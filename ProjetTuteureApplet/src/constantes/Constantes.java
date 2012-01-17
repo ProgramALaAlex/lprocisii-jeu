@@ -7,6 +7,7 @@ import java.util.ArrayList;
 public final class Constantes {
 	public static final int GAMEPLAY_MAP_STATE = 0;
 	public static final int MENU_MAP_STATE = 1;
+	public static final int COMBAT_STATE = 2;
 	
 	public static final String CHAR_LOCATION = "res/graphics/char/";
 	public static final String OBJECT_LOCATION = "res/graphics/objects/";

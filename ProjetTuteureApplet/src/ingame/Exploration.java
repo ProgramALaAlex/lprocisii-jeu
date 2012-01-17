@@ -19,7 +19,6 @@ public class Exploration extends BasicGameState{
 	private static Map currMap;
 	private static Player player;
 	private float x = 250f, y = 330f;
-	public Menu menu;
 	
 	public Exploration(int id){
 		this.stateID = id;
@@ -34,7 +33,7 @@ public class Exploration extends BasicGameState{
 		container.setVSync(true);
 		this.currMap = new Map("01", true);
 		player = new Player("Ark", "BlackGuard.png", x, y, currMap);
-		menu = new Menu(Constantes.MENU_MAP_STATE);
+		
 	}
 	
 	@Override
@@ -50,6 +49,7 @@ public class Exploration extends BasicGameState{
 		Scrolling.scrollPlayer(playerX, playerY, resolutionWidth, resolutionHeight, player, currMap);
 		Scrolling.scrollTopLayer(playerX, playerY, resolutionWidth, resolutionHeight, currMap);
 
+		
 		//HUD
 		if(currMap.isSafe()){
 			g.setColor(Color.black);
@@ -64,7 +64,7 @@ public class Exploration extends BasicGameState{
 			g.drawString("Map dangereuse", 10, 23);
 			
 		}
-
+		
 		//DEBUG
 		//		Affiche la hitbox du joueur
 //				g.draw(player.getCollision());
@@ -81,7 +81,7 @@ public class Exploration extends BasicGameState{
 	public void update(GameContainer container, StateBasedGame game, int delta)
 			throws SlickException {
 		Input input = container.getInput();
-		player.update(container, delta);
+		player.update(container, game, delta);
 		
 		
 		// juste pour tester la téléportation
@@ -98,6 +98,8 @@ public class Exploration extends BasicGameState{
 		// menu de pause (inutile mais pour tester les gamestates)
 		if (input.isKeyPressed(Input.KEY_ESCAPE)){
 			game.enterState(Constantes.MENU_MAP_STATE);
+//			a.enterState(Constantes.MENU_MAP_STATE);
+//			System.out.println("SALUT");
 		}
 		
 		//utilisé pour le debug
