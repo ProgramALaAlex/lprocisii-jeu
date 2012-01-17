@@ -7,7 +7,7 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ProjetTuteureApplet/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/slick.jar"/>
+	<classpathentry kind="lib" path="lib/slick.jar" sourcepath="C:/Users/Antonin/Documents/Slick/src"/>
 	<classpathentry kind="lib" path="lib/ibxm.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -13,7 +13,7 @@ public class Map {
 	private int square[] = {0,0,32,0,32,32,0,32}; //collision carrées 32*32
 	private static ArrayList<Block> entities; // obligé que ce soit statique sinon Player vide pas sa mémoire.
 	private String IDMap;
-	private boolean safe;
+	private static boolean safe;
 	private static ArrayList<Teleporter> listeTeleporter;
 	
  

@@ -9,6 +9,7 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Polygon;
+import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.tiled.TiledMap;
 
 import constantes.Constantes;
@@ -22,6 +23,7 @@ public class Player {
 	private SpriteSheet spriteSheet;
 	private Animation sprite, up, down, left, right;
 	private Map map;
+	private int pasAvantProchainCombat;
 
 	public Player(String name, String spriteSheetName, float x, float y, Map map){
 		this.name = name;
@@ -43,6 +45,8 @@ public class Player {
 		collision.setLocation(x+5, y+5);
 		initAnimation(false);
 		sprite = right; 
+		pasAvantProchainCombat = (int) (Math.random()*500);
+
 	}
 
 	public void initAnimation(boolean autoUpdate){
@@ -57,13 +61,22 @@ public class Player {
 		right = new Animation(lookRight, Constantes.EVENT_ANIM_DEFAUT_DURATION, autoUpdate); 
 	}
 
-	public void update(GameContainer container, int delta) throws SlickException{
+	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException{
+		
+		// Gestion des combats.
+		if(!map.isSafe() && pasAvantProchainCombat==0){
+			game.enterState(Constantes.COMBAT_STATE);
+			pasAvantProchainCombat = (int) (Math.random()*500);
+		}	
+
 		Input input = container.getInput();
+		
 		if (input.isKeyDown(Input.KEY_UP)){
 			sprite = up;
 			if (!isBlocked(0, - delta * 0.1f)){
 				sprite.update(delta);
 				y -= delta * 0.1f;
+				decrementerPas(delta);
 			}
 		}
 		if (input.isKeyDown(Input.KEY_DOWN)){
@@ -71,6 +84,7 @@ public class Player {
 			if (!isBlocked(0, delta * 0.1f)){
 				sprite.update(delta);
 				y += delta * 0.1f;
+				decrementerPas(delta);
 			}
 		}
 		if (input.isKeyDown(Input.KEY_LEFT)){
@@ -78,6 +92,7 @@ public class Player {
 			if (!isBlocked(- delta * 0.1f, 0)){
 				sprite.update(delta);
 				x -= delta * 0.1f;
+				decrementerPas(delta);
 			}
 		}
 		if (input.isKeyDown(Input.KEY_RIGHT)){
@@ -85,18 +100,37 @@ public class Player {
 			if (!isBlocked(delta * 0.1f, 0)){
 				sprite.update(delta);
 				x += delta * 0.1f;
+				decrementerPas(delta);
 			}
 		}
 		
-		// on rafraichit la hitbox du joueur à chaque déplacement
-		collision.setLocation(x+5, y+5);
 		
-		// si ne bouge pas : on met l'animation 1
+		// DEBUG
+		if (input.isKeyDown(Input.KEY_P)){
+			game.enterState(Constantes.COMBAT_STATE);
+			pasAvantProchainCombat = (int) (Math.random()*500);
+		}
+		
+		// si on appuit sur rien : on met l'animation 1
 		if (!((input.isKeyDown(Input.KEY_UP))
 				|| (input.isKeyDown(Input.KEY_DOWN))
 				|| (input.isKeyDown(Input.KEY_LEFT))
 				|| (input.isKeyDown(Input.KEY_RIGHT))))
 			sprite.setCurrentFrame(1);
+		else{
+			// sinon, on rafraichit les collisions
+			collision.setLocation(x+5, y+5);
+		}
+		
+	}
+	
+	/**
+	 * Methode d'update des combats
+	 */
+	public void updateCombat(GameContainer container, StateBasedGame game, int delta) throws SlickException{
+		sprite=left;
+		sprite.update(delta);
+		
 	}
 
 	private boolean isBlocked(float x, float y){
@@ -111,6 +145,15 @@ public class Player {
 		return false;
 	}
 
+	/**
+	 * Appelé lorsque le joueur se déplace, pour rafraichir les collisions
+	 * et décrémenter le temps pour le prochain combat.
+	 */
+	public void decrementerPas(int delta){
+		if(!map.isSafe() && pasAvantProchainCombat>0)
+			pasAvantProchainCombat--;
+	}
+	
 	public Animation getSprite(){
 		return sprite;
 	}

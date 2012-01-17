@@ -1,5 +1,6 @@
 package game;
 
+import ingame.Combat;
 import ingame.Exploration;
 import gui.Menu;
 
@@ -23,6 +24,7 @@ public class MainGame extends StateBasedGame{
 	public void initStatesList(GameContainer container) {
 		addState(new Exploration(Constantes.GAMEPLAY_MAP_STATE));
 		addState(new Menu(Constantes.MENU_MAP_STATE));
+		addState(new Combat(Constantes.COMBAT_STATE));
 	}
 
 	public static void main(String[] argv) { 
