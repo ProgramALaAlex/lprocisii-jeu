@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="33" height="20" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="grass" tilewidth="32" tileheight="32">
+  <image source="grassland.png" width="506" height="789"/>
+ </tileset>
+ <tileset firstgid="361" name="trees" tilewidth="32" tileheight="32">
+  <image source="grasstrees.png" width="672" height="192"/>
+ </tileset>
+ <layer name="block" width="33" height="20">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC91WWwoAIAjrcN3/TBH9SBTpnFgN+hH3AIUsZaASHwIPl6HF9Ec12f5ojihEz2Xu23GRuay0Ua6svzqXHzN03JLBk0PyvTqa2imDpq7132lYdTW91h72Dmf/HS/5R2RA9Ng3DJoh655rsRjN4VAKAAA=
+  </data>
+ </layer>
+ <layer name="Sol" width="33" height="20">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAACxNgYGAQBGKBAaTlgVhhgOmB9P9oOIyGw2AOB2EgFhsALI4UDkpAbEJnbATEagwDmx5UoG4YyPQAc8NoOAxsOIgCsSMQmw5QOCDbDxMfSP8PRDlpjOb/gQiHwVxfAAAnbvu1UAoAAA==
+  </data>
+ </layer>
+ <layer name="Couche 0" width="33" height="20">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC71WPVMCMRDdFMz4D/w/0NGgVvoLoKRBSxv1B6iUfkKJgtqiWKud9so/8e1MMpNbN7DhTt7Mm83dJXlvctlsiIg64AE4BZ+j+BLFaaI9i+I+2Ka/GIBD8e4UPPPtG69/oozNxXHCxyP4FD03hIdJRfrLfNS9dmjHHmYV6ms+rsBrJfL63/6DtubjHhwrkdf/oaTGjnh+c0Tv4Icr+uC9ew72qbjHef1flXk/Mf7LFd9tGz19Y9wPOBfjW6TnRRVoiLgIIS+aiTnWhV1wb82aGqz/1YqcfxHAe6Nj6Gfx2srQjRFqggTnas0pHwS0nFlFXzuTOVdTtcYCi7dF+gzOl3Cm9TPmtULT3xJ9Qr6wD8s5Ui+pL89XRs/HLhXra1ksW/8YRz4eVqifeycJNfwCvKR0rbXGDZd/Jwk1fATeUbrWWuOmy7+T/AIIT+a4UAoAAA==
+  </data>
+ </layer>
+ <layer name="devant" width="33" height="20">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC+3Uyw2CUBCF4Ut5NiXYgIooDSgq2oCggK8tPlrwQR3+SxawMHAzkDDJF1bOOSQOSnWTn76hlAkLA0Omg0PuFDO4Qh3W5PrYYCvU4UTuGRdca+4QIa53ZWunV/H3Tb4ZXd2K9pbdjK57Ltob8YyR4JjL0nXP/+zVdc9l71xlhuwZYQwbE4H/9ZzMBTwssRLosCMzQIg9DgIdUjJvuOOBp0CHF5lvfPBFJvSda/r8AG99jkdQCgAA
+  </data>
+ </layer>
+</map>
