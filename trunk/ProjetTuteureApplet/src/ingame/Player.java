@@ -15,22 +15,28 @@ import org.newdawn.slick.tiled.TiledMap;
 import constantes.Constantes;
 
 
-public class Player {
-	private String name, spriteSheetName;
-	private int pv, pvmax, vitesse;
+public class Player extends Combattant{
+	private String nom, spriteSheetName;
+	private int pvCourant, pvMax, attaque, vitesse;
 	private float x, y, vx, vy;
 	private Polygon collision;
 	private SpriteSheet spriteSheet;
-	private Animation sprite, up, down, left, right;
+	private Animation up, down, left, right;
 	private Map map;
 	private int pasAvantProchainCombat;
+	private int directionHistorique;
 
-	public Player(String name, String spriteSheetName, float x, float y, Map map){
-		this.name = name;
+	
+
+	public Player(String nom, String spriteSheetName, float x, float y, Map map, int pvMax, int pvCourant, int attaque, int vitesse){
+		super(nom, pvMax, pvCourant, attaque, vitesse);
 		this.spriteSheetName = spriteSheetName;
 		this.x = x;
 		this.y = y;
 		this.map = map;
+		this.pvMax = pvMax;
+		this.pvCourant = pvCourant;
+		this.attaque = attaque;
 		try {
 			spriteSheet = new SpriteSheet(Constantes.CHAR_LOCATION+spriteSheetName, 31, 32);
 		} catch (SlickException e) {
@@ -71,8 +77,12 @@ public class Player {
 
 		Input input = container.getInput();
 		
+		// pas trouvé d'autres moyen pour garder l'historique, hyper crade
+		finCombat();
+		
 		if (input.isKeyDown(Input.KEY_UP)){
 			sprite = up;
+			directionHistorique = Constantes.HAUT;
 			if (!isBlocked(0, - delta * 0.1f)){
 				sprite.update(delta);
 				y -= delta * 0.1f;
@@ -80,6 +90,7 @@ public class Player {
 			}
 		}
 		if (input.isKeyDown(Input.KEY_DOWN)){
+			directionHistorique = Constantes.BAS;
 			sprite = down;
 			if (!isBlocked(0, delta * 0.1f)){
 				sprite.update(delta);
@@ -88,6 +99,7 @@ public class Player {
 			}
 		}
 		if (input.isKeyDown(Input.KEY_LEFT)){
+			directionHistorique = Constantes.GAUCHE;
 			sprite = left;
 			if (!isBlocked(- delta * 0.1f, 0)){
 				sprite.update(delta);
@@ -96,6 +108,7 @@ public class Player {
 			}
 		}
 		if (input.isKeyDown(Input.KEY_RIGHT)){
+			directionHistorique = Constantes.DROITE;
 			sprite = right;
 			if (!isBlocked(delta * 0.1f, 0)){
 				sprite.update(delta);
@@ -133,6 +146,19 @@ public class Player {
 		
 	}
 
+	/**
+	 * Pour qu'à la fin du combat, le joueur regarde dans l'ancienne direction
+	 * On est obligé d'utiliser directHistorique, car sprite n'est pas Clonable
+	 */
+	public void finCombat(){
+		switch(directionHistorique){
+		case Constantes.BAS : sprite = down; break;
+		case Constantes.DROITE : sprite = right; break;
+		case Constantes.HAUT : sprite = up; break;
+		case Constantes.GAUCHE : sprite = left; break;
+		}
+	}
+
 	private boolean isBlocked(float x, float y){
 		for (Block b : map.getEntities()) {
 			Polygon tmp = collision.copy();
@@ -157,7 +183,7 @@ public class Player {
 	public Animation getSprite(){
 		return sprite;
 	}
-
+	
 	public Polygon getCollision(){
 		return collision;
 	}

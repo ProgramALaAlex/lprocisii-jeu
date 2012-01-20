@@ -32,7 +32,7 @@ public class Exploration extends BasicGameState{
 			throws SlickException {
 		container.setVSync(true);
 		this.currMap = new Map("01", true);
-		player = new Player("Ark", "BlackGuard.png", x, y, currMap);
+		player = new Player("Ark", "BlackGuard.png", x, y, currMap, 133, 133, 133, 134);
 		
 	}
 	
