@@ -26,7 +26,7 @@ public class Combattant {
 	 */
 	public boolean attaquer(Combattant c){
 		System.out.println("\n"+ nom +" attaque "+c.getNom()+" !");
-		int degatInflige = (int) (this.attaque + (this.attaque * (Math.random() -0.5) * 0.30));
+		int degatInflige = (int) (getAttaque() + (getAttaque() * (Math.random() -0.5) * 0.30));
 		int pvFinaux = c.getPvCourant()-degatInflige;
 		System.out.println(c.getNom()+" perd "+degatInflige+" pv!");
 		c.setPvCourant(pvFinaux);

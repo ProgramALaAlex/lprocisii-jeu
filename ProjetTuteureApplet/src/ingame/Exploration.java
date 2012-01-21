@@ -103,9 +103,13 @@ public class Exploration extends BasicGameState{
 		}
 		
 		//utilisé pour le debug
-		if(input.isKeyPressed(Input.KEY_I)){
+		if(input.isKeyPressed(Input.KEY_L)){
 			System.out.println("x:"+input.getAbsoluteMouseX()+" y:"+input.getAbsoluteMouseY());
 			System.out.println("x:"+input.getMouseX()+" y:"+input.getMouseY());
+		}
+
+		if(input.isKeyPressed(Input.KEY_I)){
+			System.out.println(player.getInventaire());
 		}
 	}
 
