@@ -3,6 +3,7 @@ package ingame;
 
 import java.util.ArrayList;
 
+import org.lwjgl.Sys;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -108,8 +109,11 @@ public class Combat extends BasicGameState{
 				tourJoueur=true;
 				choisirAction(input);
 			}
-			else
+			else{
 				c.attaquer(Exploration.getPlayer());
+			}
+			
+			//fin du tour
 			tour++;
 		}
 		if(tourJoueur){
@@ -182,7 +186,8 @@ public class Combat extends BasicGameState{
 					selectionCible = true;
 				}
 				else {
-					System.out.println("On utilisera une potion quand ce sera intégré");
+					System.out.println("UTILISER POTION");
+					Exploration.getPlayer().utiliserPotion();
 					tour++;
 					tourJoueur=false;
 				}
@@ -203,6 +208,7 @@ public class Combat extends BasicGameState{
 				// on attaque
 				if(Exploration.getPlayer().attaquer(listeMonstre.get(definirCible))){
 					// si l'ennemi est KO
+					Exploration.getPlayer().getInventaire().addObjets(listeMonstre.get(definirCible).drop());
 					listeMonstre.remove(definirCible);
 					definirCible=0;
 				}

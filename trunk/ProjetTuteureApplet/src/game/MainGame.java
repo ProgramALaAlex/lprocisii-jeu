@@ -30,6 +30,7 @@ public class MainGame extends StateBasedGame{
 	public static void main(String[] argv) { 
 		try { 
 			AppGameContainer container = new AppGameContainer(new MainGame()); 
+			container.setVSync(true);
 			container.setDisplayMode(640,480,false); 
 			container.start(); 
 		} catch (SlickException e) { 

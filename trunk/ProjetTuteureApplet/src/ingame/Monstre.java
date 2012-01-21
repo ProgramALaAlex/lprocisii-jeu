@@ -1,5 +1,12 @@
 package ingame;
 
+import inventaire.Arme;
+import inventaire.Objet;
+import inventaire.Potion;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
@@ -7,12 +14,15 @@ import org.newdawn.slick.SlickException;
 import constantes.Constantes;
 
 public class Monstre extends Combattant{
+	private HashMap<Objet, Integer> dropList;
 
 	/**
 	 * Pas de paramètres : généré aléatoirement entre deux modèles.
 	 */
 	public Monstre() {
 		sprite = new Animation();
+		dropList = new HashMap<Objet, Integer>();
+
 		if(Math.random() < 0.5){
 			nom = "Slime bleue";
 			pvMax = 500;
@@ -24,6 +34,7 @@ public class Monstre extends Combattant{
 			} catch (SlickException e) {
 				e.printStackTrace();
 			}
+			dropList.put(new Potion(), 100); // == 100% de chance de dropper des potions
 			
 		}
 		else {
@@ -37,10 +48,21 @@ public class Monstre extends Combattant{
 			} catch (SlickException e) {
 				e.printStackTrace();
 			}
+			dropList.put(new Arme(1), 50);
 		}
-		
-			
-			
+	}
+	
+	public ArrayList<Objet> drop(){
+		ArrayList<Objet> res = new ArrayList<Objet>();
+		int random = (int) (Math.random()*100);
+		for(Objet o : this.dropList.keySet())
+			if(random <= this.dropList.get(o)){
+				System.out.println("objet droppé ! C'est un(e)"+o.getNom());
+				res.add(o);
+			}
+		if(res.isEmpty())
+			System.out.println("pas d'objet droppé...");
+		return res;
 	}
 
 }

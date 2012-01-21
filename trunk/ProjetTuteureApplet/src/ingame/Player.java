@@ -1,5 +1,9 @@
 package ingame;
 
+import inventaire.Armure;
+import inventaire.Inventaire;
+import inventaire.Potion;
+
 import java.awt.Point;
 
 import org.newdawn.slick.Animation;
@@ -25,8 +29,7 @@ public class Player extends Combattant{
 	private Map map;
 	private int pasAvantProchainCombat;
 	private int directionHistorique;
-
-	
+	private Inventaire inventaire;
 
 	public Player(String nom, String spriteSheetName, float x, float y, Map map, int pvMax, int pvCourant, int attaque, int vitesse){
 		super(nom, pvMax, pvCourant, attaque, vitesse);
@@ -52,6 +55,11 @@ public class Player extends Combattant{
 		initAnimation(false);
 		sprite = right; 
 		pasAvantProchainCombat = (int) (Math.random()*500);
+		inventaire = new Inventaire();
+		inventaire.addObjet(new Potion());
+		inventaire.addObjet(new Armure(1));
+		inventaire.equiperArmure(new Armure(1));
+		System.out.println("Armure 1 équipée");
 
 	}
 
@@ -204,5 +212,31 @@ public class Player extends Combattant{
 		this.y = y;
 	}
 
+	public void utiliserPotion(){
+		int soin = this.inventaire.retirerPotion();
+		if(soin==0) System.out.println("Pas de potion!");
+		else System.out.println(getNom()+" utilise une potion !");
+		if(getPvCourant()+soin <= pvMax)
+			setPvCourant(getPvCourant()+soin);
+		else setPvCourant(pvMax);
+	}
 
+	// juste pour le debug, a virer plus tard
+	public Inventaire getInventaire() {
+		return inventaire;
+	}
+
+	@Override
+	public int getPvMax() {
+		return super.getPvMax() + this.inventaire.getPVBonus();
+	}
+
+	@Override
+	public int getAttaque() {
+		return super.getAttaque() + this.inventaire.getAttaqueBonus();
+	}
+	
+	
+	
+	
 }
