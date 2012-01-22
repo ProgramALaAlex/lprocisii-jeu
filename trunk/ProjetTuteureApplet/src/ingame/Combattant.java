@@ -2,22 +2,26 @@ package ingame;
 
 import org.newdawn.slick.Animation;
 
-public class Combattant {
+public abstract class Combattant {
 	protected String nom;
 	protected int pvMax, pvCourant, attaque, vitesse;
+	protected int xCombat;
+	protected boolean enAttaque;
 	protected Animation sprite;
 	
 	
-	public Combattant(){}
+	public Combattant(){
+		this.enAttaque = true;
+	}
 	
 	public Combattant(String nom, int pvMax, int pvCourant, int attaque,
 			int vitesse) {
-		super();
 		this.nom = nom;
 		this.pvMax = pvMax;
 		this.pvCourant = pvCourant;
 		this.attaque = attaque;
 		this.vitesse = vitesse;
+		this.enAttaque = true;
 	}
 
 	/**
@@ -40,6 +44,12 @@ public class Combattant {
 			return false;
 		}
 	}
+	
+	/**
+	 * Déplace un combattant lorsqu'il attaque
+	 * @return true quand le combattant a terminé son déplacement.
+	 */
+	public abstract boolean deplacementAttaque(int delta, int departX, int destinationX);
 
 	public int getPvCourant() {
 		return pvCourant;
@@ -74,6 +84,13 @@ public class Combattant {
 		return sprite;
 	}
 
-	
+	public int getXCombat() {
+		return xCombat;
+	}
+
+	public void setXCombat(int xCombat) {
+		this.xCombat = xCombat;
+	}
+
 	
 }

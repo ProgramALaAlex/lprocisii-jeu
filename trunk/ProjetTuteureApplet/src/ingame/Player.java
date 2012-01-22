@@ -235,6 +235,25 @@ public class Player extends Combattant{
 	public int getAttaque() {
 		return super.getAttaque() + this.inventaire.getAttaqueBonus();
 	}
+
+	@Override
+	public boolean deplacementAttaque(int delta, int departX, int destinationX) {
+		if(enAttaque  && xCombat >= destinationX){
+			xCombat-=0.5f*delta;
+		}
+		if(xCombat <= destinationX){
+			enAttaque = false;
+			xCombat+=0.3f*delta;
+		}
+		if(!enAttaque && xCombat >= destinationX){
+			xCombat+=0.3f*delta;
+		}
+		if(!enAttaque && xCombat >= departX){
+			enAttaque = true;
+			return true;
+		}
+		return false;
+	}
 	
 	
 	

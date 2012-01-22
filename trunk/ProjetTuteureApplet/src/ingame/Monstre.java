@@ -20,6 +20,7 @@ public class Monstre extends Combattant{
 	 * Pas de paramètres : généré aléatoirement entre deux modèles.
 	 */
 	public Monstre() {
+		super();
 		sprite = new Animation();
 		dropList = new HashMap<Objet, Integer>();
 
@@ -63,6 +64,25 @@ public class Monstre extends Combattant{
 		if(res.isEmpty())
 			System.out.println("pas d'objet droppé...");
 		return res;
+	}
+
+	@Override
+	public boolean deplacementAttaque(int delta, int departX, int destinationX) {
+		if(enAttaque  && xCombat <= destinationX){
+			xCombat+=0.5f*delta;
+		}
+		if(xCombat >= destinationX){
+			enAttaque = false;
+			xCombat-=0.1f*delta;
+		}
+		if(!enAttaque && xCombat <= destinationX){
+			xCombat-=0.1f*delta;
+		}
+		if(!enAttaque && xCombat <= departX){
+			enAttaque = true;
+			return true;
+		}
+		return false;
 	}
 
 }

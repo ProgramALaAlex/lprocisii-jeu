@@ -24,4 +24,8 @@ public final class Constantes {
 	public static final TPList LISTE_TP = new TPList();
 	
 	public static final String SELECTION = "> ";
+	
+	//combats
+	public static final int POSX_COMBAT_MONSTRE = 100;
+	public static final int POSX_ATTAQUE_MONSTRE = 150;
 }
