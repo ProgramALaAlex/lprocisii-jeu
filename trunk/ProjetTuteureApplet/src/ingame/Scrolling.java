@@ -7,11 +7,15 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Rectangle;
 
+import rmi.paquetJoueur.PaquetJoueur;
 
 
+/**
+ * C4EST MOCHE
+ */
 public class Scrolling {
 
-	public static void scrollTopLayer(int playerX, int playerY, int resolutionWidth, int resolutionHeight, Map currMap){
+	public static void scrollLayer(int playerX, int playerY, int resolutionWidth, int resolutionHeight, Map currMap, int layer){
 		int mapHeight = currMap.getTmap().getHeight()*currMap.getTmap().getTileHeight();
 		int mapWidth = currMap.getTmap().getWidth()*currMap.getTmap().getTileWidth();
 		boolean gauche = playerX-resolutionWidth/2<0;
@@ -20,32 +24,32 @@ public class Scrolling {
 		boolean bas = playerY+resolutionHeight/2>mapHeight;
 
 		if (gauche && haut){
-			currMap.getTmap().render(0,0,3);
+			currMap.getTmap().render(0,0,layer);
 		}
 		else if (gauche && bas){
-			currMap.getTmap().render(0, -mapHeight+resolutionHeight,3);
+			currMap.getTmap().render(0, -mapHeight+resolutionHeight,layer);
 		}
 		else if (haut && droite){
-			currMap.getTmap().render(resolutionWidth-mapWidth, 0,3);
+			currMap.getTmap().render(resolutionWidth-mapWidth, 0,layer);
 		}
 		else if (bas && droite){
-			currMap.getTmap().render(resolutionWidth-mapWidth, -mapHeight+resolutionHeight,3);
+			currMap.getTmap().render(resolutionWidth-mapWidth, -mapHeight+resolutionHeight,layer);
 		}
 		else if(gauche){
-			currMap.getTmap().render(0, -playerY+resolutionHeight/2, 3);
+			currMap.getTmap().render(0, -playerY+resolutionHeight/2, layer);
 		}
 		else if (droite){
-			currMap.getTmap().render(resolutionWidth-mapWidth, -playerY+resolutionHeight/2, 3);
+			currMap.getTmap().render(resolutionWidth-mapWidth, -playerY+resolutionHeight/2, layer);
 		}
 		else if(haut){
-			currMap.getTmap().render(-playerX+resolutionWidth/2, 0, 3);
+			currMap.getTmap().render(-playerX+resolutionWidth/2, 0, layer);
 		}
 		else if(bas){
-			currMap.getTmap().render(-playerX+resolutionWidth/2, resolutionHeight-mapHeight, 3);
+			currMap.getTmap().render(-playerX+resolutionWidth/2, resolutionHeight-mapHeight, layer);
 		}
 		else {
 			// haut gauche
-			currMap.getTmap().render(-playerX+resolutionWidth/2, -playerY+resolutionHeight/2, 3);
+			currMap.getTmap().render(-playerX+resolutionWidth/2, -playerY+resolutionHeight/2, layer);
 		}
 	}
 
@@ -87,41 +91,45 @@ public class Scrolling {
 		}
 	}
 
-	public static void scrollBottomLayer(int playerX, int playerY, int resolutionWidth, int resolutionHeight, Map map){
+	
+	public static void scrollOtherPlayers(Graphics g, PaquetJoueur p, int positionLocaleX, int positionLocaleY, int resolutionWidth, int resolutionHeight, Map map){
 		int mapHeight = map.getTmap().getHeight()*map.getTmap().getTileHeight();
 		int mapWidth = map.getTmap().getWidth()*map.getTmap().getTileWidth();
-		boolean gauche = playerX-resolutionWidth/2<0;
-		boolean droite = playerX+resolutionWidth/2>mapWidth;
-		boolean haut = (int)playerY-resolutionHeight/2<0;
-		boolean bas = (int)playerY+resolutionHeight/2>mapHeight;
+		boolean gauche = positionLocaleX-resolutionWidth/2<0;
+		boolean droite = positionLocaleX+resolutionWidth/2>mapWidth;
+		boolean haut = positionLocaleY-resolutionHeight/2<0;
+		boolean bas = positionLocaleY+resolutionHeight/2>mapHeight;
+		int playerX = (int) p.getPosition().getX();
+		int playerY = (int) p.getPosition().getY();
+		Player player = new Player(p);
 
 		if (gauche && haut){
-			map.getTmap().render(0,0);
+			player.getSprite().draw(playerX,playerY, 32, 32);
 		}
 		else if (gauche && bas){
-			map.getTmap().render(0, -mapHeight+resolutionHeight);
+			player.getSprite().draw(playerX, playerY-mapHeight+resolutionHeight, 32, 32);
 		}
 		else if (haut && droite){
-			map.getTmap().render(resolutionWidth-mapWidth, 0);
+			player.getSprite().draw(playerX+resolutionWidth-mapWidth, playerY, 32, 32);
 		}
 		else if (bas && droite){
-			map.getTmap().render(resolutionWidth-mapWidth, -mapHeight+resolutionHeight);
+			player.getSprite().draw(playerX+resolutionWidth-mapWidth, playerY-mapHeight+resolutionHeight, 32, 32);
 		}
 		else if(gauche){
-			map.getTmap().render(0, -playerY+resolutionHeight/2);
+			player.getSprite().draw(playerX, playerY-positionLocaleY+resolutionHeight/2, 32, 32);
 		}
 		else if (droite){
-			map.getTmap().render(resolutionWidth-mapWidth, -playerY+resolutionHeight/2);
+			player.getSprite().draw(playerX+resolutionWidth-mapWidth, playerY-positionLocaleY+resolutionHeight/2, 32, 32);
 		}
 		else if(haut){
-			map.getTmap().render(-playerX+resolutionWidth/2, 0);
+			player.getSprite().draw(playerX-positionLocaleX+resolutionWidth/2, playerY, 32, 32);
 		}
 		else if(bas){
-			map.getTmap().render(-playerX+resolutionWidth/2, resolutionHeight-mapHeight);
+			player.getSprite().draw(playerX-positionLocaleX+resolutionWidth/2, playerY+resolutionHeight-mapHeight, 32, 32);
 		}
 		else {
 			// haut gauche
-			map.getTmap().render(-playerX+resolutionWidth/2, -playerY+resolutionHeight/2);
+			player.getSprite().draw(playerX-positionLocaleX+resolutionWidth/2, playerY-positionLocaleY+resolutionHeight/2, 32, 32);
 		}
 	}
 

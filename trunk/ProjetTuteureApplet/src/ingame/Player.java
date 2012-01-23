@@ -5,6 +5,8 @@ import inventaire.Inventaire;
 import inventaire.Potion;
 
 import java.awt.Point;
+import java.io.Serializable;
+import java.rmi.server.UID;
 
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.GameContainer;
@@ -16,20 +18,23 @@ import org.newdawn.slick.geom.Polygon;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.tiled.TiledMap;
 
+import rmi.interfaces.DispatcherInterface;
+import rmi.interfaces.ReceiverInterface;
+import rmi.paquetJoueur.PaquetJoueur;
+
 import constantes.Constantes;
 
 
-public class Player extends Combattant{
-	private String nom, spriteSheetName;
-	private int pvCourant, pvMax, attaque, vitesse;
+public class Player extends Combattant implements ReceiverInterface, Serializable {
+	private String nom, mapName, spriteSheetName;
+	private int pvCourant, pvMax, attaque, vitesse, pasAvantProchainCombat, directionHistorique;
 	private float x, y, vx, vy;
-	private Polygon collision;
-	private SpriteSheet spriteSheet;
-	private Animation up, down, left, right;
-	private Map map;
-	private int pasAvantProchainCombat;
-	private int directionHistorique;
-	private Inventaire inventaire;
+	private transient Polygon collision;
+	private transient SpriteSheet spriteSheet;
+	private transient Animation up, down, left, right;
+	private transient Map map;
+	private transient Inventaire inventaire;
+	private UID userId; //pour le online
 
 	public Player(String nom, String spriteSheetName, float x, float y, Map map, int pvMax, int pvCourant, int attaque, int vitesse){
 		super(nom, pvMax, pvCourant, attaque, vitesse);
@@ -37,6 +42,7 @@ public class Player extends Combattant{
 		this.x = x;
 		this.y = y;
 		this.map = map;
+		this.mapName = map.getIDMap();
 		this.pvMax = pvMax;
 		this.pvCourant = pvCourant;
 		this.attaque = attaque;
@@ -60,7 +66,25 @@ public class Player extends Combattant{
 		inventaire.addObjet(new Armure(1));
 		inventaire.equiperArmure(new Armure(1));
 		System.out.println("Armure 1 équipée");
-
+		this.userId = new UID();
+	}
+	
+	/**
+	 * Constructeur utilisé pour reconstruire les autres joueurs en ligne, donc pas complet pour éco bande passante
+	 */
+	public Player(PaquetJoueur p){
+		this.spriteSheetName = p.getSpriteSheetName();
+		this.x = (int)p.getPosition().getX();
+		this.y = (int)p.getPosition().getY();
+		this.directionHistorique = p.getDirection();
+		try {
+			spriteSheet = new SpriteSheet(Constantes.CHAR_LOCATION+spriteSheetName, 31, 32);
+		} catch (SlickException e) {
+			e.printStackTrace();
+		}	
+		initAnimation(false);
+		sprite = right;
+		finCombat();
 	}
 
 	public void initAnimation(boolean autoUpdate){
@@ -254,8 +278,32 @@ public class Player extends Combattant{
 		}
 		return false;
 	}
+
+	public UID getUserId() {
+		return userId;
+	}
+
+	// online
+	public String getSpriteSheetName() {
+		return spriteSheetName;
+	}
+
+	// online
+	public int getDirection() {
+		return directionHistorique;
+	}
+
+	public String getMapId() {
+		return mapName;
+	}
+
+	public void setMapId(String mapId) {
+		this.mapName = mapId;
+	}
 	
 	
+	
+
 	
 	
 }
