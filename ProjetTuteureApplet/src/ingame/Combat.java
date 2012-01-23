@@ -7,6 +7,7 @@ import org.lwjgl.Sys;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.BasicGameState;
@@ -25,8 +26,9 @@ public class Combat extends BasicGameState{
 	private Combattant enCours;
 
 	private int attaqueJoueurX, destinationAttaqueJoueurX; // peut pas mettre dans constante car par rapport au bord..
-	private boolean joueurAttaque; //moche
-
+	private boolean joueurAttaque;
+	private Image background;
+	
 	public Combat(int stateID){
 		this.stateID = stateID;
 	}
@@ -42,6 +44,7 @@ public class Combat extends BasicGameState{
 	@Override
 	public void init(GameContainer container, StateBasedGame game)
 			throws SlickException {
+		background = new Image(Constantes.BATTLE_BACKGROUND_LOCATION+"battleBackground.jpg");
 	}
 
 
@@ -72,9 +75,10 @@ public class Combat extends BasicGameState{
 
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
+		background.draw(0, 0, container.getWidth(), container.getHeight()-Constantes.HAUTEUR_MENU_BAS_COMBAT);
 		Exploration.getPlayer().getSprite().draw(Exploration.getPlayer().getXCombat(),container.getHeight()/2);
 
-		int espace = 100;
+		int espace = 30;
 		for(Monstre m : listeMonstre){
 			m.getSprite().draw(m.getXCombat(), (espace+=60));
 			g.setColor(Color.black);
@@ -84,7 +88,7 @@ public class Combat extends BasicGameState{
 		}
 
 		// Menu combat
-		int positionH = container.getHeight()-70;
+		int positionH = container.getHeight()-Constantes.HAUTEUR_MENU_BAS_COMBAT;
 		g.drawLine(0, positionH, container.getWidth(), positionH);
 		if (attaquer){
 			g.setColor(Color.white);
@@ -92,7 +96,7 @@ public class Combat extends BasicGameState{
 			g.setColor(Color.gray);
 			g.drawString("Utiliser potion", 50, positionH+30);
 			if(selectionCible){
-				g.drawString(Constantes.SELECTION, 80, 170+definirCible*50);
+				g.drawString(Constantes.SELECTION, 80, 130+definirCible*60);
 			}
 		}
 		else{
