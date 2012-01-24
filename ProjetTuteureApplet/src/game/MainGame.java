@@ -27,10 +27,10 @@ public class MainGame extends StateBasedGame{
 		super("Projet Tuteuré");
 		try { 
 			if (Constantes.MODE_ONLINE){
-				System.out.println("A");
-				System.setProperty("java.security.policy","applet.policy");
-				System.out.println("B");
-				System.setSecurityManager(new RMISecurityManager());
+//				System.out.println("A");
+//				System.setProperty("java.security.policy","applet.policy");
+//				System.out.println("B");
+//				System.setSecurityManager(new RMISecurityManager());
 				System.out.println("C");
 				Registry registry = LocateRegistry.getRegistry("localhost");
 				System.out.println(registry);
@@ -55,6 +55,7 @@ public class MainGame extends StateBasedGame{
 		try{
 			AppGameContainer container = new AppGameContainer(new MainGame()); 
 			container.setVSync(true);
+			container.setAlwaysRender(true);
 			container.setDisplayMode(640,480,false); 
 			container.start(); 
 
