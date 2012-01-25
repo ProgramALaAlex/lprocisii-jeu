@@ -12,7 +12,11 @@ import org.newdawn.slick.state.StateBasedGame;
 import constantes.Constantes;
 
 
-
+/**
+ * Juste une classe de test à la base.
+ * Mais au final on pourrait utiliser ça pour les AFK donc je laisse pour le moment.
+ *
+ */
 public class Menu extends BasicGameState{
 	private int stateID;
 

@@ -1,7 +1,9 @@
-package ingame;
+package combats;
 
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.lwjgl.Sys;
 import org.newdawn.slick.Color;
@@ -12,8 +14,11 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
+import org.newdawn.slick.tests.xml.Entity;
 
 import constantes.Constantes;
+import exploration.Exploration;
+import exploration.Player;
 
 
 
@@ -81,6 +86,8 @@ public class Combat extends BasicGameState{
 		int espace = 30;
 		for(Monstre m : listeMonstre){
 			m.getSprite().draw(m.getXCombat(), (espace+=60));
+			
+			//afficher PV
 			g.setColor(Color.black);
 			g.drawString(m.getPvCourant()+"/"+m.getPvMax(), m.getXCombat(), espace+46);
 			g.setColor(Color.gray);
@@ -121,6 +128,7 @@ public class Combat extends BasicGameState{
 		listeCombattant.add(Exploration.getPlayer());
 		listeCombattant.addAll(this.listeMonstre);
 
+		// on défini qui doit commencer à jouer
 		if(!tourJoueur && !tourEnnemi){
 			if(tour>=listeCombattant.size())
 				tour=0;
@@ -138,18 +146,18 @@ public class Combat extends BasicGameState{
 			//fin du tour
 			tour++;
 		}
+		
 		// c'est au tour de l'ennemi d'attaquer
 		if(tourEnnemi){
 			if(enCours.deplacementAttaque(delta, Constantes.POSX_COMBAT_MONSTRE, Constantes.POSX_ATTAQUE_MONSTRE))
 				tourEnnemi = false;
 		}
-
 		if(tourJoueur){
 			choisirAction(input, delta);
 		}
 
 
-		//si tous les ennemis sont mort, on arrête le combat
+		//si tous les ennemis sont morts, on arrête le combat
 		if(listeMonstre.isEmpty()){
 			Exploration.getPlayer().finCombat();
 			game.enterState(Constantes.GAMEPLAY_MAP_STATE);
@@ -164,7 +172,7 @@ public class Combat extends BasicGameState{
 
 
 		//DEBUG : sortir du combat
-		if (input.isKeyPressed(Input.KEY_ESCAPE)){
+		if (input.isKeyPressed(Input.KEY_F1)){
 			Exploration.getPlayer().finCombat();
 			game.enterState(Constantes.GAMEPLAY_MAP_STATE);
 		}
@@ -211,7 +219,7 @@ public class Combat extends BasicGameState{
 					attaquer = !attaquer;
 
 				if(input.isKeyPressed(Input.KEY_ENTER)){
-					// si pas encore en train de choisir cible, choisir attaquer (menu bas)
+					// si il choisit d'attaquer
 					if(attaquer && !selectionCible){
 						selectionCible = true;
 					}
@@ -235,7 +243,10 @@ public class Combat extends BasicGameState{
 				else if(input.isKeyPressed(Input.KEY_ENTER)){
 					// on attaque
 					joueurAttaque = true;
-
+				}
+				else if (input.isKeyPressed(Input.KEY_ESCAPE)){
+					//on annule
+					selectionCible = false;
 				}
 			}
 		}

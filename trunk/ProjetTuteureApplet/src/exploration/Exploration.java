@@ -1,4 +1,4 @@
-package ingame;
+package exploration;
 
 import java.awt.Point;
 import java.rmi.RemoteException;
@@ -11,6 +11,7 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
@@ -53,7 +54,7 @@ public class Exploration extends BasicGameState{
 				listePaquetJoueurs = MainGame.getRemoteReference().updateListe(player.getUserId(), player.getMapId());
 			} catch (RemoteException e) {
 				e.printStackTrace();
-				System.out.println("Erreur : le serveur du jeu ne répond pas (probablement car pas executé) mais un RMI répond lawl. \nPassage en mode Hors Ligne.");
+				System.out.println("Erreur : le serveur du jeu ne répond pas (probablement car pas executé ou que l'objet est sur une adresse inaccessible) mais un RMI répond lawl. \nPassage en mode Hors Ligne.");
 				Constantes.MODE_ONLINE=false;
 			}
 		}
@@ -102,8 +103,8 @@ public class Exploration extends BasicGameState{
 		//		Affiche la hitbox du joueur
 //				g.draw(player.getCollision());
 		//		Afficher les collisions du terrain
-//				for(Block p : currMap.getEntities())
-//				p.draw(g);
+//				for(Rectangle p : currMap.getCollision())
+//					g.draw(p);
 		//	Afficher les TP
 //		for(Teleporter tp : currMap.getListeTeleporter())
 //			g.draw(tp);
@@ -116,6 +117,7 @@ public class Exploration extends BasicGameState{
 		Input input = container.getInput();
 		player.update(container, game, delta);
 		
+		//TODO faire un vrai dispatcher : rappeler le serveur toutes les deux secondes c'est inutile en fait
 		if (Constantes.MODE_ONLINE){
 			try {
 					listePaquetJoueurs = MainGame.getRemoteReference().updateListe(player.getUserId(), player.getMapId());
@@ -132,12 +134,7 @@ public class Exploration extends BasicGameState{
 				currMap = new Map(tp.getIdMapDestination(), tp.isSafe());
 				player.setX(tp.getDestinationX());
 				player.setY(tp.getDestinationY());
-				System.out.println("PUTAIN C "+tp.getIdMapDestination());
 				player.setMapId(tp.getIdMapDestination());
-				
-				if(Constantes.MODE_ONLINE){
-					//TODO
-				}
 			}
 		}
 		
@@ -145,8 +142,6 @@ public class Exploration extends BasicGameState{
 		// menu de pause (inutile mais pour tester les gamestates)
 		if (input.isKeyPressed(Input.KEY_ESCAPE)){
 			game.enterState(Constantes.MENU_MAP_STATE);
-//			a.enterState(Constantes.MENU_MAP_STATE);
-//			System.out.println("SALUT");
 		}
 		
 		//utilisé pour le debug

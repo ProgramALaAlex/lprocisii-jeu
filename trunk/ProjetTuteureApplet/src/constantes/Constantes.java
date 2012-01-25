@@ -1,8 +1,9 @@
 package constantes;
 
-import ingame.Teleporter;
 
 import java.util.ArrayList;
+
+import exploration.Teleporter;
 
 public final class Constantes {
 	// NE PAS TOUCHER
@@ -27,6 +28,7 @@ public final class Constantes {
 	public static final int GAUCHE=4;
 	public static final int DROITE=6;
 	public static final float VITESSE_DEPLACEMENT=0.1f;
+	public static int TAILLE_CARRE_COLLISION = 32;
 	
 	//téléporteurs (car codés en dur)
 	public static final TPList LISTE_TP = new TPList();

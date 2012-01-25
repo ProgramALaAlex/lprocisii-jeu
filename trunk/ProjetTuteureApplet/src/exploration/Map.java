@@ -1,4 +1,5 @@
-package ingame;
+package exploration;
+
 import java.util.ArrayList;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;
@@ -10,15 +11,15 @@ public class Map {
 	private TiledMap tmap;
 	private int mapWidth;
 	private int mapHeight;
-	private int square[] = {0,0,32,0,32,32,0,32}; //collision carrées 32*32
-	private static ArrayList<Block> entities; // obligé que ce soit statique sinon Player vide pas sa mémoire.
 	private String IDMap;
+
+	private static ArrayList<Rectangle> listeCollisions; // obligé que ce soit statique sinon Player vide pas sa mémoire?
 	private static boolean safe;
 	private static ArrayList<Teleporter> listeTeleporter;
 	
  
 	public Map(String id, boolean safe) throws SlickException {
-		entities = new ArrayList<Block>();
+		listeCollisions = new ArrayList<Rectangle>();
 		
 		this.tmap = new TiledMap(Constantes.MAP_LOCATION+"map"+id+".tmx", "res/map");
 		this.mapWidth = tmap.getWidth() * tmap.getTileWidth();
@@ -28,11 +29,11 @@ public class Map {
 			for (int y = 0; y < tmap.getHeight(); y++) {
 				int tileID = tmap.getTileId(x, y, 0);
 				if (tileID == 68) {
-					entities.add(new Block(x * 32, y * 32, square, "square"));
+					listeCollisions.add(new Rectangle(x*Constantes.TAILLE_CARRE_COLLISION, y*Constantes.TAILLE_CARRE_COLLISION, Constantes.TAILLE_CARRE_COLLISION, Constantes.TAILLE_CARRE_COLLISION));
 				}
 			}
 		}
-		this.safe = safe;
+		Map.safe = safe;
 		this.IDMap = id;
 		
 		//initialisation des TP (pour pas avoir à parcourir tous les TP du monde dans la méthode update())
@@ -69,12 +70,8 @@ public class Map {
 		return mapHeight;
 	}
 
-	public int[] getSquare() {
-		return square;
-	}
-
-	public ArrayList<Block> getEntities() {
-		return entities;
+	public ArrayList<Rectangle> getCollision() {
+		return listeCollisions;
 	}
 
 	public boolean isSafe() {
