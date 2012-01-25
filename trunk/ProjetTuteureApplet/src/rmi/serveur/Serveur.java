@@ -1,12 +1,15 @@
 package rmi.serveur;
 
 import java.awt.Point;
+import java.net.InetAddress;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UID;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+
+import constantes.Constantes;
 
 import rmi.interfaces.DispatcherInterface;
 import rmi.interfaces.ReceiverInterface;
@@ -26,16 +29,15 @@ public class Serveur implements DispatcherInterface {
 	}
 
 	public static void main(String[] args){
+		System.out.println("Dispatcher");
 		System.setSecurityManager (null);
 		try {
-			System.out.println("Dispatcher");
-			
-			/* création de l'objet serveur */
+//			OK
+//			System.setProperty("java.rmi.server.hostname", Constantes.IP_SERVEUR);
 			DispatcherInterface server = new Serveur();
-			/* création du proxy */
 			DispatcherInterface proxy = (DispatcherInterface) UnicastRemoteObject.exportObject(server, 0);
-			Registry registry = LocateRegistry.getRegistry();
-			registry.rebind(REGISTRY_NAME, proxy);
+			Registry registry = LocateRegistry.getRegistry(Constantes.REGISTRY_PORT);
+			registry.rebind(Constantes.REGISTRY_NAME, proxy);
 			System.out.println("dispatcher OK");
 		} catch (Exception e) {
 			e.printStackTrace();

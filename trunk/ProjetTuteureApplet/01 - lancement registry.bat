@@ -4,6 +4,6 @@ echo %CLASSPATH%
 
 cd bin 
 
-rmiregistry
+rmiregistry 25565
 
 pause

@@ -35,4 +35,9 @@ public final class Constantes {
 	public static final int POSX_COMBAT_MONSTRE = 100;
 	public static final int POSX_ATTAQUE_MONSTRE = 150;
 	public static final int HAUTEUR_MENU_BAS_COMBAT = 70;
+	
+	//online
+	public static final String IP_SERVEUR = "78.230.68.159";
+	public static final String REGISTRY_NAME = "RMI_JEU";
+	public static final int REGISTRY_PORT = 25565;
 }

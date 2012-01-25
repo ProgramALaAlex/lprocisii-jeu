@@ -1,5 +1,6 @@
 package game;
 
+import java.rmi.Naming;
 import java.rmi.RMISecurityManager;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -27,14 +28,14 @@ public class MainGame extends StateBasedGame{
 		super("Projet Tuteuré");
 		try { 
 			if (Constantes.MODE_ONLINE){
-//				System.out.println("A");
-//				System.setProperty("java.security.policy","applet.policy");
-//				System.out.println("B");
-//				System.setSecurityManager(new RMISecurityManager());
-				System.out.println("C");
-				Registry registry = LocateRegistry.getRegistry("localhost");
+				System.out.println("Connexion en cours...");
+				System.setProperty("java.rmi.server.hostname", Constantes.IP_SERVEUR);
+				Registry registry = LocateRegistry.getRegistry(Constantes.IP_SERVEUR, Constantes.REGISTRY_PORT);
 				System.out.println(registry);
-				remoteReference = (DispatcherInterface) registry.lookup(DispatcherInterface.REGISTRY_NAME);
+				// EN FAIT FAIRE UNE REFERENCE REPREND UN PORT AU HASARD :/
+				remoteReference = (DispatcherInterface) Naming.lookup("rmi://"+Constantes.IP_SERVEUR+":"+Constantes.REGISTRY_PORT+"/"+Constantes.REGISTRY_NAME);
+//				remoteReference = (DispatcherInterface) registry.lookup(Constantes.REGISTRY_NAME);
+				System.out.println(remoteReference);
 				System.out.println("Connexion établie, normalement.");
 			}
 		} catch (Exception e){
