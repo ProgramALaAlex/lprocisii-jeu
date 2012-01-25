@@ -1,4 +1,4 @@
-package ingame;
+package combats;
 
 import inventaire.Arme;
 import inventaire.Objet;

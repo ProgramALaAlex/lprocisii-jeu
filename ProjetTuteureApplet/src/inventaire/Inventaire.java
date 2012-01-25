@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * En fait utiliser une hashmap c'était pas le top.
+ * J'aurai du utiliser une arraylist je pense mais maintenant que c'est fait..
+ */
 public class Inventaire extends HashMap<Objet, Nombre> {
 
 	public Inventaire() {

@@ -1,4 +1,4 @@
-package ingame;
+package combats;
 
 import org.newdawn.slick.Animation;
 
@@ -37,6 +37,7 @@ public abstract class Combattant {
 		
 		if(c.getPvCourant() <= 0){
 			System.out.println("Il est KO! OH MON DIEU!");
+//			this.afficherDegatsRecu(degatInflige+getPvCourant());
 			return true;
 		}
 		else{

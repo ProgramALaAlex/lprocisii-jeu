@@ -1,11 +1,5 @@
 package inventaire;
 
-/**
- * olbigé d'utiliser ça car pas de set() dans Integer pour l'hashmap.
- * impossible de definir une classe interne à inventaire car c'est une hashmap qui l'utilise
- * en fait utiliser une hashmap c'est surement pas le mieux
- *
- */
 public class Nombre{
 	private int nombre;
 	private boolean equipe = false;
@@ -38,7 +32,6 @@ public class Nombre{
 		this.equipe = equipe;
 	}
 
-	// pour le debug, a virer apres;
 	public int getNombre() {
 		return nombre;
 	}

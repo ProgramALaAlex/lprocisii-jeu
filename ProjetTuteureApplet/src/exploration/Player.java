@@ -1,4 +1,4 @@
-package ingame;
+package exploration;
 
 import inventaire.Armure;
 import inventaire.Inventaire;
@@ -15,8 +15,11 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Polygon;
+import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.tiled.TiledMap;
+
+import combats.Combattant;
 
 import rmi.interfaces.DispatcherInterface;
 import rmi.interfaces.ReceiverInterface;
@@ -24,7 +27,7 @@ import rmi.paquetJoueur.PaquetJoueur;
 
 import constantes.Constantes;
 
-
+// exploration étant le mode "principal", je met player là dedans.
 public class Player extends Combattant implements ReceiverInterface, Serializable {
 	private String nom, mapName, spriteSheetName;
 	private int pvCourant, pvMax, attaque, vitesse, pasAvantProchainCombat, directionHistorique;
@@ -192,11 +195,11 @@ public class Player extends Combattant implements ReceiverInterface, Serializabl
 	}
 
 	private boolean isBlocked(float x, float y){
-		for (Block b : map.getEntities()) {
+		for (Rectangle r : map.getCollision()) {
 			Polygon tmp = collision.copy();
 			tmp.setX(tmp.getX()+x);
 			tmp.setY(tmp.getY()+y);
-			if (tmp.intersects(b.poly)) {
+			if (tmp.intersects(r)) {
 				return true;
 			}       
 		}

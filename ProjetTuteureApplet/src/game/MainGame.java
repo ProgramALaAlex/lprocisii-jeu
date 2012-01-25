@@ -5,14 +5,15 @@ import java.rmi.RMISecurityManager;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
-import ingame.Combat;
-import ingame.Exploration;
+import exploration.Exploration;
 import gui.Menu;
 
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
+
+import combats.Combat;
 
 import rmi.interfaces.DispatcherInterface;
 
@@ -32,7 +33,6 @@ public class MainGame extends StateBasedGame{
 				System.setProperty("java.rmi.server.hostname", Constantes.IP_SERVEUR);
 				Registry registry = LocateRegistry.getRegistry(Constantes.IP_SERVEUR, Constantes.REGISTRY_PORT);
 				System.out.println(registry);
-				// EN FAIT FAIRE UNE REFERENCE REPREND UN PORT AU HASARD :/
 				remoteReference = (DispatcherInterface) Naming.lookup("rmi://"+Constantes.IP_SERVEUR+":"+Constantes.REGISTRY_PORT+"/"+Constantes.REGISTRY_NAME);
 //				remoteReference = (DispatcherInterface) registry.lookup(Constantes.REGISTRY_NAME);
 				System.out.println(remoteReference);
@@ -40,7 +40,7 @@ public class MainGame extends StateBasedGame{
 			}
 		} catch (Exception e){
 			e.printStackTrace();
-			System.out.println("Erreur de connexion, sûrement. Passage en mode Hors Ligne.");
+			System.out.println("Erreur de connexion au serveur RMI. Passage en mode Hors Ligne.");
 			Constantes.MODE_ONLINE=false;
 		}
 	}

@@ -1,6 +1,5 @@
 package rmi.interfaces;
 
-import ingame.Player;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -8,6 +7,8 @@ import java.rmi.server.UID;
 import java.util.ArrayList;
 
 import org.newdawn.slick.Animation;
+
+import exploration.Player;
 
 /**
  * Les méthode que le serveur va appeler à dsitance.
