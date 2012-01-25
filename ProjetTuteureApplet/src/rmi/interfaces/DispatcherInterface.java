@@ -14,9 +14,6 @@ import rmi.paquetJoueur.PaquetJoueur;
  */
 public interface DispatcherInterface extends Remote
 {
-    String REGISTRY_NAME = "RMI_JEU";
-    int REGISTRY_PORT = 3273;
-
     /**
      * Connecte un joueur au serveur
      * @param joueur

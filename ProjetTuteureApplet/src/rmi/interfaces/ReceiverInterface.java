@@ -14,8 +14,6 @@ import org.newdawn.slick.Animation;
  */
 public interface ReceiverInterface extends Remote
 {
-    String REGISTRY_NAME = "RMI_JEU";
-    int REGISTRY_PORT = 3273;
 
     public float getX() throws RemoteException;
     public float getY() throws RemoteException;
