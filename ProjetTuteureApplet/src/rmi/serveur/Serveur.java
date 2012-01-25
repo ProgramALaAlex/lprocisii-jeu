@@ -35,8 +35,8 @@ public class Serveur implements DispatcherInterface {
 //			OK
 //			System.setProperty("java.rmi.server.hostname", Constantes.IP_SERVEUR);
 			DispatcherInterface server = new Serveur();
-			DispatcherInterface proxy = (DispatcherInterface) UnicastRemoteObject.exportObject(server, 0);
-			Registry registry = LocateRegistry.getRegistry(Constantes.REGISTRY_PORT);
+			DispatcherInterface proxy = (DispatcherInterface) UnicastRemoteObject.exportObject(server, 25465);
+			Registry registry = LocateRegistry.createRegistry(Constantes.REGISTRY_PORT);
 			registry.rebind(Constantes.REGISTRY_NAME, proxy);
 			System.out.println("dispatcher OK");
 		} catch (Exception e) {

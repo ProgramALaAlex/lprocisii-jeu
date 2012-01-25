@@ -69,5 +69,29 @@ public class MainGame extends StateBasedGame{
 	public static DispatcherInterface getRemoteReference() {
 		return remoteReference;
 	} 
+	
+	public void testJavaScript(){
+		try{
+		java.security.AccessController.doPrivileged(
+			new java.security.PrivilegedAction<Object>() {
+				public Object run() {
+					try{
+						System.out.println("Salut ! On m'a appelé via du javascript !");
+					}
+					catch (Exception e)
+					{
+						e.printStackTrace();
+					}
+					return null;
+
+				};
+
+			}
+		);
+
+		} catch (Exception ex) {
+		ex.printStackTrace();
+		}
+	}
 
 }
