@@ -115,7 +115,7 @@ public class Player extends Combattant implements ReceiverInterface, Serializabl
 		if (input.isKeyDown(Input.KEY_UP)){
 			sprite = up;
 			directionHistorique = Constantes.HAUT;
-			if (!isBlocked(0, - delta * 0.1f)){
+			if (!isBlocked(0, - delta * Constantes.VITESSE_DEPLACEMENT)){
 				sprite.update(delta);
 				y -= delta * 0.1f;
 				decrementerPas(delta);
@@ -124,7 +124,7 @@ public class Player extends Combattant implements ReceiverInterface, Serializabl
 		if (input.isKeyDown(Input.KEY_DOWN)){
 			directionHistorique = Constantes.BAS;
 			sprite = down;
-			if (!isBlocked(0, delta * 0.1f)){
+			if (!isBlocked(0, delta * Constantes.VITESSE_DEPLACEMENT)){
 				sprite.update(delta);
 				y += delta * 0.1f;
 				decrementerPas(delta);
@@ -133,7 +133,7 @@ public class Player extends Combattant implements ReceiverInterface, Serializabl
 		if (input.isKeyDown(Input.KEY_LEFT)){
 			directionHistorique = Constantes.GAUCHE;
 			sprite = left;
-			if (!isBlocked(- delta * 0.1f, 0)){
+			if (!isBlocked(- delta * Constantes.VITESSE_DEPLACEMENT, 0)){
 				sprite.update(delta);
 				x -= delta * 0.1f;
 				decrementerPas(delta);
@@ -142,7 +142,7 @@ public class Player extends Combattant implements ReceiverInterface, Serializabl
 		if (input.isKeyDown(Input.KEY_RIGHT)){
 			directionHistorique = Constantes.DROITE;
 			sprite = right;
-			if (!isBlocked(delta * 0.1f, 0)){
+			if (!isBlocked(delta * Constantes.VITESSE_DEPLACEMENT, 0)){
 				sprite.update(delta);
 				x += delta * 0.1f;
 				decrementerPas(delta);

@@ -26,6 +26,7 @@ public final class Constantes {
 	public static final int BAS=2;
 	public static final int GAUCHE=4;
 	public static final int DROITE=6;
+	public static final float VITESSE_DEPLACEMENT=0.1f;
 	
 	//téléporteurs (car codés en dur)
 	public static final TPList LISTE_TP = new TPList();
@@ -36,8 +37,9 @@ public final class Constantes {
 	public static final int POSX_ATTAQUE_MONSTRE = 150;
 	public static final int HAUTEUR_MENU_BAS_COMBAT = 70;
 	
-	//online
-	public static final String IP_SERVEUR = "78.230.68.159";
+	//online - changer les commentaires si non local
+//	public static final String IP_SERVEUR = "78.230.68.159";
+	public static final String IP_SERVEUR = "localhost";
 	public static final String REGISTRY_NAME = "RMI_JEU";
 	public static final int REGISTRY_PORT = 25565;
 }

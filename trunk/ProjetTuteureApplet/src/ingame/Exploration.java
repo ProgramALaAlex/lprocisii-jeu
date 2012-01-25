@@ -44,7 +44,7 @@ public class Exploration extends BasicGameState{
 	public void init(GameContainer container, StateBasedGame game)
 			throws SlickException {
 		container.setVSync(true);
-		this.currMap = new Map("01", true);
+		Exploration.currMap = new Map("01", true);
 		player = new Player("Ark", "BlackGuard.png", x, y, currMap, 133, 133, 133, 134);
 		listePaquetJoueurs = new ArrayList<PaquetJoueur>();
 		if (Constantes.MODE_ONLINE){
@@ -53,7 +53,7 @@ public class Exploration extends BasicGameState{
 				listePaquetJoueurs = MainGame.getRemoteReference().updateListe(player.getUserId(), player.getMapId());
 			} catch (RemoteException e) {
 				e.printStackTrace();
-				System.out.println("Erreur : le serveur du jeu ne répond pas (probablement car pas executé) mais un RMI semble être allumé lawl. \n Passage en mode Hors Ligne.");
+				System.out.println("Erreur : le serveur du jeu ne répond pas (probablement car pas executé) mais un RMI répond lawl. \nPassage en mode Hors Ligne.");
 				Constantes.MODE_ONLINE=false;
 			}
 		}
