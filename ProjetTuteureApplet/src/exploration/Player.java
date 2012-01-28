@@ -68,7 +68,6 @@ public class Player extends Combattant implements ReceiverInterface, Serializabl
 		inventaire.addObjet(new Potion());
 		inventaire.addObjet(new Armure(1));
 		inventaire.equiperArmure(new Armure(1));
-		System.out.println("Armure 1 équipée");
 		this.userId = new UID();
 	}
 	

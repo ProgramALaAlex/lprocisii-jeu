@@ -1,9 +1,12 @@
 package combats;
 
 
+import java.applet.Applet;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import netscape.javascript.JSObject;
 
 import org.lwjgl.Sys;
 import org.newdawn.slick.Color;
@@ -19,6 +22,7 @@ import org.newdawn.slick.tests.xml.Entity;
 import constantes.Constantes;
 import exploration.Exploration;
 import exploration.Player;
+import game.AppletGameContainer;
 
 
 
@@ -51,12 +55,31 @@ public class Combat extends BasicGameState{
 			throws SlickException {
 		background = new Image(Constantes.BATTLE_BACKGROUND_LOCATION+"battleBackground.jpg");
 	}
-
+	
+	
+	
+	public void leave(GameContainer container, StateBasedGame game)
+			throws SlickException {
+		// TODO Auto-generated method stub
+		super.leave(container, game);
+		if(container instanceof AppletGameContainer.Container){
+			Applet applet = ((AppletGameContainer.Container) container).getApplet();
+			JSObject jso = JSObject.getWindow(applet);
+			jso.call("activerBoutons", null);
+		}
+	}
 
 	@Override
 	public void enter(GameContainer container, StateBasedGame game)
 			throws SlickException {
 		super.enter(container, game);
+		
+		if(container instanceof AppletGameContainer.Container){
+			Applet applet = ((AppletGameContainer.Container) container).getApplet();
+			JSObject jso = JSObject.getWindow(applet);
+			jso.call("desactiverBoutons", null);
+		}
+		
 		listeMonstre = new ArrayList<Monstre>();
 		for (int i=0; i<Math.random()*4; i++){
 			listeMonstre.add(new Monstre());

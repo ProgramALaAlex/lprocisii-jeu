@@ -20,6 +20,7 @@ import rmi.paquetJoueur.PaquetJoueur;
 import constantes.Constantes;
 import constantes.TPList;
 
+import game.AppletGameContainer;
 import game.MainGame;
 import gui.Menu;
 
@@ -44,6 +45,7 @@ public class Exploration extends BasicGameState{
 	@Override
 	public void init(GameContainer container, StateBasedGame game)
 			throws SlickException {
+		
 		container.setVSync(true);
 		Exploration.currMap = new Map("01", true);
 		player = new Player("Ark", "BlackGuard.png", x, y, currMap, 133, 133, 133, 134);
