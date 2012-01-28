@@ -3,43 +3,34 @@ package inventaire;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Observable;
 
 /**
  * En fait utiliser une hashmap c'était pas le top.
  * J'aurai du utiliser une arraylist je pense mais maintenant que c'est fait..
  */
-public class Inventaire extends HashMap<Objet, Nombre> {
-
+public class Inventaire extends Observable {
+	private HashMap<Objet, Nombre> inventaire;
 	public Inventaire() {
 		super();
-		put(new Potion(), new Nombre());
-		put(new Arme(1), new Nombre());
-		put(new Arme(2), new Nombre());
-		put(new Armure(1), new Nombre());
-		put(new Armure(2), new Nombre());
-	}
-
-	public Inventaire(int initialCapacity, float loadFactor) {
-		super(initialCapacity, loadFactor);
-	}
-
-	public Inventaire(int initialCapacity) {
-		super(initialCapacity);
-	}
-
-	
-	public Inventaire(Map<? extends Objet, ? extends Nombre> m) {
-		super(m);
+		inventaire = new HashMap<Objet, Nombre>();
+		inventaire.put(new Potion(), new Nombre());
+		inventaire.put(new Arme(1), new Nombre());
+		inventaire.put(new Arme(2), new Nombre());
+		inventaire.put(new Armure(1), new Nombre());
+		inventaire.put(new Armure(2), new Nombre());
 	}
 
 	/**
 	 * @return le nombre de PV récupéré
 	 */
 	public int retirerPotion(){
-		for(Objet o : this.keySet())
+		for(Objet o : inventaire.keySet())
 			if(o instanceof Potion){
-				if(!this.get(o).isEmpty()){
-					this.get(o).decrementer();
+				if(!inventaire.get(o).isEmpty()){
+					inventaire.get(o).decrementer();
+					setChanged();
+					notifyObservers();
 					return o.valeur;
 				}
 			}
@@ -52,14 +43,18 @@ public class Inventaire extends HashMap<Objet, Nombre> {
 	 * TODO A VOIR AVEC LES POINTEURS, MARCHE SUREMENT PAS
 	 */
 	public void addObjet(Objet o){
-		if(this.containsKey(o)){
-			this.get(o).incrementer();
+		if(inventaire.containsKey(o)){
+			inventaire.get(o).incrementer();
+			setChanged();
+			notifyObservers();
 		}
 	}
 	
 	public void addObjets(ArrayList<Objet> listeO){
 		for(Objet o : listeO)
 			addObjet(o);
+		setChanged();
+		notifyObservers();
 	}
 	
 	/**
@@ -69,15 +64,18 @@ public class Inventaire extends HashMap<Objet, Nombre> {
 	 * TODO A VOIR AVEC LES POINTEURS, MARCHE SUREMENT PAS
 	 */
 	public boolean equiperArme(Arme a){
-		if(this.containsKey(a)){
-			for (Objet possede : this.keySet())
+		if(inventaire.containsKey(a)){
+			for (Objet possede : inventaire.keySet())
 				if(possede instanceof Arme)
-					this.get(possede).setEquipe(false);
-			this.get(a).setEquipe(true);
+					inventaire.get(possede).setEquipe(false);
+			inventaire.get(a).setEquipe(true);
+			setChanged();
+			notifyObservers();
 			return true;
 		}
 		return false;
 	}
+	
 
 	/**
 	 * équipe une armure possedée et déséquipe l'autre 
@@ -86,14 +84,27 @@ public class Inventaire extends HashMap<Objet, Nombre> {
 	 * TODO A VOIR AVEC LES POINTEURS, MARCHE SUREMENT PAS
 	 */
 	public boolean equiperArmure(Armure a){
-		if(this.containsKey(a)){
-			for (Objet possede : this.keySet())
-				if(possede instanceof Armure)
-					this.get(possede).setEquipe(false);
-			this.get(a).setEquipe(true);
+		if(inventaire.containsKey(a)){
+			for (Objet possede : inventaire.keySet())
+				if(possede instanceof Armure && inventaire.get(possede).isEquipe())
+					inventaire.get(possede).setEquipe(false);
+			inventaire.get(a).setEquipe(true);
+			System.out.println(a.getNom()+" équipée.");
+			setChanged();
+			notifyObservers();
 			return true;
 		}
 		return false;
+	}
+	
+	public void desequiperArmure(){
+			for (Objet possede : inventaire.keySet())
+				if(possede instanceof Armure && inventaire.get(possede).isEquipe()){
+					inventaire.get(possede).setEquipe(false);
+					System.out.println(possede.getNom()+" déséquipée.");
+					setChanged();
+					notifyObservers();
+				}
 	}
 	
 	/**
@@ -101,8 +112,8 @@ public class Inventaire extends HashMap<Objet, Nombre> {
 	 * @return 0 si aucune arme équipée
 	 */
 	public int getAttaqueBonus(){
-		for (Objet o : this.keySet())
-			if ((o instanceof Arme) && (this.get(o)).isEquipe())
+		for (Objet o : inventaire.keySet())
+			if ((o instanceof Arme) && (inventaire.get(o)).isEquipe())
 				return o.valeur;
 		return 0;
 	}
@@ -112,17 +123,32 @@ public class Inventaire extends HashMap<Objet, Nombre> {
 	 * @return 0 si aucune arme équipée
 	 */
 	public int getPVBonus(){
-		for (Objet o : this.keySet())
-			if ((o instanceof Armure) && (this.get(o)).isEquipe())
+		for (Objet o : inventaire.keySet())
+			if ((o instanceof Armure) && (inventaire.get(o)).isEquipe())
 				return o.valeur;
 		return 0;
 	}
 
 	public String toString(){
 		String res="INVENTAIRE : \n";
-		for(Objet o : this.keySet())
-			res+="- "+o.getNom()+" NOMBRE = "+this.get(o).getNombre()+"\n";
+		for(Objet o : inventaire.keySet()){
+			res+="- "+o.getNom()+" NOMBRE = "+inventaire.get(o).getNombre();
+			if (inventaire.get(o).isEquipe())
+				res += "(Equipé)";
+			res += "\n";
+		}
 		return res;
+	}
+	
+	public String toStringHTML(){
+		String res="<h3>INVENTAIRE :</h3><ul>";
+		for(Objet o : inventaire.keySet()){
+			res+="<li>"+o.getNom()+" NOMBRE = "+inventaire.get(o).getNombre();
+			if (inventaire.get(o).isEquipe())
+				res += "(Equipé)";
+			res += "</li>";
+		}
+		return res+"</ul>";
 	}
 	
 }

@@ -9,5 +9,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/slick.jar" sourcepath="C:/Users/Antonin/Documents/Slick/src"/>
 	<classpathentry kind="lib" path="lib/ibxm.jar"/>
+	<classpathentry kind="lib" path="lib/plugin.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

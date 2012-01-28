@@ -1,12 +1,20 @@
 package game;
 
+import inventaire.Arme;
+import inventaire.Armure;
+
+import java.applet.Applet;
 import java.rmi.Naming;
 import java.rmi.RMISecurityManager;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.Observable;
+import java.util.Observer;
 
 import exploration.Exploration;
 import gui.Menu;
+
+import netscape.javascript.JSObject;
 
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
@@ -21,7 +29,7 @@ import constantes.Constantes;
 
 
 
-public class MainGame extends StateBasedGame{
+public class MainGame extends StateBasedGame implements Observer{
 	private static DispatcherInterface remoteReference;
 
 
@@ -37,6 +45,7 @@ public class MainGame extends StateBasedGame{
 //				remoteReference = (DispatcherInterface) registry.lookup(Constantes.REGISTRY_NAME);
 				System.out.println(remoteReference);
 				System.out.println("Connexion établie, normalement.");
+				
 			}
 		} catch (Exception e){
 			e.printStackTrace();
@@ -58,14 +67,17 @@ public class MainGame extends StateBasedGame{
 			container.setVSync(true);
 			container.setAlwaysRender(true);
 			container.setDisplayMode(640,480,false); 
+			
+			
 			container.start(); 
-
 
 		} catch (SlickException e) { 
 			e.printStackTrace(); 
 		}
 	}
 
+	
+	
 	public static DispatcherInterface getRemoteReference() {
 		return remoteReference;
 	} 
@@ -91,6 +103,33 @@ public class MainGame extends StateBasedGame{
 
 		} catch (Exception ex) {
 		ex.printStackTrace();
+		}
+	}
+	
+	public void equiperArmure(String id){
+		int intid = Integer.parseInt(id);
+		Exploration.getPlayer().getInventaire().equiperArmure(new Armure(intid));
+	}
+	
+	public void desequiperArmure(){
+		Exploration.getPlayer().getInventaire().desequiperArmure();
+	}
+	
+	public String voirInventaire(){
+		if(Exploration.getPlayer().getInventaire().countObservers()==0){
+			Exploration.getPlayer().getInventaire().addObserver(this);
+			System.out.println("Inventaire observé");
+		}
+		return Exploration.getPlayer().getInventaire().toStringHTML();
+	}
+
+	@Override
+	public void update(Observable arg0, Object arg1) {
+		// si on est bien dans une applet
+		if(this.getContainer() instanceof AppletGameContainer.Container){
+			Applet applet = ((AppletGameContainer.Container) this.getContainer()).getApplet();
+			JSObject jso = JSObject.getWindow(applet);
+			jso.call("voirInventaire", null);
 		}
 	}
 
