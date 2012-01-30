@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 import constantes.Constantes;
 
+import rmi.interfaces.ChatRemoteInterface;
 import rmi.interfaces.DispatcherInterface;
 import rmi.interfaces.ReceiverInterface;
 import rmi.paquetJoueur.PaquetJoueur;
@@ -38,7 +39,14 @@ public class Serveur implements DispatcherInterface {
 			DispatcherInterface proxy = (DispatcherInterface) UnicastRemoteObject.exportObject(server, 25465);
 			Registry registry = LocateRegistry.createRegistry(Constantes.REGISTRY_PORT);
 			registry.rebind(Constantes.REGISTRY_NAME, proxy);
-			System.out.println("dispatcher OK");
+			
+			System.out.println("Serveur du Jeu : OK");
+			
+            ChatRemoteInterface remoteReference = (ChatRemoteInterface) UnicastRemoteObject.exportObject(new Chat(), 7777);
+            registry.rebind(Constantes.REGISTRY_NAME_CHAT, remoteReference);
+			
+            System.out.println("Serveur du Chat : OK");
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);

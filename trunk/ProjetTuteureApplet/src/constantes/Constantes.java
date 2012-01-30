@@ -44,4 +44,7 @@ public final class Constantes {
 	public static final String IP_SERVEUR = "localhost";
 	public static final String REGISTRY_NAME = "RMI_JEU";
 	public static final int REGISTRY_PORT = 25565;
+	
+	//CHAT
+	public static final String REGISTRY_NAME_CHAT = "RMI_CHAT";
 }
