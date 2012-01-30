@@ -6,8 +6,10 @@ import inventaire.Armure;
 import java.applet.Applet;
 import java.rmi.Naming;
 import java.rmi.RMISecurityManager;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -23,14 +25,17 @@ import org.newdawn.slick.state.StateBasedGame;
 
 import combats.Combat;
 
+import rmi.interfaces.ChatReceiverInterface;
+import rmi.interfaces.ChatRemoteInterface;
 import rmi.interfaces.DispatcherInterface;
 
 import constantes.Constantes;
 
 
 
-public class MainGame extends StateBasedGame implements Observer{
+public class MainGame extends StateBasedGame implements Observer, ChatReceiverInterface{
 	private static DispatcherInterface remoteReference;
+	private static ChatRemoteInterface remoteReferenceChat;
 
 
 	public MainGame() {
@@ -38,10 +43,14 @@ public class MainGame extends StateBasedGame implements Observer{
 		try { 
 			if (Constantes.MODE_ONLINE){
 				System.out.println("Connexion en cours...");
-				System.setProperty("java.rmi.server.hostname", Constantes.IP_SERVEUR);
+//				System.setProperty("java.rmi.server.hostname", Constantes.IP_SERVEUR);
 				Registry registry = LocateRegistry.getRegistry(Constantes.IP_SERVEUR, Constantes.REGISTRY_PORT);
 				System.out.println(registry);
 				remoteReference = (DispatcherInterface) Naming.lookup("rmi://"+Constantes.IP_SERVEUR+":"+Constantes.REGISTRY_PORT+"/"+Constantes.REGISTRY_NAME);
+				
+				remoteReferenceChat = (ChatRemoteInterface) Naming.lookup("rmi://"+Constantes.IP_SERVEUR+":"+Constantes.REGISTRY_PORT+"/"+Constantes.REGISTRY_NAME_CHAT);
+				enregistrerClient();
+				
 //				remoteReference = (DispatcherInterface) registry.lookup(Constantes.REGISTRY_NAME);
 				System.out.println(remoteReference);
 				System.out.println("Connexion établie, normalement.");
@@ -132,5 +141,54 @@ public class MainGame extends StateBasedGame implements Observer{
 			jso.call("voirInventaire", null);
 		}
 	}
+
+	
+	// CHAT
+	
+	@Override
+	public void afficheMsg(String message, String user){
+		if(this.getContainer() instanceof AppletGameContainer.Container){
+			Applet applet = ((AppletGameContainer.Container) this.getContainer()).getApplet();
+			JSObject jso = JSObject.getWindow(applet);
+			jso.call("ajoutMsg", new String[] { user, message, "general"});
+		}
+	}
+	
+	private void enregistrerClient() {
+		try {
+			UnicastRemoteObject.exportObject((ChatReceiverInterface)this, 12345);
+			remoteReferenceChat.addClient(this);
+		}
+		catch (RemoteException e) {
+			System.out.println("Remote exception: " + e.getMessage());
+			System.exit(1);
+		}
+		catch (Exception e) {
+			System.out.println("General exception: " +
+			e.getClass().getName() + ": " + e.getMessage());
+			System.exit(1);
+		}
+	}
+	
+	public void goMsg(String m){
+		final String g = m;
+		final ChatReceiverInterface client = this;
+		System.out.println("gomsg?");
+		java.security.AccessController.doPrivileged(
+				new java.security.PrivilegedAction<Object>() {
+			public Object run() {
+				// label.setText(remoteReference.getMessage(g));
+				try {
+					System.out.println("goMsg appelé : "+g);
+					remoteReferenceChat.getMessage(g, client);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
+				return null;
+			}
+		});
+
+	}
+	
 
 }
