@@ -5,7 +5,7 @@ import org.newdawn.slick.Animation;
 public abstract class Combattant {
 	protected String nom;
 	protected int pvMax, pvCourant, attaque, vitesse;
-	protected int xCombat;
+	protected int xCombat, yCombat;
 	protected boolean enAttaque;
 	protected Animation sprite;
 	
@@ -26,9 +26,9 @@ public abstract class Combattant {
 
 	/**
 	 * @param Combattant
-	 * @return true si l'ennemi est KO
+	 * @return le nombre de dégats infligés
 	 */
-	public boolean attaquer(Combattant c){
+	public int attaquer(Combattant c){
 		System.out.println("\n"+ nom +" attaque "+c.getNom()+" !");
 		int degatInflige = (int) (getAttaque() + (getAttaque() * (Math.random() -0.5) * 0.30));
 		int pvFinaux = c.getPvCourant()-degatInflige;
@@ -37,13 +37,16 @@ public abstract class Combattant {
 		
 		if(c.getPvCourant() <= 0){
 			System.out.println("Il est KO! OH MON DIEU!");
-//			this.afficherDegatsRecu(degatInflige+getPvCourant());
-			return true;
+			return degatInflige+c.getPvCourant();
 		}
 		else{
 			System.out.println("Il ne lui reste plus que "+pvFinaux+" pv.");
-			return false;
+			return degatInflige;
 		}
+	}
+	
+	public boolean estEnVie(){
+		return this.getPvCourant() > 0;
 	}
 	
 	/**
@@ -92,6 +95,16 @@ public abstract class Combattant {
 	public void setXCombat(int xCombat) {
 		this.xCombat = xCombat;
 	}
+
+	public int getYCombat() {
+		return yCombat;
+	}
+
+	public void setYCombat(int yCombat) {
+		this.yCombat = yCombat;
+	}
+	
+	
 
 	
 }

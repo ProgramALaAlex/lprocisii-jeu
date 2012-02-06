@@ -11,7 +11,7 @@ public final class Constantes {
 	public static final int MENU_MAP_STATE = 1;
 	public static final int COMBAT_STATE = 2;
 	
-	// DEBUG : FALSE POUR TESTER EN SOLO
+	// passe à false pour le mode solo
 	public static boolean MODE_ONLINE = true;
 	
 	// ressources
@@ -38,6 +38,7 @@ public final class Constantes {
 	public static final int POSX_COMBAT_MONSTRE = 100;
 	public static final int POSX_ATTAQUE_MONSTRE = 150;
 	public static final int HAUTEUR_MENU_BAS_COMBAT = 70;
+	public static final int TEMPS_AFFICHAGE_DEGATS = 750;
 	
 	//online - changer les commentaires si non local
 //	public static final String IP_SERVEUR = "78.230.68.159";

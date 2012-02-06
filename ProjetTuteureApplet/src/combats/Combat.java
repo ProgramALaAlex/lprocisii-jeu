@@ -1,7 +1,10 @@
 package combats;
 
 
+import inventaire.Objet;
+
 import java.applet.Applet;
+import java.awt.Container;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -23,6 +26,7 @@ import constantes.Constantes;
 import exploration.Exploration;
 import exploration.Player;
 import game.AppletGameContainer;
+import gui.GUIValeursCombats;
 
 
 
@@ -32,12 +36,14 @@ public class Combat extends BasicGameState{
 
 	private boolean attaquer, selectionCible, tourJoueur, tourEnnemi;
 	private int definirCible, tour;
-	private Combattant enCours;
+	private Combattant combattantPlusRapide;
 
 	private int attaqueJoueurX, destinationAttaqueJoueurX; // peut pas mettre dans constante car par rapport au bord..
 	private boolean joueurAttaque;
 	private Image background;
-	
+
+	private GUIValeursCombats degatsDisplay, dropDisplay;
+
 	public Combat(int stateID){
 		this.stateID = stateID;
 	}
@@ -55,31 +61,35 @@ public class Combat extends BasicGameState{
 			throws SlickException {
 		background = new Image(Constantes.BATTLE_BACKGROUND_LOCATION+"battleBackground.jpg");
 	}
-	
-	
-	
+
+
+
 	public void leave(GameContainer container, StateBasedGame game)
 			throws SlickException {
-		// TODO Auto-generated method stub
 		super.leave(container, game);
+		// réactivaiton des boutons
 		if(container instanceof AppletGameContainer.Container){
 			Applet applet = ((AppletGameContainer.Container) container).getApplet();
 			JSObject jso = JSObject.getWindow(applet);
 			jso.call("activerBoutons", null);
 		}
+		// fin de l'affichage
+		degatsDisplay = null;
+		dropDisplay = null;
 	}
 
 	@Override
 	public void enter(GameContainer container, StateBasedGame game)
 			throws SlickException {
 		super.enter(container, game);
-		
+
+		//on désactive les boutons de la page
 		if(container instanceof AppletGameContainer.Container){
 			Applet applet = ((AppletGameContainer.Container) container).getApplet();
 			JSObject jso = JSObject.getWindow(applet);
 			jso.call("desactiverBoutons", null);
 		}
-		
+
 		listeMonstre = new ArrayList<Monstre>();
 		for (int i=0; i<Math.random()*4; i++){
 			listeMonstre.add(new Monstre());
@@ -96,25 +106,29 @@ public class Combat extends BasicGameState{
 		joueurAttaque = false;
 
 		Exploration.getPlayer().setXCombat(attaqueJoueurX);
+		Exploration.getPlayer().setYCombat(container.getHeight()/2);
+
+		int espace = 30;
 		for(Monstre m : listeMonstre){
 			m.setXCombat(Constantes.POSX_COMBAT_MONSTRE);
+			m.setYCombat(espace+=60);
 		}
 	}
 
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
 		background.draw(0, 0, container.getWidth(), container.getHeight()-Constantes.HAUTEUR_MENU_BAS_COMBAT);
-		Exploration.getPlayer().getSprite().draw(Exploration.getPlayer().getXCombat(),container.getHeight()/2);
+		Exploration.getPlayer().getSprite().draw(Exploration.getPlayer().getXCombat(),Exploration.getPlayer().getYCombat());
 
-		int espace = 30;
+
 		for(Monstre m : listeMonstre){
-			m.getSprite().draw(m.getXCombat(), (espace+=60));
-			
+			m.getSprite().draw(m.getXCombat(), m.getYCombat());
+
 			//afficher PV
 			g.setColor(Color.black);
-			g.drawString(m.getPvCourant()+"/"+m.getPvMax(), m.getXCombat(), espace+46);
-			g.setColor(Color.gray);
-			g.drawString(m.getPvCourant()+"/"+m.getPvMax(), m.getXCombat(), espace+45);
+			g.drawString(m.getPvCourant()+"/"+m.getPvMax(), m.getXCombat(), m.getYCombat()+46);
+			g.setColor(Color.lightGray);
+			g.drawString(m.getPvCourant()+"/"+m.getPvMax(), m.getXCombat(), m.getYCombat()+45);
 		}
 
 		// Menu combat
@@ -125,8 +139,8 @@ public class Combat extends BasicGameState{
 			g.drawString(Constantes.SELECTION+"Attaquer", 50, positionH+10);
 			g.setColor(Color.gray);
 			g.drawString("Utiliser potion", 50, positionH+30);
-			if(selectionCible){
-				g.drawString(Constantes.SELECTION, 80, 130+definirCible*60);
+			if(selectionCible && !this.listeMonstre.isEmpty()){
+				g.drawString(Constantes.SELECTION, this.listeMonstre.get(definirCible).getXCombat(), this.listeMonstre.get(definirCible).getYCombat()+20);
 			}
 		}
 		else{
@@ -135,63 +149,90 @@ public class Combat extends BasicGameState{
 			g.drawString(Constantes.SELECTION+"Utiliser potion", 50, positionH+30);
 			g.setColor(Color.gray);
 		}
-		g.drawString(Exploration.getPlayer().getPvCourant()+"/"+Exploration.getPlayer().getPvMax(), Exploration.getPlayer().getXCombat()-20, container.getHeight()/2+35);
+
+		g.setColor(Color.black);
+		g.drawString(Exploration.getPlayer().getPvCourant()+"/"+Exploration.getPlayer().getPvMax(), Exploration.getPlayer().getXCombat()-20, Exploration.getPlayer().getYCombat()+35);
+		g.setColor(Color.lightGray);
+		g.drawString(Exploration.getPlayer().getPvCourant()+"/"+Exploration.getPlayer().getPvMax(), Exploration.getPlayer().getXCombat()-20, Exploration.getPlayer().getYCombat()+34);
+		//affichage des dégats
+
+		if(degatsDisplay != null){
+			degatsDisplay.render(container, game, g);
+		}
+		if(dropDisplay != null){
+			dropDisplay.render(container, game, g);
+		}
+
 	}
 
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
 		Input input = container.getInput();
 
+		// animation joueur
 		Exploration.getPlayer().updateCombat(container, game, delta);
 
+		// drops eventuels
+		if(dropDisplay != null && dropDisplay.isAffiche())
+			dropDisplay.update(container, game, delta);
+		
+		//on attend la fin d'affichage des dégats pour continuer
+		if(degatsDisplay != null && degatsDisplay.isAffiche())
+			degatsDisplay.update(container, game, delta);
+		else {
+			//si tous les ennemis sont morts, on arrête le combat
+			if(listeMonstre.isEmpty()){
+				Exploration.getPlayer().finCombat();
+				game.enterState(Constantes.GAMEPLAY_MAP_STATE);
+			}
+			
+			// si le joueur (seul pour l'instant) est ko, on stop aussi en fait
+			if(Exploration.getPlayer().getPvCourant()<=0){
+				Exploration.getPlayer().finCombat();
+				Exploration.getPlayer().setPvCourant(Exploration.getPlayer().getPvMax());
+				game.enterState(Constantes.GAMEPLAY_MAP_STATE);
+			}
+			
+			
+			//avant de naviguer dans le menu, on regarde si on est le plus rapide
+			//-- liste de tous les combattants :
+			ArrayList<Combattant> listeCombattant = new ArrayList<Combattant>();
+			listeCombattant.add(Exploration.getPlayer());
+			listeCombattant.addAll(this.listeMonstre);
 
-		//avant de naviguer dans le menu, on regarde si on est le plus rapide
-		//-- liste de tous les combattants :
-		ArrayList<Combattant> listeCombattant = new ArrayList<Combattant>();
-		listeCombattant.add(Exploration.getPlayer());
-		listeCombattant.addAll(this.listeMonstre);
+			// on défini qui doit commencer à jouer
+			if(!tourJoueur && !tourEnnemi){
+				if(tour>=listeCombattant.size())
+					tour=0;
+				combattantPlusRapide = getPlusRapide(listeCombattant, tour);
+				if(combattantPlusRapide instanceof Player){
+					tourJoueur=true;
+					tourEnnemi=false;
+					choisirAction(input, delta);
+				}
+				else{
+					tourEnnemi=true;
+				}
 
-		// on défini qui doit commencer à jouer
-		if(!tourJoueur && !tourEnnemi){
-			if(tour>=listeCombattant.size())
-				tour=0;
-			enCours = getPlusRapide(listeCombattant, tour);
-			if(enCours instanceof Player){
-				tourJoueur=true;
-				tourEnnemi=false;
+				//fin du tour
+				tour++;
+			}
+
+			// c'est au tour de l'ennemi d'attaquer
+			if(tourEnnemi){
+				if(combattantPlusRapide.deplacementAttaque(delta, Constantes.POSX_COMBAT_MONSTRE, Constantes.POSX_ATTAQUE_MONSTRE)){
+					tourEnnemi = false;
+					int degats = combattantPlusRapide.attaquer(Exploration.getPlayer());
+					degatsDisplay = new GUIValeursCombats(Exploration.getPlayer().getXCombat(), container.getHeight()/2, Integer.toString(degats));
+				}
+			}
+			if(tourJoueur){
 				choisirAction(input, delta);
 			}
-			else{
-				tourEnnemi=true;
-				enCours.attaquer(Exploration.getPlayer());
-			}
 
-			//fin du tour
-			tour++;
-		}
-		
-		// c'est au tour de l'ennemi d'attaquer
-		if(tourEnnemi){
-			if(enCours.deplacementAttaque(delta, Constantes.POSX_COMBAT_MONSTRE, Constantes.POSX_ATTAQUE_MONSTRE))
-				tourEnnemi = false;
-		}
-		if(tourJoueur){
-			choisirAction(input, delta);
 		}
 
 
-		//si tous les ennemis sont morts, on arrête le combat
-		if(listeMonstre.isEmpty()){
-			Exploration.getPlayer().finCombat();
-			game.enterState(Constantes.GAMEPLAY_MAP_STATE);
-		}
-
-		// si le joueur (seul pour l'instant) est ko, on stop aussi en fait
-		if(Exploration.getPlayer().getPvCourant()<=0){
-			Exploration.getPlayer().finCombat();
-			Exploration.getPlayer().setPvCourant(Exploration.getPlayer().getPvMax());
-			game.enterState(Constantes.GAMEPLAY_MAP_STATE);
-		}
 
 
 		//DEBUG : sortir du combat
@@ -242,13 +283,14 @@ public class Combat extends BasicGameState{
 					attaquer = !attaquer;
 
 				if(input.isKeyPressed(Input.KEY_ENTER)){
-					// si il choisit d'attaquer
+					// s'il choisit d'attaquer
 					if(attaquer && !selectionCible){
 						selectionCible = true;
 					}
 					else {
-						Exploration.getPlayer().utiliserPotion();
+						int soin = Exploration.getPlayer().utiliserPotion();
 						tourJoueur=false;
+						degatsDisplay = new GUIValeursCombats(Exploration.getPlayer().getXCombat(), Exploration.getPlayer().getYCombat(), Integer.toString(soin), 2);
 					}
 				}
 			}
@@ -276,9 +318,23 @@ public class Combat extends BasicGameState{
 		else {
 			if (Exploration.getPlayer().deplacementAttaque(delta, attaqueJoueurX, destinationAttaqueJoueurX)){
 				joueurAttaque = false;
-				if(Exploration.getPlayer().attaquer(listeMonstre.get(definirCible))){
+				int degats = Exploration.getPlayer().attaquer(listeMonstre.get(definirCible));
+				degatsDisplay = new GUIValeursCombats(listeMonstre.get(definirCible).getXCombat(), listeMonstre.get(definirCible).getYCombat(), Integer.toString(degats));
+				if(!listeMonstre.get(definirCible).estEnVie()){
 					// si l'ennemi est KO
-					Exploration.getPlayer().getInventaire().addObjets(listeMonstre.get(definirCible).drop());
+					ArrayList<Objet> drops = listeMonstre.get(definirCible).drop();
+					// si drop
+					if(drops!=null && !drops.isEmpty()){
+						String drop = "";
+						if(drops.size()>1){
+							for (Objet o : drops)
+								drop+=o.getNom()+", ";
+						drop+=" droppés!";
+						}
+						else drop+=drops.get(0).getNom()+" droppé!";
+						dropDisplay = new GUIValeursCombats(listeMonstre.get(definirCible).getXCombat(), listeMonstre.get(definirCible).getYCombat(), drop, 3);
+						Exploration.getPlayer().getInventaire().addObjets(drops);
+					}
 					listeMonstre.remove(definirCible);
 					definirCible=0;
 				}
@@ -287,4 +343,5 @@ public class Combat extends BasicGameState{
 			}
 		}
 	}
+
 }

@@ -73,10 +73,10 @@ public class Monstre extends Combattant{
 		}
 		if(xCombat >= destinationX){
 			enAttaque = false;
-			xCombat-=0.1f*delta;
+			xCombat-=0.3f*delta;
 		}
 		if(!enAttaque && xCombat <= destinationX){
-			xCombat-=0.1f*delta;
+			xCombat-=0.3f*delta;
 		}
 		if(!enAttaque && xCombat <= departX){
 			enAttaque = true;
