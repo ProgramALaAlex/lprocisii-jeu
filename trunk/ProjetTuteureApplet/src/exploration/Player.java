@@ -238,13 +238,19 @@ public class Player extends Combattant implements ReceiverInterface, Serializabl
 		this.y = y;
 	}
 
-	public void utiliserPotion(){
+	public int utiliserPotion(){
 		int soin = this.inventaire.retirerPotion();
 		if(soin==0) System.out.println("Pas de potion!");
-		else System.out.println(getNom()+" utilise une potion !");
-		if(getPvCourant()+soin <= pvMax)
+		else System.out.println(getNom()+" utilise une potion!");
+		if(getPvCourant()+soin <= getPvMax()){
 			setPvCourant(getPvCourant()+soin);
-		else setPvCourant(pvMax);
+			return soin;
+		}
+		else {
+			int pvSoigne = getPvMax() - getPvCourant();
+			setPvCourant(getPvMax());
+			return  pvSoigne;
+		}
 	}
 
 	// juste pour le debug, a virer plus tard

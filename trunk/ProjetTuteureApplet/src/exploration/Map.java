@@ -35,7 +35,7 @@ public class Map {
 		}
 		Map.safe = safe;
 		this.IDMap = id;
-		
+
 		//initialisation des TP (pour pas avoir à parcourir tous les TP du monde dans la méthode update())
 		listeTeleporter = new ArrayList<Teleporter>();
 		for(Teleporter tp : Constantes.LISTE_TP){
