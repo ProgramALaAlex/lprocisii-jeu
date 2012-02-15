@@ -1,13 +1,15 @@
 package combats;
 
+import java.io.Serializable;
+
 import org.newdawn.slick.Animation;
 
-public abstract class Combattant {
+public abstract class Combattant implements Serializable {
 	protected String nom;
 	protected int pvMax, pvCourant, attaque, vitesse;
 	protected int xCombat, yCombat;
 	protected boolean enAttaque;
-	protected Animation sprite;
+	protected transient Animation sprite;
 	
 	
 	public Combattant(){

@@ -1,12 +1,11 @@
 package rmi.interfaces;
 
-import java.awt.Point;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.server.UID;
 import java.util.ArrayList;
 
-import rmi.paquetJoueur.PaquetJoueur;
+import exploration.Player;
 
 
 /**
@@ -28,7 +27,7 @@ public interface DispatcherInterface extends Remote
     /**
      * Permet au joueur de récupérer la liste des autres joueurs updaté
      */
-    public ArrayList<PaquetJoueur> updateListe(UID id, String idMap) throws RemoteException;
+    public ArrayList<Player> updateListe(UID id, String idMap) throws RemoteException;
     
-    public void updatePosition(PaquetJoueur p) throws RemoteException;
+    public void updatePosition(Player p) throws RemoteException;
 }

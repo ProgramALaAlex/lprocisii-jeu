@@ -1,8 +1,5 @@
 package rmi.serveur;
 
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -29,9 +26,9 @@ public class Chat implements ChatRemoteInterface
 		return UUID.randomUUID().toString();
 	}
 	
-    public String getMessage(String msg, ChatReceiverInterface client)
+    @Override
+	public String getMessage(String msg, ChatReceiverInterface client)
     {
-    	System.out.println("onche");
 		String debut = msg.substring(0,1);
 		if(debut.compareTo("/") == 0){
 			String[] cmd = msg.split(" ");
@@ -62,6 +59,7 @@ public class Chat implements ChatRemoteInterface
         return "Message recu";
     }
 	
+	@Override
 	public void addClient(ChatReceiverInterface client) {
 		String user = "user"+clients.size();
 		System.out.println("Ajout d'un client nommé: "+user);

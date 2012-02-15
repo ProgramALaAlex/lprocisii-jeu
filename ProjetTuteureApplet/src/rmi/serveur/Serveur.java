@@ -1,7 +1,5 @@
 package rmi.serveur;
 
-import java.awt.Point;
-import java.net.InetAddress;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -10,11 +8,11 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
 import constantes.Constantes;
+import exploration.Player;
 
 import rmi.interfaces.ChatRemoteInterface;
 import rmi.interfaces.DispatcherInterface;
 import rmi.interfaces.ReceiverInterface;
-import rmi.paquetJoueur.PaquetJoueur;
 
 /**
  * LE SERVEUR RMI
@@ -22,18 +20,17 @@ import rmi.paquetJoueur.PaquetJoueur;
  */
 public class Serveur implements DispatcherInterface {
 	private ArrayList<ReceiverInterface> listeRefJoueurs;
-	private ArrayList<PaquetJoueur> listeJoueurs;
+	private ArrayList<Player> listeJoueurs;
 	
 	public Serveur(){
 		listeRefJoueurs = new ArrayList<ReceiverInterface>();
-		listeJoueurs = new ArrayList<PaquetJoueur>();
+		listeJoueurs = new ArrayList<Player>();
 	}
 
 	public static void main(String[] args){
 		System.out.println("Dispatcher");
 		System.setSecurityManager (null);
 		try {
-//			OK
 //			System.setProperty("java.rmi.server.hostname", Constantes.IP_SERVEUR);
 			DispatcherInterface server = new Serveur();
 			DispatcherInterface proxy = (DispatcherInterface) UnicastRemoteObject.exportObject(server, 25465);
@@ -56,25 +53,25 @@ public class Serveur implements DispatcherInterface {
 	@Override
 	public void inscription(ReceiverInterface joueur) throws RemoteException {
 		this.listeRefJoueurs.add(joueur);
-		this.listeJoueurs.add(new PaquetJoueur(joueur.getUserId(), new Point((int)joueur.getX(), (int)joueur.getY()), joueur.getDirection(), joueur.getSpriteSheetName(), joueur.getMapId()));
+		this.listeJoueurs.add((Player) joueur);
 	}
 
 	@Override
-	public ArrayList<PaquetJoueur> updateListe(UID id, String idMap) throws RemoteException {
-		ArrayList<PaquetJoueur> res = new ArrayList<PaquetJoueur>();
-		for (PaquetJoueur p : listeJoueurs)
-			if(!p.getId().equals(id) && p.getMapName().equals(idMap))
+	public ArrayList<Player> updateListe(UID id, String idMap) throws RemoteException {
+		ArrayList<Player> res = new ArrayList<Player>();
+		for (Player p : listeJoueurs)
+			if(!p.getUserId().equals(id) && p.getMapId().equals(idMap))
 				res.add(p);
 		return res;
 	}
 
 	@Override
-	public void updatePosition(PaquetJoueur paquetJoueur) throws RemoteException {
-		for(PaquetJoueur p : this.listeJoueurs)
-			if(p.getId().equals(paquetJoueur.getId())){
+	public void updatePosition(Player paquetJoueur) throws RemoteException {
+		for(Player p : this.listeJoueurs)
+			if(p.getUserId().equals(paquetJoueur.getUserId())){
 				p.setPosition(paquetJoueur.getPosition());
 				p.setDirection(paquetJoueur.getDirection());
-				p.setMapName(paquetJoueur.getMapName());
+				p.setMapId(paquetJoueur.getMapId());
 			}
 	}
 

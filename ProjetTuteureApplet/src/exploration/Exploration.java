@@ -1,39 +1,21 @@
 package exploration;
 
-import java.awt.Point;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-
-import javax.jws.Oneway;
-
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
-import rmi.paquetJoueur.PaquetJoueur;
-
 import constantes.Constantes;
-import constantes.TPList;
-
-import game.AppletGameContainer;
 import game.MainGame;
-import gui.Menu;
 
 
 public class Exploration extends BasicGameState{
 	private int stateID;
 	private static Map currMap;
-	private static Player player;
-	private float x = 250f, y = 330f;
-	
-	//TEST ONLINE
-	private ArrayList<PaquetJoueur> listePaquetJoueurs;
-	
 	
 	public Exploration(int id){
 		this.stateID = id;
@@ -47,47 +29,37 @@ public class Exploration extends BasicGameState{
 			throws SlickException {
 		
 		container.setVSync(true);
-		Exploration.currMap = new Map("01", true);
-		player = new Player("Ark", "BlackGuard.png", x, y, currMap, 133, 133, 133, 134);
-		listePaquetJoueurs = new ArrayList<PaquetJoueur>();
-		if (Constantes.MODE_ONLINE){
-			try {
-				MainGame.getRemoteReference().inscription(player);
-				listePaquetJoueurs = MainGame.getRemoteReference().updateListe(player.getUserId(), player.getMapId());
-			} catch (RemoteException e) {
-				e.printStackTrace();
-				System.out.println("Erreur : le serveur du jeu ne répond pas (probablement car pas executé ou que l'objet est sur une adresse inaccessible) mais un RMI répond lawl. \nPassage en mode Hors Ligne.");
-				Constantes.MODE_ONLINE=false;
-			}
-		}
+		setCurrMap(new Map("01", true));
+		MainGame.initialisationJoueur();
+		
 	}
 
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g)
 			throws SlickException {
-		int playerX = (int) player.getX();
-		int playerY = (int) player.getY();
+		int playerX = (int) MainGame.getPlayer().getX();
+		int playerY = (int) MainGame.getPlayer().getY();
 		int resolutionWidth = container.getWidth();
 		int resolutionHeight = container.getHeight();
 		
 		//scroll
-		Scrolling.scrollLayer(playerX, playerY, resolutionWidth, resolutionHeight, currMap, 1 );
-		Scrolling.scrollLayer(playerX, playerY, resolutionWidth, resolutionHeight, currMap, 2 );
-		Scrolling.scrollPlayer(playerX, playerY, resolutionWidth, resolutionHeight, player, currMap);
+		Scrolling.scrollLayer(playerX, playerY, resolutionWidth, resolutionHeight, getCurrMap(), 1 );
+		Scrolling.scrollLayer(playerX, playerY, resolutionWidth, resolutionHeight, getCurrMap(), 2 );
+		Scrolling.scrollPlayer(g, playerX, playerY, resolutionWidth, resolutionHeight, MainGame.getPlayer(), getCurrMap());
 		
 		//afficher les autres joueurs en ligne
 		if (Constantes.MODE_ONLINE){
-			if (!this.listePaquetJoueurs.isEmpty())
-				for(PaquetJoueur p : this.listePaquetJoueurs){
-					Scrolling.scrollOtherPlayers(g, p, (int)player.getX(), (int)player.getY(), resolutionWidth, resolutionHeight, currMap);
+			if (!MainGame.getListePaquetJoueurs().isEmpty())
+				for(Player p : MainGame.getListePaquetJoueurs()){
+					Scrolling.scrollOtherPlayers(g, p, (int)MainGame.getPlayer().getX(), (int)MainGame.getPlayer().getY(), resolutionWidth, resolutionHeight, getCurrMap());
 				}
 		}
 		
-		Scrolling.scrollLayer(playerX, playerY, resolutionWidth, resolutionHeight, currMap, 3);
+		Scrolling.scrollLayer(playerX, playerY, resolutionWidth, resolutionHeight, getCurrMap(), 3);
 
 		
 		//HUD
-		if(currMap.isSafe()){
+		if(getCurrMap().isSafe()){
 			g.setColor(Color.black);
 			g.drawString("Map non dangereuse", 10, 24);
 			g.setColor(Color.green);
@@ -117,13 +89,13 @@ public class Exploration extends BasicGameState{
 	public void update(GameContainer container, StateBasedGame game, int delta)
 			throws SlickException {
 		Input input = container.getInput();
-		player.update(container, game, delta);
+		MainGame.getPlayer().update(container, game, delta);
 		
 		//TODO faire un vrai dispatcher : rappeler le serveur toutes les deux secondes c'est inutile en fait
 		if (Constantes.MODE_ONLINE){
 			try {
-					listePaquetJoueurs = MainGame.getRemoteReference().updateListe(player.getUserId(), player.getMapId());
-					MainGame.getRemoteReference().updatePosition(new PaquetJoueur(player.getUserId(), new Point((int)player.getX(), (int)player.getY()), player.getDirection(), player.getSpriteSheetName(), player.getMapId()));
+					MainGame.updateListeJoueur();
+					MainGame.getRemoteReference().updatePosition(MainGame.getPlayer());
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -131,12 +103,12 @@ public class Exploration extends BasicGameState{
 		}
 		
 		
-		for(Teleporter tp : currMap.getListeTeleporter()){
-			if (tp.contains(player.getX()+16, player.getY()+16)){
-				currMap = new Map(tp.getIdMapDestination(), tp.isSafe());
-				player.setX(tp.getDestinationX());
-				player.setY(tp.getDestinationY());
-				player.setMapId(tp.getIdMapDestination());
+		for(Teleporter tp : getCurrMap().getListeTeleporter()){
+			if (tp.contains(MainGame.getPlayer().getX()+16, MainGame.getPlayer().getY()+16)){
+				setCurrMap(new Map(tp.getIdMapDestination(), tp.isSafe()));
+				MainGame.getPlayer().setX(tp.getDestinationX());
+				MainGame.getPlayer().setY(tp.getDestinationY());
+				MainGame.getPlayer().setMapId(tp.getIdMapDestination());
 			}
 		}
 		
@@ -153,7 +125,7 @@ public class Exploration extends BasicGameState{
 		}
 
 		if(input.isKeyPressed(Input.KEY_I)){
-			System.out.println(player.getInventaire());
+			System.out.println(MainGame.getPlayer().getInventaire());
 		}
 		
 	}
@@ -162,13 +134,17 @@ public class Exploration extends BasicGameState{
 	public int getID() {
 		return 0;
 	}
-
-	public static Player getPlayer(){
-		return player;
-	}
 	
 	public static void setBlockMap(Map blockMap){
-		currMap = blockMap;
+		setCurrMap(blockMap);
+	}
+
+	public static Map getCurrMap() {
+		return currMap;
+	}
+
+	public static void setCurrMap(Map currMap) {
+		Exploration.currMap = currMap;
 	}
 	
 }
