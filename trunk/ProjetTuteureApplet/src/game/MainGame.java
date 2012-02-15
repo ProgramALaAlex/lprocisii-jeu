@@ -1,19 +1,19 @@
 package game;
 
-import inventaire.Arme;
 import inventaire.Armure;
 
 import java.applet.Applet;
 import java.rmi.Naming;
-import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
 import exploration.Exploration;
+import exploration.Player;
 import gui.Menu;
 
 import netscape.javascript.JSObject;
@@ -36,7 +36,10 @@ import constantes.Constantes;
 public class MainGame extends StateBasedGame implements Observer, ChatReceiverInterface{
 	private static DispatcherInterface remoteReference;
 	private static ChatRemoteInterface remoteReferenceChat;
-
+	private static ArrayList<Player> listePaquetJoueurs;
+	private static Player player;
+	private static float x = 250f;
+	private static float y = 330f;
 
 	public MainGame() {
 		super("Projet Tuteuré");
@@ -63,10 +66,15 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 		}
 	}
 
+	@Override
 	public void initStatesList(GameContainer container) {
 		addState(new Exploration(Constantes.GAMEPLAY_MAP_STATE));
 		addState(new Menu(Constantes.MENU_MAP_STATE));
 		addState(new Combat(Constantes.COMBAT_STATE));
+	}
+	
+	public static void updateListeJoueur() throws RemoteException{
+		listePaquetJoueurs = remoteReference.updateListe(player.getUserId(), player.getMapId());
 	}
 
 	public static void main(String[] argv) { 
@@ -77,24 +85,54 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 			container.setAlwaysRender(true);
 			container.setDisplayMode(640,480,false); 
 			
-			
 			container.start(); 
 
 		} catch (SlickException e) { 
 			e.printStackTrace(); 
 		}
 	}
-
 	
+	
+	public static void initialisationJoueur(){
+		player = new Player("Ark", "BlackGuard.png", x, y, 133, 133, 133, 134);
+		listePaquetJoueurs = new ArrayList<Player>();
+		System.out.println("OK2");
+		if (Constantes.MODE_ONLINE){
+			try {
+				MainGame.getRemoteReference().inscription(player);
+				listePaquetJoueurs = MainGame.getRemoteReference().updateListe(player.getUserId(), player.getMapId());
+			} catch (RemoteException e) {
+				e.printStackTrace();
+				System.out.println("Erreur : le serveur du jeu ne répond pas (probablement car pas executé ou que l'objet est sur une adresse inaccessible) mais un RMI répond lawl. \nPassage en mode Hors Ligne.");
+				Constantes.MODE_ONLINE=false;
+			}
+		}
+	}
+
+
+	public static Player getPlayer() {
+		return player;
+	}
+
 	
 	public static DispatcherInterface getRemoteReference() {
 		return remoteReference;
 	} 
 	
+	public static ArrayList<Player> getListePaquetJoueurs() {
+		return listePaquetJoueurs;
+	}
+
+	public static void setListePaquetJoueurs(ArrayList<Player> listePaquetJoueurs) {
+		MainGame.listePaquetJoueurs = listePaquetJoueurs;
+	}
+
+	// JS 
 	public void testJavaScript(){
 		try{
 		java.security.AccessController.doPrivileged(
 			new java.security.PrivilegedAction<Object>() {
+				@Override
 				public Object run() {
 					try{
 						System.out.println("Salut ! On m'a appelé via du javascript !");
@@ -117,19 +155,19 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 	
 	public void equiperArmure(String id){
 		int intid = Integer.parseInt(id);
-		Exploration.getPlayer().getInventaire().equiperArmure(new Armure(intid));
+		player.getInventaire().equiperArmure(new Armure(intid));
 	}
 	
 	public void desequiperArmure(){
-		Exploration.getPlayer().getInventaire().desequiperArmure();
+		player.getInventaire().desequiperArmure();
 	}
 	
 	public String voirInventaire(){
-		if(Exploration.getPlayer().getInventaire().countObservers()==0){
-			Exploration.getPlayer().getInventaire().addObserver(this);
+		if(player.getInventaire().countObservers()==0){
+			player.getInventaire().addObserver(this);
 			System.out.println("Inventaire observé");
 		}
-		return Exploration.getPlayer().getInventaire().toStringHTML();
+		return player.getInventaire().toStringHTML();
 	}
 
 	@Override
@@ -156,12 +194,12 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 	
 	private void enregistrerClient() {
 		try {
-			UnicastRemoteObject.exportObject((ChatReceiverInterface)this, 12345);
+			UnicastRemoteObject.exportObject(this, 12345);
 			remoteReferenceChat.addClient(this);
 		}
 		catch (RemoteException e) {
 			System.out.println("Remote exception: " + e.getMessage());
-			System.exit(1);
+			System.out.println("CA TOURNE PAS EN MODE APPLET TOUT CA J'ESPERE!");
 		}
 		catch (Exception e) {
 			System.out.println("General exception: " +
@@ -176,6 +214,7 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 		System.out.println("gomsg?");
 		java.security.AccessController.doPrivileged(
 				new java.security.PrivilegedAction<Object>() {
+			@Override
 			public Object run() {
 				// label.setText(remoteReference.getMessage(g));
 				try {

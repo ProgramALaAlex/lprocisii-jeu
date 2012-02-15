@@ -1,10 +1,5 @@
 package constantes;
 
-
-import java.util.ArrayList;
-
-import exploration.Teleporter;
-
 public final class Constantes {
 	// NE PAS TOUCHER
 	public static final int GAMEPLAY_MAP_STATE = 0;

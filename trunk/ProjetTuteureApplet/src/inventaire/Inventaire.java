@@ -2,7 +2,6 @@ package inventaire;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Observable;
 
 /**
@@ -129,6 +128,7 @@ public class Inventaire extends Observable {
 		return 0;
 	}
 
+	@Override
 	public String toString(){
 		String res="INVENTAIRE : \n";
 		for(Objet o : inventaire.keySet()){

@@ -2,8 +2,6 @@ package constantes;
 
 
 import java.util.ArrayList;
-import java.util.Collection;
-
 import exploration.Teleporter;
 
 public class TPList extends ArrayList<Teleporter>{
