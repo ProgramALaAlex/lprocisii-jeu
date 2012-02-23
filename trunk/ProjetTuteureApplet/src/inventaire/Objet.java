@@ -1,6 +1,8 @@
 package inventaire;
 
-public abstract class Objet {
+import java.io.Serializable;
+
+public abstract class Objet implements Serializable {
 	protected String nom;
 	protected int valeur; //la valeur (pv soigné, attaque ajouté...)
 	

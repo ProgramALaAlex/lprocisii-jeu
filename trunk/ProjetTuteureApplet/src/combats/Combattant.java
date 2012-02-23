@@ -47,6 +47,25 @@ public abstract class Combattant implements Serializable {
 		}
 	}
 	
+	/**
+	 * Attaquer avec des dégats prédéfinies (online)
+	 */
+	public int attaquer(Combattant c, int degatsInflige){
+		System.out.println("\n"+ nom +" attaque "+c.getNom()+" !");
+		int pvFinaux = c.getPvCourant()-degatsInflige;
+		System.out.println(c.getNom()+" perd "+degatsInflige+" pv!");
+		c.setPvCourant(pvFinaux);
+		
+		if(c.getPvCourant() <= 0){
+			System.out.println("Il est KO! OH MON DIEU!");
+			return degatsInflige+c.getPvCourant();
+		}
+		else{
+			System.out.println("Il ne lui reste plus que "+pvFinaux+" pv.");
+			return degatsInflige;
+		}
+	}
+	
 	public boolean estEnVie(){
 		return this.getPvCourant() > 0;
 	}
@@ -105,6 +124,12 @@ public abstract class Combattant implements Serializable {
 	public void setYCombat(int yCombat) {
 		this.yCombat = yCombat;
 	}
+
+	/**
+	 * Nécessaire de mettre ça dans une méthode à part pour
+	 * recréer localement les animations.
+	 */
+	public abstract void initAnimation();
 	
 	
 

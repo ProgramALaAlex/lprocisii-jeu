@@ -1,6 +1,8 @@
 package inventaire;
 
-public class Nombre{
+import java.io.Serializable;
+
+public class Nombre implements Serializable{
 	private int nombre;
 	private boolean equipe = false;
 
