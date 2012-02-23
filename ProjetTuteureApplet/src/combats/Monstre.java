@@ -10,6 +10,7 @@ import java.util.HashMap;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.SpriteSheet;
 
 import constantes.Constantes;
 
@@ -21,7 +22,6 @@ public class Monstre extends Combattant{
 	 */
 	public Monstre() {
 		super();
-		sprite = new Animation();
 		dropList = new HashMap<Objet, Integer>();
 
 		if(Math.random() < 0.5){
@@ -30,11 +30,6 @@ public class Monstre extends Combattant{
 			pvCourant = 500;
 			attaque = 10;
 			vitesse = 120;
-			try {
-				sprite.addFrame(new Image(Constantes.MONSTER_LOCATION+"SlimeB.png"), Constantes.EVENT_ANIM_DEFAUT_DURATION);
-			} catch (SlickException e) {
-				e.printStackTrace();
-			}
 			dropList.put(new Potion(), 100); // == 100% de chance de dropper des potions
 			
 		}
@@ -44,13 +39,9 @@ public class Monstre extends Combattant{
 			pvCourant = 300;
 			attaque = 15;
 			vitesse = 115;
-			try {
-				sprite.addFrame(new Image(Constantes.MONSTER_LOCATION+"SlimeV.png"), Constantes.EVENT_ANIM_DEFAUT_DURATION);
-			} catch (SlickException e) {
-				e.printStackTrace();
-			}
 			dropList.put(new Arme(1), 50);
 		}
+		initAnimation();
 	}
 	
 	public ArrayList<Objet> drop(){
@@ -85,4 +76,19 @@ public class Monstre extends Combattant{
 		return false;
 	}
 
+	public void initAnimation(){
+		sprite = new Animation();
+		if(nom.equals("Slime bleue"))
+			try {
+				sprite.addFrame(new Image(Constantes.MONSTER_LOCATION+"SlimeB.png"), Constantes.EVENT_ANIM_DEFAUT_DURATION);
+			} catch (SlickException e) {
+				e.printStackTrace();
+			}
+		else try {
+			sprite.addFrame(new Image(Constantes.MONSTER_LOCATION+"SlimeV.png"), Constantes.EVENT_ANIM_DEFAUT_DURATION);
+		} catch (SlickException e) {
+			e.printStackTrace();
+		}
+	}
+	
 }

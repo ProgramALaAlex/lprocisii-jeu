@@ -7,17 +7,15 @@ public class Teleporter extends Rectangle{
 	private String idMapDestination;
 	private int destinationX;
 	private int destinationY;
-	private boolean safe;
 	
 	public Teleporter(float x, float y, float width, float height,
 			String idMapDepart, String idMapDestination, int destinationX,
-			int destinationY, boolean safe) {
+			int destinationY) {
 		super(x, y, width, height);
 		this.idMapDepart = idMapDepart;
 		this.idMapDestination = idMapDestination;
 		this.destinationX = destinationX;
 		this.destinationY = destinationY;
-		this.safe = safe;
 	}
 
 	public String getIdMapDepart() {
@@ -34,10 +32,6 @@ public class Teleporter extends Rectangle{
 
 	public int getDestinationY() {
 		return destinationY;
-	}
-
-	public boolean isSafe() {
-		return safe;
 	}
 	
 	
