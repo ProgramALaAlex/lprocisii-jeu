@@ -17,7 +17,7 @@ public class SupprimerOfflineThread extends Thread{
 		this.serveur = serveur;
 	}
 	
-	public void run(){
+	public synchronized void run(){
 		while(true){
 					serveur.retirerReferencesNeRepondantPas();
 				try {

@@ -556,12 +556,30 @@ public class Combat extends BasicGameState{
 		return false;
 	}
 
-	public static boolean attaqueOnline(Combattant cible, int degats){
+	public static boolean attaqueOnline(Combattant cibleRecu, int degats){
 		//txt+dgt
+		System.out.println("JE RECOIS UNE ATTAQUE OH MON DIEU");
+		//TODO Y U NO WORK Y U NO WORK Y U NO WORK Y U NO WORK Y U NO WORK Y U NO WORK
+		Combattant cible = null;
+		System.out.println(cibleRecu.getClass());
+		if(cibleRecu instanceof Player){
+			for(Player p : MainGame.getJoueursDuGroupe())
+				if(p.equals(cibleRecu)){
+					cibleRecu = p;
+					System.out.println("validé");
+					break;
+				}
+		} else if (cibleRecu instanceof Monstre){
+			for(Monstre m : listeMonstre)
+				if(m.equals(cibleRecu)){
+					cibleRecu = m;
+					System.out.println("validé");
+					break;
+				}
+		}
 		if(!enTrainDeRepondre){
 			cibleRecuTemp = cible;
 			degatsRecuTemp = degats;
-			//			cible.setPvCourant(cible.getPvCourant()+degats); //bricoflemme
 			combattantPlusRapide.attaquer(cible, degats);
 		}
 		//anim
