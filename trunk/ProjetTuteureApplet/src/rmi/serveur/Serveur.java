@@ -158,6 +158,7 @@ public class Serveur implements DispatcherInterface {
 		// on récupère les joueurs du groupe de l'emetteur
 		for(Player p : listeJoueurs){
 			if(!p.equals(emetteur) && p.getGroupe()!=null && p.getGroupe().equals(emetteur.getGroupe())){
+				System.out.println("playeur " +p);
 				getReferenceCorrespondante(p).attaquer(cible, degats);
 			}
 		}
