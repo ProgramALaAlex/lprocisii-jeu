@@ -528,7 +528,7 @@ public class Combat extends BasicGameState{
 	 * @return true quand l'animation est terminée
 	 */
 	private static boolean attaqueJoueur(int delta, Combattant cible, int degats) {
-		if (cible.deplacementAttaque(delta, attaqueJoueurX, destinationAttaqueJoueurX)){
+		if (combattantPlusRapide.deplacementAttaque(delta, attaqueJoueurX, destinationAttaqueJoueurX)){
 			joueurAttaque = false;
 			degatsDisplay = new GUIValeursCombats(cible.getXCombat(), cible.getYCombat(), Integer.toString(degats));
 			if(!cible.estEnVie()){
@@ -559,20 +559,19 @@ public class Combat extends BasicGameState{
 	public static boolean attaqueOnline(Combattant cibleRecu, int degats){
 		//txt+dgt
 		System.out.println("JE RECOIS UNE ATTAQUE OH MON DIEU");
-		//TODO Y U NO WORK Y U NO WORK Y U NO WORK Y U NO WORK Y U NO WORK Y U NO WORK
 		Combattant cible = null;
 		System.out.println(cibleRecu.getClass());
 		if(cibleRecu instanceof Player){
 			for(Player p : MainGame.getJoueursDuGroupe())
 				if(p.equals(cibleRecu)){
-					cibleRecu = p;
+					cible = p;
 					System.out.println("validé");
 					break;
 				}
 		} else if (cibleRecu instanceof Monstre){
 			for(Monstre m : listeMonstre)
 				if(m.equals(cibleRecu)){
-					cibleRecu = m;
+					cible = m;
 					System.out.println("validé");
 					break;
 				}

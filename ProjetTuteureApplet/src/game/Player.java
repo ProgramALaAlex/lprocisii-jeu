@@ -42,7 +42,7 @@ public class Player extends Combattant implements Mover {
 	private transient Animation up, down, left, right;
 	private Inventaire inventaire;
 	//ONLINE
-	private UID userId = new UID(); //pour le online : id unique
+	private UID userId; //pour le online : id unique
 	private Groupe groupe;
 	private LinkedList<Groupe> listeInvitation = new LinkedList<Groupe>();
 
@@ -74,6 +74,7 @@ public class Player extends Combattant implements Mover {
 		inventaire.addObjet(new Potion());
 		inventaire.addObjet(new Armure(1));
 		inventaire.equiperArmure(new Armure(1));
+		userId = new UID();
 	}
 
 	@Override
