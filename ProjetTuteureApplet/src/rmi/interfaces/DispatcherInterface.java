@@ -63,7 +63,14 @@ public interface DispatcherInterface extends Remote
     /**
      * Utilisé en combat lorsqu'un montre ou un joueur attaque
      * (si monstre, appelé par leader.)
-     * @param cible
      */
     public void attaquer(Player emetteur, Combattant cible, int degats) throws RemoteException;
+    
+    /**
+     * Utilisé en combat, lorsqu'un joueur utilise un potion
+     * @param emetteur
+     * @param soin
+     * @throws RemoteException
+     */
+    public void seSoigner(Player emetteur, int soin) throws RemoteException;
 }

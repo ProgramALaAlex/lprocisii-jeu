@@ -169,8 +169,7 @@ public class Exploration extends BasicGameState{
 							local.allerVers(false, p.getX(), p.getY(), delta);
 
 					//synhcronisation de groupe
-					local.setGroupe(p.getGroupe());
-					local.setMapId(p.getMapId());
+					local.synchroniserStats(p);
 
 				}
 				else {

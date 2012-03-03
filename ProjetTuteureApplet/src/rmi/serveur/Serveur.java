@@ -158,8 +158,17 @@ public class Serveur implements DispatcherInterface {
 		// on récupère les joueurs du groupe de l'emetteur
 		for(Player p : listeJoueurs){
 			if(!p.equals(emetteur) && p.getGroupe()!=null && p.getGroupe().equals(emetteur.getGroupe())){
-				System.out.println("playeur " +p);
 				getReferenceCorrespondante(p).attaquer(cible, degats);
+			}
+		}
+	}
+
+	@Override
+	public void seSoigner(Player emetteur, int soin) throws RemoteException {
+		// on récupère les joueurs du groupe de l'emetteur
+		for(Player p : listeJoueurs){
+			if(!p.equals(emetteur) && p.getGroupe()!=null && p.getGroupe().equals(emetteur.getGroupe())){
+				getReferenceCorrespondante(p).seSoigner(emetteur, soin);
 			}
 		}
 	}

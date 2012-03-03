@@ -410,7 +410,7 @@ public class Player extends Combattant implements Mover {
 			return  pvSoigne;
 		}
 	}
-
+	
 	public Inventaire getInventaire() {
 		return inventaire;
 	}
@@ -539,6 +539,12 @@ public class Player extends Combattant implements Mover {
 
 	public boolean possedeUnGroupeNonVide(){
 		return(this.groupe!=null && this.groupe.size()>1);
+	}
+	
+	public void synchroniserStats(Player p){
+		this.groupe = p.getGroupe();
+		this.mapName = p.getMapId();
+		this.pvCourant = p.getPvCourant();
 	}
 
 }
