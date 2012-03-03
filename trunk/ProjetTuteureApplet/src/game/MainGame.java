@@ -10,6 +10,8 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UID;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -270,6 +272,12 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 		for (Player p : Exploration.getListeJoueurLoc())
 			if(p.getGroupe().getID().equals(player.getGroupe().getID()))
 				res.add(p);
+		Collections.sort(res, new Comparator<Player>() {
+			@Override
+			public int compare(Player p1, Player p2) {
+				return p2.getId().toString().compareTo(p1.getId().toString());
+			}
+		});
 		return res;
 	}
 	

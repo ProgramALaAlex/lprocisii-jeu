@@ -6,6 +6,9 @@ import inventaire.Objet;
 import java.applet.Applet;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
 import netscape.javascript.JSObject;
 
 import org.newdawn.slick.Color;
@@ -33,7 +36,7 @@ public class Combat extends BasicGameState{
 	private static boolean tourJoueur;
 	private static boolean tourEnnemi;
 	private static int definirCible;
-	private int tour;
+	private static int tour;
 	private static Combattant combattantPlusRapide;
 
 	private static int attaqueJoueurX; // peut pas mettre dans constante car par rapport au bord..
@@ -164,7 +167,7 @@ public class Combat extends BasicGameState{
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
 		//image de fond
-		background.draw(0, 0, container.getWidth(), container.getHeight()-Constantes.HAUTEUR_MENU_BAS_COMBAT);
+		background.draw(0, 0, container.getWidth(), container.getHeight());
 
 		//affichage joueur
 		if(!combatDeGroupe){
@@ -204,9 +207,13 @@ public class Combat extends BasicGameState{
 
 		// Menu combat
 		int positionH = container.getHeight()-Constantes.HAUTEUR_MENU_BAS_COMBAT;
+		g.setColor(new Color(0f, 0f, 0f, 0.8f));
+		g.fillRect(0, positionH, container.getWidth(), Constantes.HAUTEUR_MENU_BAS_COMBAT);
 		g.drawLine(0, positionH, container.getWidth(), positionH);
 		if (attaquer){
-			g.setColor(Color.white);
+			if(!tourJoueur)
+				g.setColor(Color.darkGray);
+			else g.setColor(Color.white);
 			g.drawString(Constantes.SELECTION+"Attaquer", 50, positionH+10);
 			g.setColor(Color.gray);
 			g.drawString("Utiliser potion", 50, positionH+30);
@@ -215,8 +222,11 @@ public class Combat extends BasicGameState{
 			}
 		}
 		else{
+			g.setColor(Color.gray);
 			g.drawString("Attaquer", 50, positionH+10);
 			g.setColor(Color.white);
+			if(!tourJoueur)
+				g.setColor(Color.darkGray);
 			g.drawString(Constantes.SELECTION+"Utiliser potion", 50, positionH+30);
 			g.setColor(Color.gray);
 		}
@@ -229,6 +239,7 @@ public class Combat extends BasicGameState{
 		if(dropDisplay != null){
 			dropDisplay.render(container, game, g);
 		}
+
 
 	}
 
@@ -299,20 +310,20 @@ public class Combat extends BasicGameState{
 						}
 						//multi
 						else {
-							// si c'est nous
+							// si c'est "nous"
 							if(((Player) combattantPlusRapide).equals(MainGame.getPlayer()))
 								tourJoueur(delta, input);
 							else {
-								//on attend un réponse d'un joueur en ligne TODO
 								attendreReponse=true;
-								//							tourJoueur=false;
-								//							tourEnnemi=false;
 							}
 						}
 					}
 					else{
 						tourJoueur=false;
 						tourEnnemi=true;
+						//si on gère pas l'attaque mais qu'on l'attend juste (pas leader)
+						if(combatDeGroupe && !MainGame.getPlayer().estLeaderDUnGroupeNonVide())
+							attendreReponse=true;
 					}
 
 					//fin du tour
@@ -383,16 +394,7 @@ public class Combat extends BasicGameState{
 		if(combattantPlusRapide.deplacementAttaque(delta, Constantes.POSX_COMBAT_MONSTRE, Constantes.POSX_ATTAQUE_MONSTRE)){
 			tourEnnemi = false;
 			if(combatDeGroupe){
-				// si on est pas la cible
-				//				if(!cible.equals(MainGame.getPlayer())){
-				degats = combattantPlusRapide.attaquer(cible, degats);
 				degatsDisplay = new GUIValeursCombats(cible.getXCombat(), cible.getYCombat(), Integer.toString(degats));
-				//				}
-				//				//si on est la cible
-				//				else {
-				//					degats = combattantPlusRapide.attaquer(MainGame.getPlayer(), degats);
-				//					degatsDisplay = new GUIValeursCombats(cible.getXCombat(), cible.getYCombat(), Integer.toString(degats));
-				//				}
 			}
 			return true;
 		}
@@ -413,23 +415,17 @@ public class Combat extends BasicGameState{
 	 * Par exemple, getPlusRapide(liste, 0) retourne le plus rapide.
 	 */
 	private Combattant getPlusRapide(ArrayList<Combattant> listeCombattant,  int numero){
-		ArrayList<Combattant> temp = (ArrayList<Combattant>) listeCombattant.clone();
-		ArrayList<Combattant> sortedList = new ArrayList<Combattant>();
-		Combattant rapide = null;
-
-		for (int i=0; i<listeCombattant.size(); i++){
-			int plusRapide=0;
-			for (Combattant c : temp){
-				if(c.getVitesse() > plusRapide){
-					plusRapide = c.getVitesse();
-					rapide = c;
-				}
+		Collections.sort(listeCombattant, new Comparator<Combattant>() {
+			@Override
+			public int compare(Combattant c1, Combattant c2) {
+				return Float.compare(c2.getVitesse(), c1.getVitesse());
 			}
-			sortedList.add(rapide);
-			temp.remove(rapide);
-		}
-		System.out.println("Le plus rapide c'est "+sortedList.get(numero).getNom());
-		return sortedList.get(numero);
+		});
+
+		System.out.println("Le plus rapide c'est "+listeCombattant.get(numero).getNom());
+		if(listeCombattant.get(numero) instanceof Player)
+			System.out.println(((Player) listeCombattant.get(numero)).getId());
+		return listeCombattant.get(numero);
 	}
 
 
@@ -452,8 +448,7 @@ public class Combat extends BasicGameState{
 					}
 					else {
 						int soin = MainGame.getPlayer().utiliserPotion();
-						tourJoueur=false;
-						degatsDisplay = new GUIValeursCombats(MainGame.getPlayer().getXCombat(), MainGame.getPlayer().getYCombat(), Integer.toString(soin), 2);
+						seSoigner(soin);
 					}
 				}
 			}
@@ -481,6 +476,42 @@ public class Combat extends BasicGameState{
 		else {
 			attaqueJoueur(delta);
 		}
+	}
+
+	/**
+	 * Un autre joueur se soigne
+	 * @param emetteur
+	 * @param soin
+	 */
+	public static void seSoigner(Player emetteur, int soin) {
+		tourJoueur=false;
+		degatsDisplay = new GUIValeursCombats(emetteur.getXCombat(), emetteur.getYCombat(), Integer.toString(soin), 2);
+
+		for(Player p : MainGame.getJoueursDuGroupe())
+			if(p.equals(emetteur)){
+				p.setPvCourant(p.getPvCourant()+soin);
+				break;
+			}
+		
+		attendreReponse = false;
+		tour++;
+	}
+	
+	/**
+	 * On se soigne 
+	 * @param emetteur
+	 * @param soin
+	 */
+	public static void seSoigner(int soin) {
+		tourJoueur=false;
+		degatsDisplay = new GUIValeursCombats(MainGame.getPlayer().getXCombat(), MainGame.getPlayer().getYCombat(), Integer.toString(soin), 2);
+		if(combatDeGroupe)
+			try {
+				MainGame.getRemoteReference().seSoigner(MainGame.getPlayer(), soin);
+			} catch (RemoteException e) {
+				System.out.println("Erreur lors de l'attaque");
+				e.printStackTrace();
+			}
 	}
 
 	/**
@@ -558,36 +589,33 @@ public class Combat extends BasicGameState{
 
 	public static boolean attaqueOnline(Combattant cibleRecu, int degats){
 		//txt+dgt
-		System.out.println("JE RECOIS UNE ATTAQUE OH MON DIEU");
-		Combattant cible = null;
-		System.out.println(cibleRecu.getClass());
-		if(cibleRecu instanceof Player){
-			for(Player p : MainGame.getJoueursDuGroupe())
-				if(p.equals(cibleRecu)){
-					cible = p;
-					System.out.println("validé");
-					break;
-				}
-		} else if (cibleRecu instanceof Monstre){
-			for(Monstre m : listeMonstre)
-				if(m.equals(cibleRecu)){
-					cible = m;
-					System.out.println("validé");
-					break;
-				}
-		}
 		if(!enTrainDeRepondre){
+			Combattant cible = null;
+			System.out.println(cibleRecu.getClass());
+			if(cibleRecu instanceof Player){
+				for(Player p : MainGame.getJoueursDuGroupe())
+					if(p.equals(cibleRecu)){
+						cible = p;
+						break;
+					}
+			} else if (cibleRecu instanceof Monstre){
+				for(Monstre m : listeMonstre)
+					if(m.equals(cibleRecu)){
+						cible = m;
+						break;
+					}
+			}
 			cibleRecuTemp = cible;
 			degatsRecuTemp = degats;
 			combattantPlusRapide.attaquer(cible, degats);
 		}
 		//anim
 		if(combattantPlusRapide instanceof Player){
-			if(attaqueJoueur(delta, cible, degats))
+			if(attaqueJoueur(delta, cibleRecuTemp, degats))
 				return true;
 		}
 		else{
-			if(attaqueEnnemi(delta, cible, degats))
+			if(attaqueEnnemi(delta, cibleRecuTemp, degats))
 				return true;
 		}
 		enTrainDeRepondre=true;

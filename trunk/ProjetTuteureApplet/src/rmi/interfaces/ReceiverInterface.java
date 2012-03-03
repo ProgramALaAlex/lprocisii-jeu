@@ -33,4 +33,6 @@ public interface ReceiverInterface extends Remote{
 	public void entrerEnCombat(ArrayList<Monstre> listeMonstre) throws RemoteException;
     
 	public void attaquer(Combattant cible, int degats) throws RemoteException;
+	
+	public void seSoigner(Player emetteur, int soin) throws RemoteException;
 }

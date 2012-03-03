@@ -29,7 +29,7 @@ public class OnlineUpdateThread extends Thread {
 					e.printStackTrace();
 				}
 				try {
-					OnlineUpdateThread.sleep(200);
+					OnlineUpdateThread.sleep(100);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
