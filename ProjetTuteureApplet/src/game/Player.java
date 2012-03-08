@@ -45,10 +45,13 @@ public class Player extends Combattant implements Mover {
 	private UID userId; //pour le online : id unique
 	private Groupe groupe;
 	private LinkedList<Groupe> listeInvitation = new LinkedList<Groupe>();
+	private ArrayList<Player> listeJoueursCombatEnCours;
 
 	//TEST TODO
 	private boolean deplacementAuto = false;
 	private transient StateBasedGame game; //MOCHE
+
+	private boolean leaderCombat;
 
 	public Player(String nom, String spriteSheetName, float x, float y, int pvMax, int pvCourant, int attaque, int vitesse){
 		super(nom, pvMax, pvCourant, attaque, vitesse);
@@ -75,7 +78,24 @@ public class Player extends Combattant implements Mover {
 		inventaire.addObjet(new Armure(1));
 		inventaire.equiperArmure(new Armure(1));
 		userId = new UID();
+		leaderCombat = false;
+		listeJoueursCombatEnCours = new ArrayList<Player>();
 	}
+
+
+
+	public ArrayList<Player> getListeJoueursCombatEnCours() {
+		return listeJoueursCombatEnCours;
+	}
+
+
+
+	public void setListeJoueursCombatEnCours(
+			ArrayList<Player> listeJoueursCombatEnCours) {
+		this.listeJoueursCombatEnCours = listeJoueursCombatEnCours;
+	}
+
+
 
 	@Override
 	public void initAnimation(){
@@ -96,110 +116,110 @@ public class Player extends Combattant implements Mover {
 
 		sprite = right;
 	}
-	
+
 
 	public void demarrerCombat(){
 		game.enterState(Constantes.COMBAT_STATE);
 	}
-	
+
+
+
+	public boolean isLeaderCombat() {
+		return leaderCombat;
+	}
+
+	public void setLeaderCombat(boolean leaderCombat) {
+		this.leaderCombat = leaderCombat;
+	}
+
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException{
 		this.game = game; //MOCHE
-		
+
 		Input input = container.getInput();
-		//si on est pas dans un groupe ou si on est leader
-		if(this.groupe==null || (groupe.getLeader().equals(this))){
 
-			// Gestion des combats.
-			if(!Exploration.getCurrMap().isSafe() && pasAvantProchainCombat==0){
-				game.enterState(Constantes.COMBAT_STATE);
-				pasAvantProchainCombat = (int) (Math.random()*500);
-			}	
+		// Gestion des combats.
+		if(!Exploration.getCurrMap().isSafe() && pasAvantProchainCombat==0){
+			passerEnModeCombat(game);
+		}	
 
 
-			collision.setLocation(x+5, y+5);
-			finCombat();
-			if(!deplacementAuto){
-				if (input.isKeyDown(Input.KEY_UP)){
-					allerEnHaut(delta);
-				}
-				if (input.isKeyDown(Input.KEY_DOWN)){
-					allerEnBas(delta);
-				}
-				if (input.isKeyDown(Input.KEY_LEFT)){
-					allerAGauche(delta);
-				}
-				if (input.isKeyDown(Input.KEY_RIGHT)){
-					allerADroite(delta);
-				}
+		collision.setLocation(x+5, y+5);
+		finCombat();
+		if(!deplacementAuto){
+			if (input.isKeyDown(Input.KEY_UP)){
+				allerEnHaut(delta);
+			}
+			if (input.isKeyDown(Input.KEY_DOWN)){
+				allerEnBas(delta);
+			}
+			if (input.isKeyDown(Input.KEY_LEFT)){
+				allerAGauche(delta);
+			}
+			if (input.isKeyDown(Input.KEY_RIGHT)){
+				allerADroite(delta);
+			}
 
-				// si on appuit sur rien et qu'on bouge pas : on met l'animation 1
-				if (!((input.isKeyDown(Input.KEY_UP))
-						|| (input.isKeyDown(Input.KEY_DOWN))
-						|| (input.isKeyDown(Input.KEY_LEFT))
-						|| (input.isKeyDown(Input.KEY_RIGHT))
-						|| !deplacementAuto))
-					sprite.setCurrentFrame(1);
+			// si on appuit sur rien et qu'on bouge pas : on met l'animation 1
+			if (!((input.isKeyDown(Input.KEY_UP))
+					|| (input.isKeyDown(Input.KEY_DOWN))
+					|| (input.isKeyDown(Input.KEY_LEFT))
+					|| (input.isKeyDown(Input.KEY_RIGHT))
+					|| !deplacementAuto))
+				sprite.setCurrentFrame(1);
 
-				// debug : création d'un groupe 
-				if (input.isKeyPressed(Input.KEY_G)){
-					if(groupe==null){
-						listeInvitation.clear();
-						groupe = new Groupe(this);
-					}
-					else {
-						MainGame.disbandGroup(groupe.getID());
-					}
+			// debug : création d'un groupe 
+			if (input.isKeyPressed(Input.KEY_G)){
+				if(groupe==null){
+					listeInvitation.clear();
+					groupe = new Groupe(this);
 				}
-
-				//accepter invitation (rejoindre groupe)
-				if (input.isKeyPressed(Input.KEY_O)){
-					if(groupe==null && !listeInvitation.isEmpty()){
-						accepterInvitation();
-					}
-				}
-
-				//décliner une invitation
-				if (input.isKeyPressed(Input.KEY_N)){
-					if(groupe==null && !listeInvitation.isEmpty()){
-						listeInvitation.pop();
-					}
-				}
-				
-				//si le leader a changé de map, on retire l'invitation
-				for (Iterator iterator = listeInvitation.iterator(); iterator
-						.hasNext();) {
-					Groupe g = (Groupe) iterator.next();
-					if(g.getLeader().equals(this)){
-						iterator.remove();
-						System.out.println("le leader est dans une map différente : invitation de "+g.getNom()+ " retirée");
-					}
-				}
-
-				// debug : générer combat
-				if (input.isKeyPressed(Input.KEY_P)){
-					game.enterState(Constantes.COMBAT_STATE);
-					pasAvantProchainCombat = (int) (Math.random()*500);
+				else {
+					MainGame.disbandGroup(groupe.getID());
 				}
 			}
-		}
-		//si on est membre d'un groupe, on suit le membre devant nous (leader si on est 2eme, 2eme si on est 3eme..)
-		else {
-			for(Player p : Exploration.getListeJoueurLoc())
-				if(p.getId().equals(groupe.getLeader().getId())){
-					if(p.getMapId().equals(this.getMapId()))
-						allerVers(false, (float)p.getPosDerriere(this).getX(), (float)p.getPosDerriere(this).getY(), delta);
-					//si le leader a changé de map, on se téléporte sur lui
-					else if (!p.getMapId().equals(this.getMapId())){
-						Exploration.setCurrMap(new Map(p.getMapId()));
-						this.setX(p.getX());
-						this.setY(p.getY());
-						this.setMapId(p.getMapId());
-					}
+
+			//accepter invitation (rejoindre groupe)
+			if (input.isKeyPressed(Input.KEY_O)){
+				if(groupe==null && !listeInvitation.isEmpty()){
+					accepterInvitation();
 				}
+			}
+
+			//décliner une invitation
+			if (input.isKeyPressed(Input.KEY_N)){
+				if(groupe==null && !listeInvitation.isEmpty()){
+					listeInvitation.pop();
+				}
+			}
+
+			//si le leader a changé de map, on retire l'invitation pour le moment
+			for (Iterator iterator = listeInvitation.iterator(); iterator
+					.hasNext();) {
+				Groupe g = (Groupe) iterator.next();
+				if(g.getLeader().equals(this)){
+					iterator.remove();
+					System.out.println("le leader est dans une map différente : invitation de "+g.getNom()+ " retirée");
+				}
+			}
+
 			if (input.isKeyPressed(Input.KEY_G)){
 				groupe=null;
 			}
+
+			// debug : générer combat
+			if (input.isKeyPressed(Input.KEY_P)){
+				passerEnModeCombat(game);
+			}
 		}
+	}
+
+
+
+	private void passerEnModeCombat(StateBasedGame game) {
+		System.out.println("MODE COMBAT");
+		leaderCombat = true;
+		game.enterState(Constantes.COMBAT_STATE);
+		pasAvantProchainCombat = (int) (Math.random()*500);
 	}
 
 	/**
@@ -273,35 +293,33 @@ public class Player extends Combattant implements Mover {
 	 * Va vers un point donné en ligne droite (avec respect des collisions)
 	 * @return true si arrivé
 	 */
-	public boolean allerVers(boolean clic, float destX, float destY, int delta){
+	public boolean allerVers(float destX, float destY, int delta){
 		//si on clic et qu'on est pas dans un groupe ou si on est leader
-		if(!clic || this.groupe==null || (groupe.getLeader().equals(this))){
-			deplacementAuto = true;
-			int posX = Math.round(this.getX());
-			int posY = Math.round(this.getY());
+		deplacementAuto = true;
+		int posX = Math.round(this.getX());
+		int posY = Math.round(this.getY());
 
-			boolean horizontal = posX > destX-5 && posX < destX+5;
-			boolean vertical = posY > destY-5 && posY < destY+5;
-			if(horizontal && vertical){
-				deplacementAuto = false;
-				return true;
+		boolean horizontal = posX > destX-5 && posX < destX+5;
+		boolean vertical = posY > destY-5 && posY < destY+5;
+		if(horizontal && vertical){
+			deplacementAuto = false;
+			return true;
+		}
+		// si pas aligné horizontalement
+		if(!horizontal){
+			if(posX  > destX){
+				allerAGauche(delta);
 			}
-			// si pas aligné horizontalement
-			if(!horizontal){
-				if(posX  > destX){
-					allerAGauche(delta);
-				}
-				if(posX < destX){
-					allerADroite(delta);
-				}
+			if(posX < destX){
+				allerADroite(delta);
 			}
-			if(!vertical){
-				if(posY > destY){
-					allerEnHaut(delta);
-				}
-				if(posY < destY){
-					allerEnBas(delta);
-				}
+		}
+		if(!vertical){
+			if(posY > destY){
+				allerEnHaut(delta);
+			}
+			if(posY < destY){
+				allerEnBas(delta);
 			}
 		}
 		return false;
@@ -330,6 +348,12 @@ public class Player extends Combattant implements Mover {
 		else 
 			g.setColor(Color.yellow);
 		g.drawString(nom, x-decalage, y+30);
+
+		// on dessine un cercle autour de nous pour les combats
+		if(this.equals(MainGame.getPlayer()) && this.groupe!=null && !Exploration.getCurrMap().isSafe()){
+			g.setColor(new Color(63, 63, 63, 70));
+			g.drawOval(x+Constantes.TAILLE_CARRE_COLLISION/2-(float)Constantes.DISTANCE_JOUEURS_GROUPE/2, y+Constantes.TAILLE_CARRE_COLLISION/2-(float)Constantes.DISTANCE_JOUEURS_GROUPE/2, (float)Constantes.DISTANCE_JOUEURS_GROUPE, (float)Constantes.DISTANCE_JOUEURS_GROUPE);
+		}
 	}
 
 	/**
@@ -410,7 +434,7 @@ public class Player extends Combattant implements Mover {
 			return  pvSoigne;
 		}
 	}
-	
+
 	public Inventaire getInventaire() {
 		return inventaire;
 	}
@@ -532,7 +556,7 @@ public class Player extends Combattant implements Mover {
 	public void setDeplacementAuto(boolean deplacementAuto) {
 		this.deplacementAuto = deplacementAuto;
 	}
-	
+
 	public boolean estLeaderDUnGroupeNonVide(){
 		return (this.groupe!=null && this.groupe.getLeader().equals(this) && this.groupe.size()>1);
 	}
@@ -540,11 +564,25 @@ public class Player extends Combattant implements Mover {
 	public boolean possedeUnGroupeNonVide(){
 		return(this.groupe!=null && this.groupe.size()>1);
 	}
-	
+
 	public void synchroniserStats(Player p){
 		this.groupe = p.getGroupe();
 		this.mapName = p.getMapId();
 		this.pvCourant = p.getPvCourant();
 	}
 
+
+	/**
+	 * @return la liste des joueurs du même groupe que le joueur, et proche
+	 */
+	public ArrayList<Player> getJoueursDuGroupeProches(){
+		ArrayList<Player> listeJoueurGroupe =  MainGame.getJoueursDuGroupe();
+		ArrayList<Player> res = new ArrayList<Player>();
+		if(!listeJoueurGroupe.isEmpty())
+			for (Player p : listeJoueurGroupe){
+				if(!p.equals(this) && p.getPosition().distance(this.getPosition()) < Constantes.DISTANCE_JOUEURS_GROUPE/2)
+					res.add(p);
+			}
+		return res;
+	}
 }

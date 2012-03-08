@@ -50,16 +50,16 @@ public class Exploration extends BasicGameState{
 		setCurrMap(new Map("01"));
 		MainGame.initialisationJoueur();
 		finder = new AStarPathFinder(getCurrMap(), 500, false);
-
+		listeJoueurLoc = new ArrayList<Player>();
+		
 		if (Constantes.MODE_ONLINE){
 			try {
 				MainGame.updateListeJoueur();
 				MainGame.getRemoteReference().updatePosition(MainGame.getPlayer());
 				//on copie la liste des joueurs en local pour pour interpoler leurs mouvements apres
 				listeJoueurLoc = (ArrayList<Player>) MainGame.getListePaquetJoueurs().clone();
-				listeJoueurLoc.add(MainGame.getPlayer());
 				if(!listeJoueurLoc.isEmpty())
-					//On recréé le spritesheet en local (vu que c'est transient)
+					//On recréé les spritesheet en local
 					for(Player p : listeJoueurLoc){
 						p.initAnimation();
 					}
@@ -69,6 +69,7 @@ public class Exploration extends BasicGameState{
 				e.printStackTrace();
 			}
 		}
+		listeJoueurLoc.add(MainGame.getPlayer());
 
 	}
 
@@ -160,13 +161,9 @@ public class Exploration extends BasicGameState{
 						local.setY(p.getY());
 					}
 
-					//si on est dans un groupe avec des membres, et qu'on est le leader de ce groupe : on update les membres localement, sans tenir compte de leur position
-					if(MainGame.getPlayer().estLeaderDUnGroupeNonVide() && local.getGroupe()!=null && local.getGroupe().equals(MainGame.getPlayer().getGroupe()))
-							local.allerVers(false, (float)MainGame.getPlayer().getPosDerriere(local).getX(), (float)MainGame.getPlayer().getPosDerriere(local).getY(), delta);
-
-					//sinon si la position a changé, on déplace le joueur vers cette nouvelle position
-					else if(local.getX() != p.getX() || local.getY() != p.getY())
-							local.allerVers(false, p.getX(), p.getY(), delta);
+					//si la position a changé, on déplace le joueur vers cette nouvelle position
+					if(local.getX() != p.getX() || local.getY() != p.getY())
+							local.allerVers(p.getX(), p.getY(), delta);
 
 					//synhcronisation de groupe
 					local.synchroniserStats(p);
@@ -226,11 +223,11 @@ public class Exploration extends BasicGameState{
 		if(path!=null && clicX!=0 && clicY!=0){
 			int pathSize = path.getLength();
 			if(compteurChemin<pathSize-1){
-				if (MainGame.getPlayer().allerVers(true, path.getX(compteurChemin)*Constantes.BLOCK_SIZE, path.getY(compteurChemin)*Constantes.BLOCK_SIZE, delta))
+				if (MainGame.getPlayer().allerVers(path.getX(compteurChemin)*Constantes.BLOCK_SIZE, path.getY(compteurChemin)*Constantes.BLOCK_SIZE, delta))
 					compteurChemin+=2;
 			}
 			else if(compteurChemin<pathSize)
-				if (MainGame.getPlayer().allerVers(true, path.getX(compteurChemin)*Constantes.BLOCK_SIZE, path.getY(compteurChemin)*Constantes.BLOCK_SIZE, delta))
+				if (MainGame.getPlayer().allerVers(path.getX(compteurChemin)*Constantes.BLOCK_SIZE, path.getY(compteurChemin)*Constantes.BLOCK_SIZE, delta))
 					compteurChemin++;
 
 			if(compteurChemin==pathSize){
