@@ -270,14 +270,8 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 	public static ArrayList<Player> getJoueursDuGroupe(){
 		ArrayList<Player> res = new ArrayList<Player>();
 		for (Player p : Exploration.getListeJoueurLoc())
-			if(p.getGroupe().getID().equals(player.getGroupe().getID()))
+			if(p.getGroupe() != null && p.getGroupe().getID().equals(player.getGroupe().getID()))
 				res.add(p);
-		Collections.sort(res, new Comparator<Player>() {
-			@Override
-			public int compare(Player p1, Player p2) {
-				return p2.getId().toString().compareTo(p1.getId().toString());
-			}
-		});
 		return res;
 	}
 	

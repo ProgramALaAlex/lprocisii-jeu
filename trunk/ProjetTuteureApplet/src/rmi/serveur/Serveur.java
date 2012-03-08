@@ -145,18 +145,20 @@ public class Serveur implements DispatcherInterface {
 	}
 
 	@Override
-	public void entreEnModeCombat(Player leader, ArrayList<Monstre> listeMonstre) throws RemoteException {
+	public void entreEnModeCombat(Player leader, ArrayList<Player> listeAutresJoueurs, ArrayList<Monstre> listeMonstre) throws RemoteException {
 		// on récupère les joueurs du groupe du leader
-		for(Player p : listeJoueurs)
-			if(!p.equals(leader) && p.getGroupe()!=null && p.getGroupe().equals(leader.getGroupe())){
+		for(Player p : listeAutresJoueurs){
+			System.out.println(p.getGroupe().equals(leader.getGroupe()));
+//			if(p.getGroupe()!=null && p.getGroupe().equals(leader.getGroupe())){
 				getReferenceCorrespondante(p).entrerEnCombat(listeMonstre);
-			}
+//			}
+		}
 	}
 
 	@Override
 	public void attaquer(Player emetteur, Combattant cible, int degats) throws RemoteException {
 		// on récupère les joueurs du groupe de l'emetteur
-		for(Player p : listeJoueurs){
+		for(Player p : emetteur.getListeJoueursCombatEnCours()){
 			if(!p.equals(emetteur) && p.getGroupe()!=null && p.getGroupe().equals(emetteur.getGroupe())){
 				getReferenceCorrespondante(p).attaquer(cible, degats);
 			}

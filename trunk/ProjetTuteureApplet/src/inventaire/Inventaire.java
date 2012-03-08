@@ -81,7 +81,6 @@ public class Inventaire extends Observable implements Serializable{
 	 * équipe une armure possedée et déséquipe l'autre 
 	 * @param arme à équiper
 	 * @return true si l'arme a bien été équipée
-	 * TODO A VOIR AVEC LES POINTEURS, MARCHE SUREMENT PAS
 	 */
 	public boolean equiperArmure(Armure a){
 		if(inventaire.containsKey(a)){

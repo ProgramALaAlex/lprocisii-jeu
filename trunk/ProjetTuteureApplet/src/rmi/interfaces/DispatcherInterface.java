@@ -58,7 +58,7 @@ public interface DispatcherInterface extends Remote
      * @param listeMonstre 
      * @throws RemoteException
      */
-    public void entreEnModeCombat(Player leader, ArrayList<Monstre> listeMonstre) throws RemoteException;
+    public void entreEnModeCombat(Player leader, ArrayList<Player> listeAutresJoueurs, ArrayList<Monstre> listeMonstre) throws RemoteException;
 
     /**
      * Utilisé en combat lorsqu'un montre ou un joueur attaque
