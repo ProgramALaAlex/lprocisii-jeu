@@ -50,8 +50,8 @@ public class Callbacker implements ReceiverInterface, Serializable{
 
 
 	@Override
-	public void entrerEnCombat(ArrayList<Monstre> listeMonstre) {
-		Combat.setListeMonstre(listeMonstre);
+	public void entrerEnCombat(ArrayList<Player> listeJoueurs, ArrayList<Monstre> listeMonstre) {
+		Combat.setListes(listeJoueurs, listeMonstre);
 		MainGame.getPlayer().demarrerCombat();
 	}
 

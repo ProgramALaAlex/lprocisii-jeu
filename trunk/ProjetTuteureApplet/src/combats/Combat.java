@@ -73,9 +73,14 @@ public class Combat extends BasicGameState{
 	}
 
 
-	public static void setListeMonstre(ArrayList<Monstre> listeMonstre) {
+	/**
+	 * Utilisé par le callbacker
+	 */
+	public static void setListes(ArrayList<Player> listeJoueurs, ArrayList<Monstre> listeMonstre) {
+		Combat.listeJoueurs = listeJoueurs;
 		Combat.listeMonstre = listeMonstre;
 	}
+	
 
 	@Override
 	public void leave(GameContainer container, StateBasedGame game)
@@ -93,6 +98,7 @@ public class Combat extends BasicGameState{
 		degatsDisplay = null;
 		dropDisplay = null;
 		listeMonstre = null;
+		listeJoueurs = null;
 	}
 
 	@Override
@@ -130,25 +136,33 @@ public class Combat extends BasicGameState{
 		destinationAttaqueJoueurX = container.getWidth()-80 - 30;
 		joueurAttaque = false;
 		enTrainDeRepondre=false;
-		listeJoueurs = MainGame.getPlayer().getJoueursDuGroupeProches();
 
-		combatDeGroupe=!listeJoueurs.isEmpty();
 
-		if(Constantes.MODE_ONLINE){
-			//si on est proche d'autres membres du groupe : on leur envoit le combat
-			if(combatDeGroupe && MainGame.getPlayer().isLeaderCombat()){
-				try {
-					MainGame.getRemoteReference().entreEnModeCombat(MainGame.getPlayer(), listeJoueurs, listeMonstre);
-				} catch (RemoteException e) {
-					System.out.println("Erreur combat multi");
-					e.printStackTrace();
+		// on génère la liste des joueurs si on l'a pas reçu
+		if(listeJoueurs == null) {
+			listeJoueurs = MainGame.getPlayer().getJoueursDuGroupeProches();
+
+			combatDeGroupe=!listeJoueurs.isEmpty();
+
+			listeJoueurs.add(MainGame.getPlayer());
+			
+			if(Constantes.MODE_ONLINE){
+				//si on est proche d'autres membres du groupe : on leur envoit le combat
+				if(combatDeGroupe && MainGame.getPlayer().isLeaderCombat()){
+					try {
+						MainGame.getRemoteReference().entreEnModeCombat(MainGame.getPlayer(), listeJoueurs, listeMonstre);
+					} catch (RemoteException e) {
+						System.out.println("Erreur combat multi");
+						e.printStackTrace();
+					}
 				}
 			}
 		}
+		else {
+			for (Player p : listeJoueurs)
+				p.initAnimation();
+		}
 
-
-		MainGame.getPlayer().setListeJoueursCombatEnCours(listeJoueurs);
-		listeJoueurs.add(MainGame.getPlayer());
 
 		Collections.sort(listeJoueurs, new Comparator<Player>() {
 			@Override
@@ -156,6 +170,8 @@ public class Combat extends BasicGameState{
 				return p1.getId().toString().compareTo(p2.getId().toString());
 			}
 		});
+
+		MainGame.getPlayer().setListeJoueursCombatEnCours(listeJoueurs);
 
 		// positionnement des combattants
 		int i=container.getHeight()/2/listeJoueurs.size();
@@ -170,6 +186,13 @@ public class Combat extends BasicGameState{
 			m.setYCombat(espace+=60);
 		}
 
+		
+		//debug
+		System.out.println("-- Liste des joueurs du combat :");
+		for(Player p : listeJoueurs){
+			System.out.println(p.getId());
+		}
+		System.out.println("------------------------------");
 	}
 
 	@Override
@@ -291,8 +314,11 @@ public class Combat extends BasicGameState{
 					//si c'est un joueur
 					if(combattantPlusRapide instanceof Player){
 						// si c'est "nous"
-						if(((Player) combattantPlusRapide).equals(MainGame.getPlayer()))
-							tourJoueur(delta, input);
+						if(((Player) combattantPlusRapide).equals(MainGame.getPlayer())){
+							tourJoueur=true;
+							tourEnnemi=false;
+							choisirAction(input, delta);
+						}
 						else {
 							attendreReponse=true;
 						}
@@ -377,12 +403,6 @@ public class Combat extends BasicGameState{
 			return true;
 		}
 		return false;
-	}
-
-	private void tourJoueur(int delta, Input input) {
-		tourJoueur=true;
-		tourEnnemi=false;
-		choisirAction(input, delta);
 	}
 
 
