@@ -30,7 +30,7 @@ public interface ReceiverInterface extends Remote{
 	/**
 	 * Rejoint le leader en combat
 	 */
-	public void entrerEnCombat(ArrayList<Monstre> listeMonstre) throws RemoteException;
+	public void entrerEnCombat(ArrayList<Player> listeJoueurs, ArrayList<Monstre> listeMonstre) throws RemoteException;
     
 	public void attaquer(Combattant cible, int degats) throws RemoteException;
 	

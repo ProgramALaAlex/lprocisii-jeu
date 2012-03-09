@@ -92,7 +92,6 @@ public class Serveur implements DispatcherInterface {
 
 	@Override
 	public boolean inviterJoueur(Player leader, Player invite) throws RemoteException{
-		System.out.println("Parcours de la liste...");
 		for(Player p : listeJoueurs){
 			if(invite.equals(p)){
 				ReceiverInterface ri = getReferenceCorrespondante(p);
@@ -128,39 +127,44 @@ public class Serveur implements DispatcherInterface {
 	}
 
 	public synchronized void retirerReferencesNeRepondantPas(){
-		int i=-1;
-		for (Iterator<ReceiverInterface> iterator = listeRefJoueurs.iterator(); iterator.hasNext();) {
-			ReceiverInterface ri = (ReceiverInterface) iterator.next();
-			i++;
-			try {
-				ri.getPlayer();
-			} catch (RemoteException e) {
-				listeJoueurs.remove(i);
-				i--;
-				iterator.remove();
-				System.out.println("Un joueur ne répondant pas a été supprimé.");
+		synchronized(listeJoueurs){
+			int i=-1;
+			for (Iterator<ReceiverInterface> iterator = listeRefJoueurs.iterator(); iterator.hasNext();) {
+				ReceiverInterface ri = (ReceiverInterface) iterator.next();
+				i++;
+				try {
+					ri.getPlayer();
+				} catch (RemoteException e) {
+					listeJoueurs.remove(i);
+					i--;
+					iterator.remove();
+					System.out.println("Un joueur ne répondant pas a été supprimé.");
+				}
 			}
 		}
-
 	}
 
 	@Override
-	public void entreEnModeCombat(Player leader, ArrayList<Player> listeAutresJoueurs, ArrayList<Monstre> listeMonstre) throws RemoteException {
+	public void entreEnModeCombat(Player leader, ArrayList<Player> listeJoueurs, ArrayList<Monstre> listeMonstre) throws RemoteException {
 		// on récupère les joueurs du groupe du leader
-		for(Player p : listeAutresJoueurs){
-			System.out.println(p.getGroupe().equals(leader.getGroupe()));
-//			if(p.getGroupe()!=null && p.getGroupe().equals(leader.getGroupe())){
-				getReferenceCorrespondante(p).entrerEnCombat(listeMonstre);
-//			}
+		for(Player p : listeJoueurs){
+			if(!p.equals(leader))
+			//			if(p.getGroupe()!=null && p.getGroupe().equals(leader.getGroupe())){
+				getReferenceCorrespondante(p).entrerEnCombat(listeJoueurs, listeMonstre);
+			//			}
 		}
 	}
 
 	@Override
 	public void attaquer(Player emetteur, Combattant cible, int degats) throws RemoteException {
 		// on récupère les joueurs du groupe de l'emetteur
+		System.out.println("Methode attaquer détectée");
 		for(Player p : emetteur.getListeJoueursCombatEnCours()){
-			if(!p.equals(emetteur) && p.getGroupe()!=null && p.getGroupe().equals(emetteur.getGroupe())){
+			System.out.println(p.getId());
+			if(!p.equals(emetteur)){
+//			if(!p.equals(emetteur) && p.getGroupe()!=null && p.getGroupe().equals(emetteur.getGroupe())){
 				getReferenceCorrespondante(p).attaquer(cible, degats);
+//			}
 			}
 		}
 	}
