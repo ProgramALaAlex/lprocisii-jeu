@@ -14,6 +14,7 @@
     <!--[if IE]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
 
     <script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/jquery-ui.min.js"></script>
     <script type="text/javascript" src="js/script.js"></script>
 </head>
 <body>
@@ -130,7 +131,18 @@
             </aside>
             
             <section id="action">
-    
+                <section id="iconeMenu">
+                    <img onclick="show('sac');" src="images/sac.jpg" height="40px"/>
+                    <img onclick="show('equipement');" src="images/equipement.jpg" height="40px"/>
+                </section>
+                <aside id="fenetresInteraction">
+                    <table id="inventaire" style="display: none;"></table>
+                    <div id="perso" style="display: none;">
+                            <div id="armure" class="equip"></div>
+                            <div id="arme" class="equip"></div>
+                    </div>
+                </aside>
+                <!--    
                 <em>Section inventaire et actions</em>
                 
                 <br /><br />Quelques tests<br />
@@ -140,7 +152,7 @@
                 <hr />
                 <input type="button" value="Voir Inventaire" id="butInv" onClick="voirInventaire();"/>
                 <div id="inventaire"></div>
-            
+                 -->
             </section>
 			
         </section>
@@ -152,7 +164,7 @@
         </footer>
       
     </div>
-
+<script type="text/javascript" src="js/interaction.js"></script>
 </body>
 </html>
 
