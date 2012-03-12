@@ -221,3 +221,59 @@ footer
         padding: 3px;
         width: 58px;
 }
+
+#iconeMenu
+{
+    width: 50px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+#fenetresInteraction
+{
+    display: inline-block;
+    vertical-align: top;
+}
+
+table#inventaire{
+	border: 2px solid red;
+	border-collapse: collapse;
+        display: inline-block;
+        vertical-align: top;
+}
+		
+table#inventaire td{
+	border: 2px solid red;
+	width: 44px;
+	height: 44px;
+	background-color: black;
+}
+
+#perso{
+	border : 2px solid red;
+	width: 200px;
+	height: 250px;
+	background-image: url('images/equip.png');
+        display: inline-block;
+        vertical-align: top;
+}
+
+#armure{
+	border : 2px solid red;
+	width: 40px;
+	height: 40px;
+	background-color: yellow;
+	position: relative;
+	top: 20px;
+	left: 20px;
+}
+
+#arme{
+	border : 2px solid red;
+	width: 40px;
+	height: 40px;
+	background-color: yellow;
+	position: relative;
+	top: 100px;
+	left: 20px;
+}
