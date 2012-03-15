@@ -94,6 +94,7 @@ public class Combat extends BasicGameState{
 		}
 		MainGame.getPlayer().setLeaderCombat(false);
 		MainGame.getPlayer().getListeJoueursCombatEnCours().clear();
+		combatDeGroupe = false;
 		// fin de l'affichage
 		degatsDisplay = null;
 		dropDisplay = null;
@@ -115,9 +116,24 @@ public class Combat extends BasicGameState{
 
 		//si on a pas reçu de liste de monstre préalablement, on les génère
 		if(listeMonstre==null){
-			listeMonstre = new ArrayList<Monstre>();
+			listeMonstre = new ArrayList<Monstre>(4);
 			for (int i=0; i<Math.random()*4; i++){
-				listeMonstre.add(new Monstre());
+				Monstre m = new Monstre();
+				if(listeMonstre.contains(m)){
+					 int occ = Collections.frequency(listeMonstre, m);
+					 switch (occ) {
+					case 1:
+						m.addFinNom('B');
+						break;
+					case 2:
+						m.addFinNom('C');
+						break;
+					case 3:
+						m.addFinNom('D');
+						break;
+					}
+				}
+				listeMonstre.add(m);
 			}
 		}
 		else {
@@ -159,6 +175,7 @@ public class Combat extends BasicGameState{
 			}
 		}
 		else {
+			combatDeGroupe = true;
 			for (Player p : listeJoueurs)
 				p.initAnimation();
 		}
@@ -273,6 +290,7 @@ public class Combat extends BasicGameState{
 				tour++;
 			}
 		}
+		
 		// animation joueur(s)
 		for(Player p : listeJoueurs)
 			p.updateCombat(container, game, delta);
@@ -513,12 +531,12 @@ public class Combat extends BasicGameState{
 	}
 
 	/**
-	 * Attaque du joueur local
+	 * Attaque du joueur (envoyer)
 	 * @param delta
 	 */
 	private void attaqueJoueur(int delta) {
 		if (MainGame.getPlayer().deplacementAttaque(delta, attaqueJoueurX, destinationAttaqueJoueurX)){
-			joueurAttaque = false;
+			joueurAttaque = false; //TODO
 			int degats = MainGame.getPlayer().attaquer(listeMonstre.get(definirCible));
 			//si online, on envoit l'attaque aux autres joueurs
 			if(combatDeGroupe)
@@ -529,24 +547,7 @@ public class Combat extends BasicGameState{
 					e.printStackTrace();
 				}
 			degatsDisplay = new GUIValeursCombats(listeMonstre.get(definirCible).getXCombat(), listeMonstre.get(definirCible).getYCombat(), Integer.toString(degats));
-			if(!listeMonstre.get(definirCible).estEnVie()){
-				// si l'ennemi est KO
-				ArrayList<Objet> drops = listeMonstre.get(definirCible).drop();
-				// si drop
-				if(drops!=null && !drops.isEmpty()){
-					String drop = "";
-					if(drops.size()>1){
-						for (Objet o : drops)
-							drop+=o.getNom()+", ";
-						drop+=" droppés!";
-					}
-					else drop+=drops.get(0).getNom()+" droppé!";
-					dropDisplay = new GUIValeursCombats(listeMonstre.get(definirCible).getXCombat(), listeMonstre.get(definirCible).getYCombat(), drop, 3);
-					MainGame.getPlayer().getInventaire().addObjets(drops);
-				}
-				listeMonstre.remove(definirCible);
-				definirCible=0;
-			}
+			drop(listeMonstre.get(definirCible));
 			selectionCible=false;
 			tourJoueur=false;
 		}
@@ -558,31 +559,35 @@ public class Combat extends BasicGameState{
 	 */
 	private static boolean attaqueJoueur(int delta, Combattant cible, int degats) {
 		if (combattantPlusRapide.deplacementAttaque(delta, attaqueJoueurX, destinationAttaqueJoueurX)){
-			joueurAttaque = false;
+//			joueurAttaque = false;
 			degatsDisplay = new GUIValeursCombats(cible.getXCombat(), cible.getYCombat(), Integer.toString(degats));
-			if(!cible.estEnVie()){
-				// si l'ennemi est KO
-				ArrayList<Objet> drops = ((Monstre) cible).drop();
-				// si drop
-				if(drops!=null && !drops.isEmpty()){
-					String drop = "";
-					if(drops.size()>1){
-						for (Objet o : drops)
-							drop+=o.getNom()+", ";
-						drop+=" droppés!";
-					}
-					else drop+=drops.get(0).getNom()+" droppé!";
-					dropDisplay = new GUIValeursCombats(cible.getXCombat(), cible.getYCombat(), drop, 3);
-					MainGame.getPlayer().getInventaire().addObjets(drops);
-				}
-				listeMonstre.remove(cible);
-				definirCible=0;
-			}
-			selectionCible=false;
-			tourJoueur=false;
+			drop((Monstre)cible);
+//			selectionCible=false;
+//			tourJoueur=false;
 			return true;
 		}
 		return false;
+	}
+
+	private static void drop(Monstre monstre) {
+		if(!monstre.estEnVie()){
+			// si l'ennemi est KO
+			ArrayList<Objet> drops = monstre.drop();
+			// si drop
+			if(drops!=null && !drops.isEmpty()){
+				String drop = "";
+				if(drops.size()>1){
+					for (Objet o : drops)
+						drop+=o.getNom()+", ";
+					drop+=" droppés!";
+				}
+				else drop+=drops.get(0).getNom()+" droppé!";
+				dropDisplay = new GUIValeursCombats(monstre.getXCombat(), monstre.getYCombat(), drop, 3);
+				MainGame.getPlayer().getInventaire().addObjets(drops);
+			}
+			listeMonstre.remove(monstre);
+			definirCible=0;
+		}
 	}
 
 	public static boolean attaqueOnline(Combattant cibleRecu, int degats){
@@ -607,7 +612,7 @@ public class Combat extends BasicGameState{
 			degatsRecuTemp = degats;
 			combattantPlusRapide.attaquer(cible, degats);
 		}
-		//anim
+		//anim attaque
 		if(combattantPlusRapide instanceof Player){
 			if(attaqueJoueur(delta, cibleRecuTemp, degats))
 				return true;
@@ -618,12 +623,6 @@ public class Combat extends BasicGameState{
 		}
 		enTrainDeRepondre=true;
 		return false;
-
-		//		if(combattantPlusRapide instanceof Player)
-		//			combattantPlusRapide.deplacementAttaque(delta, attaqueJoueurX, destinationAttaqueJoueurX);
-		//		else
-		//			combattantPlusRapide.deplacementAttaque(delta, Constantes.POSX_COMBAT_MONSTRE, Constantes.POSX_ATTAQUE_MONSTRE);
-
 	}
 
 }

@@ -217,7 +217,8 @@ public class Player extends Combattant implements Mover {
 
 	private void passerEnModeCombat(StateBasedGame game) {
 		System.out.println("MODE COMBAT");
-		leaderCombat = true;
+//		leaderCombat = true;
+		MainGame.getPlayer().setLeaderCombat(true);
 		game.enterState(Constantes.COMBAT_STATE);
 		pasAvantProchainCombat = (int) (Math.random()*500);
 	}
