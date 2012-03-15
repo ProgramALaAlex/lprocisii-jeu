@@ -59,7 +59,9 @@ public class Serveur implements DispatcherInterface {
 	@Override
 	public void inscription(Player p, ReceiverInterface client) throws RemoteException {
 		this.listeRefJoueurs.add(client);
-		this.listeJoueurs.add(p);
+		synchronized(listeJoueurs){
+			this.listeJoueurs.add(p);
+		}
 	}
 
 	/**

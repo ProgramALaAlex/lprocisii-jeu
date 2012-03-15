@@ -78,7 +78,7 @@ public class Monstre extends Combattant{
 
 	public void initAnimation(){
 		sprite = new Animation();
-		if(nom.equals("Slime bleue"))
+		if(nom.contains("Slime bleue"))
 			try {
 				sprite.addFrame(new Image(Constantes.MONSTER_LOCATION+"SlimeB.png"), Constantes.EVENT_ANIM_DEFAUT_DURATION);
 			} catch (SlickException e) {
@@ -89,6 +89,15 @@ public class Monstre extends Combattant{
 		} catch (SlickException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Ajoute une lettre à la fin du monstre, pour les différencier
+	 * (ex : Monstre A, Monstre B)
+	 * @param c
+	 */
+	public void addFinNom(char c){
+		this.nom+=" "+c;
 	}
 	
 	
