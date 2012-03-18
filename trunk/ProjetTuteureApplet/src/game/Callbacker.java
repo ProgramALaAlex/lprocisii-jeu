@@ -64,7 +64,7 @@ public class Callbacker implements ReceiverInterface, Serializable{
 
 	@Override
 	public void seSoigner(Player emetteur, int soin) throws RemoteException {
-		Combat.seSoigner(emetteur, soin);
+		Combat.seSoignerRecevoir(emetteur, soin);
 	}
 
 }

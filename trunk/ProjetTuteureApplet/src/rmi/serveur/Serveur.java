@@ -7,6 +7,7 @@ import java.rmi.server.UID;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Vector;
 
 import combats.Combattant;
 import combats.Monstre;
@@ -25,11 +26,11 @@ import rmi.interfaces.ReceiverInterface;
  */
 public class Serveur implements DispatcherInterface {
 	private ArrayList<ReceiverInterface> listeRefJoueurs;
-	private ArrayList<Player> listeJoueurs;
+	private Vector<Player> listeJoueurs;
 
 	public Serveur(){
 		listeRefJoueurs = new ArrayList<ReceiverInterface>();
-		listeJoueurs = new ArrayList<Player>();
+		listeJoueurs = new Vector<Player>();
 		new SupprimerOfflineThread(this).start();
 	}
 
@@ -59,9 +60,7 @@ public class Serveur implements DispatcherInterface {
 	@Override
 	public void inscription(Player p, ReceiverInterface client) throws RemoteException {
 		this.listeRefJoueurs.add(client);
-		synchronized(listeJoueurs){
-			this.listeJoueurs.add(p);
-		}
+		this.listeJoueurs.add(p);
 	}
 
 	/**
@@ -81,14 +80,8 @@ public class Serveur implements DispatcherInterface {
 	 */
 	@Override
 	public void updatePosition(Player recu) throws RemoteException {
-		//		Player update;
 		if(listeJoueurs.contains(recu)){
-			//			update = listeJoueurs.get(listeJoueurs.indexOf(recu));
 			listeJoueurs.set(listeJoueurs.indexOf(recu), recu);
-			//			update.setPosition(recu.getPosition());
-			//			update.setDirection(recu.getDirection());
-			//			update.setMapId(recu.getMapId());
-			//			update.setGroupe(recu.getGroupe());
 		}
 	}
 
@@ -129,19 +122,17 @@ public class Serveur implements DispatcherInterface {
 	}
 
 	public synchronized void retirerReferencesNeRepondantPas(){
-		synchronized(listeJoueurs){
-			int i=-1;
-			for (Iterator<ReceiverInterface> iterator = listeRefJoueurs.iterator(); iterator.hasNext();) {
-				ReceiverInterface ri = (ReceiverInterface) iterator.next();
-				i++;
-				try {
-					ri.getPlayer();
-				} catch (RemoteException e) {
-					listeJoueurs.remove(i);
-					i--;
-					iterator.remove();
-					System.out.println("Un joueur ne répondant pas a été supprimé.");
-				}
+		int i=-1;
+		for (Iterator<ReceiverInterface> iterator = listeRefJoueurs.iterator(); iterator.hasNext();) {
+			ReceiverInterface ri = (ReceiverInterface) iterator.next();
+			i++;
+			try {
+				ri.getPlayer();
+			} catch (RemoteException e) {
+				listeJoueurs.remove(i);
+				i--;
+				iterator.remove();
+				System.out.println("Un joueur ne répondant pas a été supprimé.");
 			}
 		}
 	}
@@ -174,11 +165,16 @@ public class Serveur implements DispatcherInterface {
 	@Override
 	public void seSoigner(Player emetteur, int soin) throws RemoteException {
 		// on récupère les joueurs du groupe de l'emetteur
-		for(Player p : listeJoueurs){
+		for(Player p : listeJoueurs){ //TODO emetteur.getListeJoueursCombatEnCours()
 			if(!p.equals(emetteur) && p.getGroupe()!=null && p.getGroupe().equals(emetteur.getGroupe())){
 				getReferenceCorrespondante(p).seSoigner(emetteur, soin);
 			}
 		}
+	}
+
+	@Override
+	public boolean isConnected(Player p) throws RemoteException {
+		return listeJoueurs.contains(p);
 	}
 
 }

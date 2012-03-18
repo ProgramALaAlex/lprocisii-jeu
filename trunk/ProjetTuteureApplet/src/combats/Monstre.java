@@ -70,6 +70,7 @@ public class Monstre extends Combattant{
 			xCombat-=0.3f*delta;
 		}
 		if(!enAttaque && xCombat <= departX){
+			xCombat = departX;
 			enAttaque = true;
 			return true;
 		}
@@ -96,10 +97,9 @@ public class Monstre extends Combattant{
 	 * (ex : Monstre A, Monstre B)
 	 * @param c
 	 */
-	public void addFinNom(char c){
-		this.nom+=" "+c;
+	public void addFinNom(String s){
+		this.nom+=" "+s;
 	}
-	
 	
 	
 }
