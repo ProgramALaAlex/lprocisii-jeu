@@ -36,21 +36,19 @@ import exploration.Map;
 public class Player extends Combattant implements Mover {
 	private String mapName, spriteSheetName;
 	private int pasAvantProchainCombat, directionHistorique;
-	private float x, y, vx, vy;
+	private float x, y;
 	private transient Polygon collision;
 	private transient SpriteSheet spriteSheet;
 	private transient Animation up, down, left, right;
 	private Inventaire inventaire;
+	private boolean deplacementAuto = false;
+
 	//ONLINE
 	private UID userId; //pour le online : id unique
 	private Groupe groupe;
 	private LinkedList<Groupe> listeInvitation = new LinkedList<Groupe>();
 	private ArrayList<Player> listeJoueursCombatEnCours;
-
-	//TEST TODO
-	private boolean deplacementAuto = false;
-	private transient StateBasedGame game; //MOCHE
-
+	private transient StateBasedGame game;
 	private boolean leaderCombat;
 
 	public Player(String nom, String spriteSheetName, float x, float y, int pvMax, int pvCourant, int attaque, int vitesse){
@@ -71,7 +69,7 @@ public class Player extends Combattant implements Mover {
 		});
 		collision.setLocation(x+5, y+5);
 		initAnimation();
-		directionHistorique = Constantes.DROITE;
+		directionHistorique = Constantes.BAS;
 		pasAvantProchainCombat = (int) (Math.random()*500);
 		inventaire = new Inventaire();
 		inventaire.addObjet(new Potion());
@@ -100,7 +98,7 @@ public class Player extends Combattant implements Mover {
 	@Override
 	public void initAnimation(){
 		try {
-			spriteSheet = new SpriteSheet(Constantes.CHAR_LOCATION+spriteSheetName, 31, 32);
+			spriteSheet = new SpriteSheet(Constantes.CHAR_LOCATION+this.spriteSheetName, 31, 32);
 		} catch (SlickException e) {
 			e.printStackTrace();
 		}	
@@ -114,7 +112,7 @@ public class Player extends Combattant implements Mover {
 		left = new Animation(lookLeft, Constantes.EVENT_ANIM_DEFAUT_DURATION, false);
 		right = new Animation(lookRight, Constantes.EVENT_ANIM_DEFAUT_DURATION, false);
 
-		sprite = right;
+		finCombat();
 	}
 
 
@@ -141,8 +139,7 @@ public class Player extends Combattant implements Mover {
 		if(!Exploration.getCurrMap().isSafe() && pasAvantProchainCombat==0){
 			passerEnModeCombat(game);
 		}	
-
-
+		
 		collision.setLocation(x+5, y+5);
 		finCombat();
 		if(!deplacementAuto){
@@ -192,16 +189,6 @@ public class Player extends Combattant implements Mover {
 				}
 			}
 
-			//si le leader a changé de map, on retire l'invitation pour le moment
-			for (Iterator iterator = listeInvitation.iterator(); iterator
-					.hasNext();) {
-				Groupe g = (Groupe) iterator.next();
-				if(g.getLeader().equals(this)){
-					iterator.remove();
-					System.out.println("le leader est dans une map différente : invitation de "+g.getNom()+ " retirée");
-				}
-			}
-
 			if (input.isKeyPressed(Input.KEY_G)){
 				groupe=null;
 			}
@@ -210,6 +197,8 @@ public class Player extends Combattant implements Mover {
 			if (input.isKeyPressed(Input.KEY_P)){
 				passerEnModeCombat(game);
 			}
+			
+			input.clearKeyPressedRecord();
 		}
 	}
 
@@ -350,7 +339,20 @@ public class Player extends Combattant implements Mover {
 			g.setColor(Color.yellow);
 		g.drawString(nom, x-decalage, y+30);
 
-		// on dessine un cercle autour de nous pour les combats
+
+		// si le joueur est en combat, on le note
+		if(isEnCombat()) {
+			decalage = Constantes.TAILLE_CARRE_COLLISION/2+5;
+			g.setColor(new Color(33, 33, 33, 70));
+			for(int i=-1; i<2; i++){
+				g.drawString("En combat", x-decalage, y+45+i);
+				g.drawString("En combat", x+i-decalage, y+46);
+			}
+			g.setColor(Color.red);
+			g.drawString("En combat", x-decalage, y+45);
+		}
+		
+		// on dessine un cercle autour de nous pour savoir qui nous rejoindra
 		if(this.equals(MainGame.getPlayer()) && this.groupe!=null && !Exploration.getCurrMap().isSafe()){
 			g.setColor(new Color(63, 63, 63, 70));
 			g.drawOval(x+Constantes.TAILLE_CARRE_COLLISION/2-(float)Constantes.DISTANCE_JOUEURS_GROUPE/2, y+Constantes.TAILLE_CARRE_COLLISION/2-(float)Constantes.DISTANCE_JOUEURS_GROUPE/2, (float)Constantes.DISTANCE_JOUEURS_GROUPE, (float)Constantes.DISTANCE_JOUEURS_GROUPE);
@@ -365,6 +367,10 @@ public class Player extends Combattant implements Mover {
 		sprite.update(delta);
 
 	}
+	
+	public boolean isEnCombat(){
+		return !this.listeJoueursCombatEnCours.isEmpty();
+	}
 
 	/**
 	 * Pour qu'à la fin du combat, le joueur regarde dans l'ancienne direction
@@ -375,6 +381,7 @@ public class Player extends Combattant implements Mover {
 		case Constantes.DROITE : sprite = right; break;
 		case Constantes.HAUT : sprite = up; break;
 		case Constantes.GAUCHE : sprite = left; break;
+		default : sprite = down; break;
 		}
 	}
 
@@ -463,6 +470,7 @@ public class Player extends Combattant implements Mover {
 			xCombat+=0.3f*delta;
 		}
 		if(!enAttaque && xCombat >= departX){
+			xCombat = departX;
 			enAttaque = true;
 			return true;
 		}
@@ -570,18 +578,19 @@ public class Player extends Combattant implements Mover {
 		this.groupe = p.getGroupe();
 		this.mapName = p.getMapId();
 		this.pvCourant = p.getPvCourant();
+		this.listeJoueursCombatEnCours = p.getListeJoueursCombatEnCours();
 	}
 
 
 	/**
 	 * @return la liste des joueurs du même groupe que le joueur, et proche
 	 */
-	public ArrayList<Player> getJoueursDuGroupeProches(){
+	public ArrayList<Player> getJoueursDuGroupeProchesSansCombat(){
 		ArrayList<Player> listeJoueurGroupe =  MainGame.getJoueursDuGroupe();
 		ArrayList<Player> res = new ArrayList<Player>();
 		if(!listeJoueurGroupe.isEmpty())
 			for (Player p : listeJoueurGroupe){
-				if(!p.equals(this) && p.getPosition().distance(this.getPosition()) < Constantes.DISTANCE_JOUEURS_GROUPE/2)
+				if(!p.equals(this) && p.getPosition().distance(this.getPosition()) < Constantes.DISTANCE_JOUEURS_GROUPE/2 && !p.isEnCombat())
 					res.add(p);
 			}
 		return res;

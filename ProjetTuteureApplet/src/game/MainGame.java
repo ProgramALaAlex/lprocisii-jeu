@@ -47,7 +47,7 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 	public MainGame() {
 		super("Projet Tuteuré");
 		try { 
-			if (Constantes.MODE_ONLINE){
+			if (Constantes.ONLINE){
 				System.out.println("Connexion en cours...");
 //				System.setProperty("java.rmi.server.hostname", Constantes.IP_SERVEUR);
 				Registry registry = LocateRegistry.getRegistry(Constantes.IP_SERVEUR, Constantes.REGISTRY_PORT);
@@ -64,7 +64,7 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 		} catch (Exception e){
 			e.printStackTrace();
 			System.out.println("Erreur de connexion au serveur RMI. Passage en mode Hors Ligne.");
-			Constantes.MODE_ONLINE=false;
+			Constantes.ONLINE=false;
 		}
 	}
 
@@ -97,8 +97,9 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 	
 	public static void initialisationJoueur(){
 		player = new Player("Joueur", "BlackGuard.png", x, y, 133, 133, 133, 134);
+//		player.setPvCourant(10);
 		listePaquetJoueurs = new ArrayList<Player>();
-		if (Constantes.MODE_ONLINE){
+		if (Constantes.ONLINE){
 			try {
 				Callbacker espoir = new Callbacker(player);
 				UnicastRemoteObject.exportObject(espoir, 0);
@@ -109,7 +110,7 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 			} catch (RemoteException e) {
 				e.printStackTrace();
 				System.out.println("Erreur : le serveur du jeu ne répond pas (probablement car pas executé ou que l'objet est sur une adresse inaccessible) mais un RMI répond lawl. \nPassage en mode Hors Ligne.");
-				Constantes.MODE_ONLINE=false;
+				Constantes.ONLINE=false;
 			}
 		}
 	}

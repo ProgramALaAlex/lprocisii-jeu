@@ -73,4 +73,12 @@ public interface DispatcherInterface extends Remote
      * @throws RemoteException
      */
     public void seSoigner(Player emetteur, int soin) throws RemoteException;
+    
+    /**
+     * @param un joueur
+     * @return true si connecté
+     * @throws RemoteException
+     */
+    public boolean isConnected(Player p) throws RemoteException;
+    
 }

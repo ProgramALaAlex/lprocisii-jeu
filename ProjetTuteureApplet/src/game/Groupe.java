@@ -56,7 +56,7 @@ public class Groupe extends ArrayList<UID> implements Serializable{
 	 * @return le joueur normal si le leader n'est pas trouvé
 	 */
 	public Player getLeader(){
-		if(Constantes.MODE_ONLINE){
+		if(Constantes.ONLINE){
 			for(Player p : Exploration.getListeJoueurLoc())
 				if(p.getId().equals(this.get(0)))
 					return p;

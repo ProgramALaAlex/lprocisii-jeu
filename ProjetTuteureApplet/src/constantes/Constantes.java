@@ -7,7 +7,7 @@ public final class Constantes {
 	public static final int COMBAT_STATE = 2;
 	
 	// passe à false pour le mode solo
-	public static boolean MODE_ONLINE = true;
+	public static boolean ONLINE = true;
 	
 	// ressources
 	public static final String CHAR_LOCATION = "res/graphics/char/";

@@ -30,7 +30,6 @@ public class Exploration extends BasicGameState{
 	private static ArrayList<Player> listeJoueurLoc;
 	private OnlineUpdateThread onlineUpdateThread;
 
-	//TODO TEST
 	private static PathFinder finder;
 	private Path path;
 	private int compteurChemin=1;
@@ -52,12 +51,12 @@ public class Exploration extends BasicGameState{
 		finder = new AStarPathFinder(getCurrMap(), 500, false);
 		listeJoueurLoc = new ArrayList<Player>();
 		
-		if (Constantes.MODE_ONLINE){
+		if (Constantes.ONLINE){
 			try {
 				MainGame.updateListeJoueur();
 				MainGame.getRemoteReference().updatePosition(MainGame.getPlayer());
 				//on copie la liste des joueurs en local pour pour interpoler leurs mouvements apres
-				listeJoueurLoc = (ArrayList<Player>) MainGame.getListePaquetJoueurs().clone();
+				listeJoueurLoc = new ArrayList<Player>(MainGame.getListePaquetJoueurs());
 				if(!listeJoueurLoc.isEmpty())
 					//On recréé les spritesheet en local
 					for(Player p : listeJoueurLoc){
@@ -83,7 +82,7 @@ public class Exploration extends BasicGameState{
 		Scrolling.scrollLayer(resolutionWidth, resolutionHeight, 1);
 		Scrolling.scrollLayer(resolutionWidth, resolutionHeight, 2);
 
-		if(!Constantes.MODE_ONLINE)
+		if(!Constantes.ONLINE)
 			Scrolling.scrollPlayer(g, resolutionWidth, resolutionHeight);
 		else {
 			if (listeJoueurLoc!=null && !listeJoueurLoc.isEmpty())
@@ -113,7 +112,7 @@ public class Exploration extends BasicGameState{
 		g.setColor(Color.black);
 
 		int t=50;
-		if(Constantes.MODE_ONLINE){
+		if(Constantes.ONLINE){
 		for(Player p : listeJoueurLoc)
 			g.drawString(p.toString()+":"+p.getMapId(), 10, t+=20);
 		g.setColor(Color.white);
@@ -140,7 +139,7 @@ public class Exploration extends BasicGameState{
 		Input input = container.getInput(); 
 		MainGame.getPlayer().update(container, game, delta);
 
-		if(Constantes.MODE_ONLINE){
+		if(Constantes.ONLINE){
 			listeJoueurLoc = onlineUpdateThread.getListeJoueurLoc();
 
 			//on trie la liste de joueur de façon à afficher par la suite d'abord les plus hauts
@@ -154,8 +153,7 @@ public class Exploration extends BasicGameState{
 			for(Player p : MainGame.getListePaquetJoueurs()){
 				if(listeJoueurLoc.contains(p) && (!p.equals(MainGame.getPlayer()))){
 					Player local = listeJoueurLoc.get(listeJoueurLoc.indexOf(p));
-					// si la map est différente (leader), on tp direct le joueur aux nouveaux coord du leader
-					// seul le leader peut avoir une map différente du joueur
+					// changement de map
 					if(!local.getMapId().equals(p.getMapId())){
 						local.setX(p.getX());
 						local.setY(p.getY());
@@ -165,7 +163,7 @@ public class Exploration extends BasicGameState{
 					if(local.getX() != p.getX() || local.getY() != p.getY())
 							local.allerVers(p.getX(), p.getY(), delta);
 
-					//synhcronisation de groupe
+					//synchronisation..
 					local.synchroniserStats(p);
 
 				}
@@ -178,8 +176,12 @@ public class Exploration extends BasicGameState{
 			for (Iterator<Player> iterator = listeJoueurLoc.iterator(); iterator
 					.hasNext();) {
 				Player p = (Player) iterator.next();
-				if(!p.equals(MainGame.getPlayer()) && !MainGame.getListePaquetJoueurs().contains(p))
+				if(!p.equals(MainGame.getPlayer()) && !MainGame.getListePaquetJoueurs().contains(p)){
+					if(p.getGroupe()!=null && p.getGroupe().getLeader().equals(p))
+						for(Player p2 : listeJoueurLoc)
+							p2.getGroupe().remove(0);
 					iterator.remove();
+				}
 			}
 		}
 
@@ -237,7 +239,7 @@ public class Exploration extends BasicGameState{
 		}
 
 		// invitation à rejoindre un groupe via clique droit - temporaire
-		if(Constantes.MODE_ONLINE){
+		if(Constantes.ONLINE){
 			//si le joueur est leader d'un groupe
 			if(MainGame.getPlayer().getGroupe()!=null && MainGame.getPlayer().getGroupe().getLeader().equals(MainGame.getPlayer())){
 				if(input.isMousePressed(Input.MOUSE_RIGHT_BUTTON)){

@@ -148,4 +148,8 @@ public abstract class Combattant implements Serializable {
 		return true;
 	}
 	
+	public boolean isKO(){
+		return pvCourant<=0;
+	}
+	
 }
