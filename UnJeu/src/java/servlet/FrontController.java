@@ -42,7 +42,7 @@ public class FrontController extends HttpServlet {
             flow = cmd.actionPerform(req);
         }
 
-        if (flow.isRedirect() == true) {
+        if (flow.isRedirect() == true) {            
             res.sendRedirect(flow.getPath());
         } else {
             ServletContext sc = getServletContext();
