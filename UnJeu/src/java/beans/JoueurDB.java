@@ -15,12 +15,7 @@ public class JoueurDB {
     
     public void creerJoueur( JoueurBean joueur){
         try {
-            Class.forName("com.mysql.jdbc.Driver");
-            
-            String url = "jdbc:mysql://localhost:3306/unjeu";
-            String user = "root";
-            String password = null;
-            Connection con = DriverManager.getConnection( url, user, password ) ;
+            Connection con = Singleton.getInstance().getConnection();
             Statement statement = con.createStatement(); 
             String query = "INSERT INTO unjeu.joueur (pseudo, mail, pass, dateInscription, attaque, vitesse, pvMax, pvActuels, totalCombats, totalMonstres, dernierX, dernierY, idMap, idArme, idArmure, idApparance, newsletter) VALUES ("
                     + "'"+joueur.getPseudo()+"', "
