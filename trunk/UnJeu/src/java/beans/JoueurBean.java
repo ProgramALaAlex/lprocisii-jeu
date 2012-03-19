@@ -4,6 +4,8 @@
  */
 package beans;
 
+import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -29,12 +31,17 @@ public class JoueurBean {
 	int idArmure;
 	int idApparance;
 	int newsletter;
-
+        
+    public static java.sql.Date getCurrentJavaSqlDate() {
+        java.util.Date today = new java.util.Date();
+        return new java.sql.Date(today.getTime());
+    }
+    
     public JoueurBean(String pseudo, String mail, String pass) {
         this.pseudo = pseudo;
         this.mail = mail;
         this.pass = pass;
-        this.dateInscription = null;
+        this.dateInscription = getCurrentJavaSqlDate();
 	this.attaque = 0;
 	this.vitesse = 0;
 	this.pvMax = 0;
