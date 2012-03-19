@@ -17,12 +17,12 @@ public class JoueurDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             
-            String url = "jdbc:mysql://localhost:3306";
+            String url = "jdbc:mysql://localhost:3306/unjeu";
             String user = "root";
             String password = null;
             Connection con = DriverManager.getConnection( url, user, password ) ;
             Statement statement = con.createStatement(); 
-            String query = "INSERT INTO joueur (pseudo, mail, pass, dateInscription, attaque, vitesse, pvMax, pvActuels, totalCombats, totalMonstres, dernierX, dernierY, idMap, idArme, idArmure, idApparance, newsletter) VALUES ("
+            String query = "INSERT INTO unjeu.joueur (pseudo, mail, pass, dateInscription, attaque, vitesse, pvMax, pvActuels, totalCombats, totalMonstres, dernierX, dernierY, idMap, idArme, idArmure, idApparance, newsletter) VALUES ("
                     + "'"+joueur.getPseudo()+"', "
                     + "'"+joueur.getMail()+"', "
                     + "'"+joueur.getPass()+"', "
@@ -40,12 +40,14 @@ public class JoueurDB {
                     + "'"+joueur.getIdArmure()+"', "
                     + "'"+joueur.getIdApparance()+"', "
                     + "'"+joueur.getNewsletter()+"')"; 
+            System.out.println(query);
             statement.executeUpdate(query);
             con.close();
         }
         catch(Exception ex) 
         { 
             System.out.println("Fail du chargement du driver J mysql");
+            System.out.println(ex.toString());
         }
     }
 }
