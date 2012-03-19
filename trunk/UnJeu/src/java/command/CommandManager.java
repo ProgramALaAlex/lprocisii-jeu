@@ -21,6 +21,7 @@ public class CommandManager {
 
     public static void init() {
         cmds.put("view", new ViewCommand());
+        cmds.put("test", new TestCommand());
         //cmds.put("supprimer", new RemoveCommand());
         //cmds.put("payer", new CheckoutCommand());
 
