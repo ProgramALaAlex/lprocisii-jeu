@@ -1,6 +1,6 @@
 <h3>Connnexion!</h3>
 
-<form methode="post" action="connexion.do">
+<form method="post" action="connexion.do">
     <table id="formulaire">
         <tr>
             <td class="label">Login</td>
