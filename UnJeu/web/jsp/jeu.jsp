@@ -76,6 +76,8 @@
             
             <aside id="sidebar">
             
+		<div id="listeJoueur"><i>Aucun joueur dans la map</i></div>
+		
                 <a class="chatSection" onclick="switchOnglet('general');">Général</a> - 
                 <a class="chatSection" onclick="switchOnglet('guild');">Guild</a> - 
                 <a class="chatSection" onclick="switchOnglet('whisp');">Whisp</a>
