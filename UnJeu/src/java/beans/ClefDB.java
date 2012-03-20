@@ -13,15 +13,18 @@ import java.util.UUID;
  * @author Loic
  */
 public class ClefDB {
-        public void createInvenaire( String id ){
+        public String createInvenaire( String id ){
             try {
                 Connection con = Singleton.getInstance().getConnection();
                 Statement statement = con.createStatement(); 
-                String query = "INSERT INTO unjeu.clef (clef, idJoueur) Values('"+UUID.randomUUID().toString()+"', '"+id+"')";
+                String clef = UUID.randomUUID().toString();
+                String query = "INSERT INTO unjeu.clef (clef, idJoueur) Values('"+clef+"', '"+id+"')";
                 System.out.println(query);
                 statement.executeUpdate(query);
+                return clef;
             }catch(Exception e){
                 System.out.println("Fail clef db");
             }
+            return null;
         }
 }
