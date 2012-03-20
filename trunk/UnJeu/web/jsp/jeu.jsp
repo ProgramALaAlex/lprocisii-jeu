@@ -1,4 +1,4 @@
-<section id="content">
+      <section id="content">
     
               <applet mayscript="true"
 			code="org.lwjgl.util.applet.AppletLoader"
