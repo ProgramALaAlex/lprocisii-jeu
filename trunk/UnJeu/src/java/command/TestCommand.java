@@ -5,10 +5,7 @@
 package command;
 
 
-import beans.InventaireBean;
-import beans.InventaireDB;
-import beans.JoueurBean;
-import beans.JoueurDB;
+import beans.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import javax.servlet.http.HttpServletRequest;
@@ -46,6 +43,9 @@ public class TestCommand implements Command {
         JoueurBean j = new JoueurBean("test", "ee", "dd");
         JoueurDB jdb = new JoueurDB();
         jdb.creerJoueur(j);
+        
+        ClefDB cle = new ClefDB();
+        cle.createInvenaire(j.getIdJoueur()+"");
         
         InventaireBean inv = new InventaireBean(j.getIdJoueur());
         InventaireDB idb = new InventaireDB();
