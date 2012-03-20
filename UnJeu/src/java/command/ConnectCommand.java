@@ -25,7 +25,7 @@ public class ConnectCommand implements Command {
         
         if (request.getParameter("submit") != null) {
             HttpSession session = request.getSession(false);
-
+            
             String login = request.getParameter("login");
             String password = request.getParameter("pass");
 
