@@ -191,26 +191,32 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 	public void goMsg(String m){
 		final String g = m;
 		final ChatReceiverInterface client = this;
-		java.security.AccessController.doPrivileged(
-				new java.security.PrivilegedAction<Object>() {
-					@Override
-					public Object run() {
-						try {
-							System.out.println("goMsg appelé : "+g);
-							remoteReferenceChat.getMessage(g, client);
-						} catch (RemoteException e) {
-							e.printStackTrace();
+		try{
+			java.security.AccessController.doPrivileged(
+					new java.security.PrivilegedAction<Object>() {
+						@Override
+						public Object run() {
+							try {
+								System.out.println("goMsg appelé : "+g);
+								remoteReferenceChat.getMessage(g, client);
+							} catch (RemoteException e) {
+								e.printStackTrace();
+							}
+							return null;
 						}
-						return null;
-					}
-				});
+					});
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 
 	}
 
 	public static void inviterAuGroupe(Player invite){
 		try {
-			if(remoteReference.inviterJoueur(player, invite))
+			if(remoteReference.inviterJoueur(player, invite)){
 				System.out.println("Invitation envoyée à "+invite.getNom()+" !");
+				invite.addInvitation(player.getGroupe());
+			}
 			else {
 				String erreur = "L'invitation n'a pas été envoyée : ";
 				if(invite.getGroupe()!=null)
@@ -274,8 +280,9 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 
 		if(player.getGroupe()!=null){
 			res += player.getGroupe().getNom()+"<br/>";
-			if(!player.getGroupe().getLeader().equals(player))
+			if(!player.getGroupe().getLeader().equals(player)){
 				res+="Leader : <span class=\"joueurGroupe\">"+player.getGroupe().getLeader().getNom()+"</span>";
+			} else res+="Vous êtes le leader.";
 		}
 		else res+= "Vous n'appartenez à aucun groupe";
 
@@ -286,11 +293,12 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 				Player p = Exploration.getListeJoueurLoc().get(i);
 				res+="<li>";
 				if(!p.equals(player)){
-					if(p.getGroupe()!=null)
+					if(p.getGroupe()!=null){
 						if(p.getGroupe().equals(player.getGroupe()))
 							res+="<span class=\"joueurGroupe\">"+p.getNom()+"</span>";
 						else
 							res+="<span class=\"joueurAutreGroupe\">"+p.getNom()+"</span>";
+					}
 					else res+=p.getNom();
 				}
 				if(player.getGroupe() != null && player.getGroupe().getLeader().equals(player) && p.getGroupe()==null && !p.estInvitePar(player.getGroupe()))
@@ -302,6 +310,18 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 			res+="</ul>";
 		}
 		return res;
+	}
+
+	/**
+	 * Appelle la fonciton JS qui rafraichit la liste des joueurs
+	 * @param container
+	 */
+	public static void updateListHTML(GameContainer container) {
+		if(container instanceof AppletGameContainer.Container){
+			Applet applet = ((AppletGameContainer.Container) container).getApplet();
+			JSObject jso = JSObject.getWindow(applet);
+			jso.call("voirListeJoueurs", null);
+		}
 	}
 
 }

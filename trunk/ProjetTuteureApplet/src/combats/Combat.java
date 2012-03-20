@@ -94,7 +94,7 @@ public class Combat extends BasicGameState{
 			JSObject jso = JSObject.getWindow(applet);
 			jso.call("activerBoutons", null);
 		}
-		MainGame.getPlayer().synchroniserStats(getPlayer());
+		MainGame.getPlayer().synchroniserStats(getPlayer(), container);
 		MainGame.getPlayer().setLeaderCombat(false);
 		MainGame.getPlayer().getListeJoueursCombatEnCours().clear();
 		if(MainGame.getPlayer().isKO())

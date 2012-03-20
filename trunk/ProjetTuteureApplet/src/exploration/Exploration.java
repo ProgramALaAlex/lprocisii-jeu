@@ -74,17 +74,10 @@ public class Exploration extends BasicGameState{
 			}
 		}
 		listeJoueurLoc.add(MainGame.getPlayer());
-		updateListHTML(container);
+		MainGame.updateListHTML(container);
 
 	}
 
-	private void updateListHTML(GameContainer container) {
-		if(container instanceof AppletGameContainer.Container){
-			Applet applet = ((AppletGameContainer.Container) container).getApplet();
-			JSObject jso = JSObject.getWindow(applet);
-			jso.call("voirListeJoueurs", null);
-		}
-	}
 
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g)
@@ -179,7 +172,7 @@ public class Exploration extends BasicGameState{
 							local.allerVers(p.getX(), p.getY(), delta);
 
 					//synchronisation..
-					local.synchroniserStats(p);
+					local.synchroniserStats(p, container);
 
 				}
 				else {
@@ -202,7 +195,7 @@ public class Exploration extends BasicGameState{
 				}
 			}
 			if(change)
-				updateListHTML(container);
+				MainGame.updateListHTML(container);
 		}
 
 
