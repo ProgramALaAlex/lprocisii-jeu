@@ -287,10 +287,15 @@ table#inventaire td{
     color: yellow;
 }
 
-table#formulaire{
+table#formulaire td.label{
     text-align: right;
+    font-weight: bold;
 }
 
 table#formulaire td{
     padding: 5px;
+}
+
+table#formulaire input{
+    width: 200px;
 }
