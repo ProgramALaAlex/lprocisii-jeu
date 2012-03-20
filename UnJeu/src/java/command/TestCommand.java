@@ -5,6 +5,8 @@
 package command;
 
 
+import beans.InventaireBean;
+import beans.InventaireDB;
 import beans.JoueurBean;
 import beans.JoueurDB;
 import java.sql.Connection;
@@ -39,9 +41,19 @@ public class TestCommand implements Command {
         { 
             System.out.println("Fail du chargement du driver J mysql");
         }*/
+        
+        
         JoueurBean j = new JoueurBean("test", "ee", "dd");
         JoueurDB jdb = new JoueurDB();
         jdb.creerJoueur(j);
+        
+        InventaireBean inv = new InventaireBean(j.getIdJoueur());
+        InventaireDB idb = new InventaireDB();
+        idb.createInvenaire(inv);
+        
+        InventaireBean inv2 = idb.jsonInventaire(j.getIdJoueur());
+        System.out.println (inv2.getIdJoueur());
+        
         String vue = "index";
         return new ActionFlow(vue, vue+".jsp", false);
     }
