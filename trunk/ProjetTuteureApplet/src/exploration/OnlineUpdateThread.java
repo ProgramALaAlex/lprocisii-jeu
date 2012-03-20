@@ -8,15 +8,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.Vector;
 
 import org.newdawn.slick.GameContainer;
 
 import constantes.Constantes;
 
 public class OnlineUpdateThread extends Thread {
-	private ArrayList<Player> listeJoueurLoc;
+	private Vector<Player> listeJoueurLoc;
 
-	public OnlineUpdateThread(ArrayList<Player> listeJoueurLoc){
+	public OnlineUpdateThread(Vector<Player> listeJoueurLoc){
 		this.listeJoueurLoc = listeJoueurLoc;
 	}
 
@@ -36,7 +37,7 @@ public class OnlineUpdateThread extends Thread {
 		}
 	}
 	
-	public ArrayList<Player> getListeJoueurLoc(){
+	public Vector<Player> getListeJoueurLoc(){
 		return listeJoueurLoc;
 	}
 

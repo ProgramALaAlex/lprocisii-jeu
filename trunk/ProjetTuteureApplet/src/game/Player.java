@@ -4,12 +4,15 @@ import inventaire.Armure;
 import inventaire.Inventaire;
 import inventaire.Potion;
 
+import java.applet.Applet;
 import java.awt.Point;
 import java.rmi.RemoteException;
 import java.rmi.server.UID;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
+
+import netscape.javascript.JSObject;
 
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
@@ -170,8 +173,14 @@ public class Player extends Combattant implements Mover {
 					listeInvitation.clear();
 					groupe = new Groupe(this);
 				}
-				else {
+				else if(Constantes.ONLINE){
 					MainGame.disbandGroup(groupe.getID());
+				}
+				else groupe=null;
+				if(container instanceof AppletGameContainer.Container){
+					Applet applet = ((AppletGameContainer.Container) container).getApplet();
+					JSObject jso = JSObject.getWindow(applet);
+					jso.call("voirListeJoueurs", null);
 				}
 			}
 
@@ -189,10 +198,6 @@ public class Player extends Combattant implements Mover {
 				}
 			}
 
-			if (input.isKeyPressed(Input.KEY_G)){
-				groupe=null;
-			}
-
 			// debug : générer combat
 			if (input.isKeyPressed(Input.KEY_P)){
 				passerEnModeCombat(game);
@@ -202,7 +207,9 @@ public class Player extends Combattant implements Mover {
 		}
 	}
 
-
+	public boolean estInvitePar(Groupe g){
+		return listeInvitation.contains(g);
+	}
 
 	private void passerEnModeCombat(StateBasedGame game) {
 		System.out.println("MODE COMBAT");

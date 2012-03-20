@@ -6,6 +6,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UID;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -25,11 +26,11 @@ import rmi.interfaces.ReceiverInterface;
  * NE PAS IMPORTER DANS LE JEU
  */
 public class Serveur implements DispatcherInterface {
-	private ArrayList<ReceiverInterface> listeRefJoueurs;
+	private Vector<ReceiverInterface> listeRefJoueurs;
 	private Vector<Player> listeJoueurs;
 
 	public Serveur(){
-		listeRefJoueurs = new ArrayList<ReceiverInterface>();
+		listeRefJoueurs = new Vector<ReceiverInterface>();
 		listeJoueurs = new Vector<Player>();
 		new SupprimerOfflineThread(this).start();
 	}
@@ -115,10 +116,10 @@ public class Serveur implements DispatcherInterface {
 
 	@Override
 	public void disbandGroup(UID groupID) throws RemoteException {
-		for(ReceiverInterface ri : listeRefJoueurs)
-			for(Player p : listeJoueurs)
-				if(p.equals(ri.getPlayer()))
-					ri.disbandGroup();
+		for(Player p : listeJoueurs){
+			if(p.getGroupe().getID().equals(groupID))
+			getReferenceCorrespondante(p).disbandGroup();
+		}
 	}
 
 	public synchronized void retirerReferencesNeRepondantPas(){
@@ -129,10 +130,15 @@ public class Serveur implements DispatcherInterface {
 			try {
 				ri.getPlayer();
 			} catch (RemoteException e) {
-				listeJoueurs.remove(i);
-				i--;
-				iterator.remove();
-				System.out.println("Un joueur ne répondant pas a été supprimé.");
+				try{
+					listeJoueurs.remove(i);
+					i--;
+					iterator.remove();
+					System.out.println("Un joueur ne répondant pas a été supprimé.");
+				} catch(ConcurrentModificationException cme){
+					System.out.println("humhum");
+					new SupprimerOfflineThread(this).start();
+				}
 			}
 		}
 	}
@@ -142,7 +148,7 @@ public class Serveur implements DispatcherInterface {
 		// on récupère les joueurs du groupe du leader
 		for(Player p : listeJoueurs){
 			if(!p.equals(leader))
-			//			if(p.getGroupe()!=null && p.getGroupe().equals(leader.getGroupe())){
+				//			if(p.getGroupe()!=null && p.getGroupe().equals(leader.getGroupe())){
 				getReferenceCorrespondante(p).entrerEnCombat(listeJoueurs, listeMonstre);
 			//			}
 		}
@@ -155,9 +161,9 @@ public class Serveur implements DispatcherInterface {
 		for(Player p : emetteur.getListeJoueursCombatEnCours()){
 			System.out.println(p.getId());
 			if(!p.equals(emetteur)){
-//			if(!p.equals(emetteur) && p.getGroupe()!=null && p.getGroupe().equals(emetteur.getGroupe())){
+				//			if(!p.equals(emetteur) && p.getGroupe()!=null && p.getGroupe().equals(emetteur.getGroupe())){
 				getReferenceCorrespondante(p).attaquer(cible, degats);
-//			}
+				//			}
 			}
 		}
 	}

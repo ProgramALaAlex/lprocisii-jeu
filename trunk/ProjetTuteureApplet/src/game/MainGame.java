@@ -49,17 +49,17 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 		try { 
 			if (Constantes.ONLINE){
 				System.out.println("Connexion en cours...");
-//				System.setProperty("java.rmi.server.hostname", Constantes.IP_SERVEUR);
+				//				System.setProperty("java.rmi.server.hostname", Constantes.IP_SERVEUR);
 				Registry registry = LocateRegistry.getRegistry(Constantes.IP_SERVEUR, Constantes.REGISTRY_PORT);
 				System.out.println(registry);
 				remoteReference = (DispatcherInterface) Naming.lookup("rmi://"+Constantes.IP_SERVEUR+":"+Constantes.REGISTRY_PORT+"/"+Constantes.REGISTRY_NAME);
 				remoteReferenceChat = (ChatRemoteInterface) Naming.lookup("rmi://"+Constantes.IP_SERVEUR+":"+Constantes.REGISTRY_PORT+"/"+Constantes.REGISTRY_NAME_CHAT);
 				enregistrerClient();
-				
-//				remoteReference = (DispatcherInterface) registry.lookup(Constantes.REGISTRY_NAME);
+
+				//				remoteReference = (DispatcherInterface) registry.lookup(Constantes.REGISTRY_NAME);
 				System.out.println(remoteReference);
 				System.out.println("Connexion établie, normalement.");
-				
+
 			}
 		} catch (Exception e){
 			e.printStackTrace();
@@ -74,7 +74,7 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 		addState(new Menu(Constantes.MENU_MAP_STATE));
 		addState(new Combat(Constantes.COMBAT_STATE));
 	}
-	
+
 	public static void updateListeJoueur() throws RemoteException{
 		listePaquetJoueurs = remoteReference.updateListe(player.getId(), player.getMapId());
 	}
@@ -93,19 +93,17 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 			e.printStackTrace(); 
 		}
 	}
-	
-	
+
+
 	public static void initialisationJoueur(){
 		player = new Player("Joueur", "BlackGuard.png", x, y, 133, 133, 133, 134);
-//		player.setPvCourant(10);
+		//		player.setPvCourant(10);
 		listePaquetJoueurs = new ArrayList<Player>();
 		if (Constantes.ONLINE){
 			try {
 				Callbacker espoir = new Callbacker(player);
 				UnicastRemoteObject.exportObject(espoir, 0);
-				remoteReference.inscription(player, espoir); //impossible d'unicast player?! WTF§§
-				//je veux que player agisse normalement côté serveur
-				//et qu'une methode se fasse côté client donc j'l'exporte 2 fois.. 
+				remoteReference.inscription(player, espoir); 
 				listePaquetJoueurs = remoteReference.updateListe(player.getId(), player.getMapId());
 			} catch (RemoteException e) {
 				e.printStackTrace();
@@ -120,11 +118,11 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 		return player;
 	}
 
-	
+
 	public static DispatcherInterface getRemoteReference() {
 		return remoteReference;
 	} 
-	
+
 	public static ArrayList<Player> getListePaquetJoueurs() {
 		return listePaquetJoueurs;
 	}
@@ -133,41 +131,15 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 		MainGame.listePaquetJoueurs = listePaquetJoueurs;
 	}
 
-	// JS 
-	public void testJavaScript(){
-		try{
-		java.security.AccessController.doPrivileged(
-			new java.security.PrivilegedAction<Object>() {
-				@Override
-				public Object run() {
-					try{
-						System.out.println("Salut ! On m'a appelé via du javascript !");
-					}
-					catch (Exception e)
-					{
-						e.printStackTrace();
-					}
-					return null;
-
-				};
-
-			}
-		);
-
-		} catch (Exception ex) {
-		ex.printStackTrace();
-		}
-	}
-	
 	public void equiperArmure(String id){
 		int intid = Integer.parseInt(id);
 		player.getInventaire().equiperArmure(new Armure(intid));
 	}
-	
+
 	public void desequiperArmure(){
 		player.getInventaire().desequiperArmure();
 	}
-	
+
 	public String voirInventaire(){
 		if(player.getInventaire().countObservers()==0){
 			player.getInventaire().addObserver(this);
@@ -176,6 +148,9 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 		return player.getInventaire().toStringHTML();
 	}
 
+	/**
+	 * MVC
+	 */
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		// si on est bien dans une applet
@@ -186,9 +161,9 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 		}
 	}
 
-	
+
 	// CHAT
-	
+
 	@Override
 	public void afficheMsg(String message, String user){
 		if(this.getContainer() instanceof AppletGameContainer.Container){
@@ -197,7 +172,7 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 			jso.call("ajoutMsg", new String[] { user, message, "general"});
 		}
 	}
-	
+
 	private void enregistrerClient() {
 		try {
 			UnicastRemoteObject.exportObject(this, 0);
@@ -208,30 +183,30 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 		}
 		catch (Exception e) {
 			System.out.println("General exception: " +
-			e.getClass().getName() + ": " + e.getMessage());
+					e.getClass().getName() + ": " + e.getMessage());
 			System.exit(1);
 		}
 	}
-	
+
 	public void goMsg(String m){
 		final String g = m;
 		final ChatReceiverInterface client = this;
 		java.security.AccessController.doPrivileged(
 				new java.security.PrivilegedAction<Object>() {
-			@Override
-			public Object run() {
-				try {
-					System.out.println("goMsg appelé : "+g);
-					remoteReferenceChat.getMessage(g, client);
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				}
-				return null;
-			}
-		});
+					@Override
+					public Object run() {
+						try {
+							System.out.println("goMsg appelé : "+g);
+							remoteReferenceChat.getMessage(g, client);
+						} catch (RemoteException e) {
+							e.printStackTrace();
+						}
+						return null;
+					}
+				});
 
 	}
-	
+
 	public static void inviterAuGroupe(Player invite){
 		try {
 			if(remoteReference.inviterJoueur(player, invite))
@@ -249,7 +224,25 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 			e.printStackTrace();
 		}
 	}
-	
+
+	public static void inviterAuGroupeByID(final String id){
+		try{
+			java.security.AccessController.doPrivileged(
+					new java.security.PrivilegedAction<Object>() {
+						@Override
+						public Object run() {
+							int intid = Integer.parseInt(id);
+							inviterAuGroupe(Exploration.getListeJoueurLoc().get(intid));
+							return null;
+						}
+					});
+		}
+		catch(Exception ex){
+			ex.printStackTrace();
+		}
+
+	}
+
 	public static void accepterInvitation(){
 		try {
 			remoteReference.accepterInvitation(player.getGroupe().getLeader(), MainGame.getPlayer());
@@ -258,7 +251,7 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void disbandGroup(UID groupeID){
 		if(player.equals(player.getGroupe().getLeader()))
 			try {
@@ -267,7 +260,7 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 				e.printStackTrace();
 			}
 	}
-	
+
 	public static ArrayList<Player> getJoueursDuGroupe(){
 		ArrayList<Player> res = new ArrayList<Player>();
 		for (Player p : Exploration.getListeJoueurLoc())
@@ -275,5 +268,40 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 				res.add(p);
 		return res;
 	}
-	
+
+	public static String afficherListeJoueurMapHTML(){
+		String res = "";
+
+		if(player.getGroupe()!=null){
+			res += player.getGroupe().getNom()+"<br/>";
+			if(!player.getGroupe().getLeader().equals(player))
+				res+="Leader : <span class=\"joueurGroupe\">"+player.getGroupe().getLeader().getNom()+"</span>";
+		}
+		else res+= "Vous n'appartenez à aucun groupe";
+
+		if(Exploration.getListeJoueurLoc().size()>1){
+			res+="<br/>Autres joueurs présents dans la map : <ul>";
+
+			for(int i=0; i<Exploration.getListeJoueurLoc().size(); i++){
+				Player p = Exploration.getListeJoueurLoc().get(i);
+				res+="<li>";
+				if(!p.equals(player)){
+					if(p.getGroupe()!=null)
+						if(p.getGroupe().equals(player.getGroupe()))
+							res+="<span class=\"joueurGroupe\">"+p.getNom()+"</span>";
+						else
+							res+="<span class=\"joueurAutreGroupe\">"+p.getNom()+"</span>";
+					else res+=p.getNom();
+				}
+				if(player.getGroupe() != null && player.getGroupe().getLeader().equals(player) && p.getGroupe()==null && !p.estInvitePar(player.getGroupe()))
+					res+=" <a href='#' onclick='inviter("+i+"); return false;'>[Inviter]</a>";
+				else if(player.getGroupe()!=null && p.getGroupe()== null && p.estInvitePar(player.getGroupe()))
+					res+=" [invité]";
+				res+="</li>";
+			}
+			res+="</ul>";
+		}
+		return res;
+	}
+
 }
