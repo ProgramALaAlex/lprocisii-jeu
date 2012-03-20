@@ -23,7 +23,7 @@
 	<div id="wrapper">
     
 	<header>
-        	<h1><a title="Un Jeu" href="view.do"><img src="images/UnJeu.png" height="120px"/></a></h1>
+        	<h1><a title="Un Jeu" href="./"><img src="images/UnJeu.png" height="120px"/></a></h1>
         </header>
 	
             <c:choose>
@@ -43,8 +43,23 @@
                 <c:when test="${param.action == 'jeu'}">
                     <%@ include file="jeu.jsp" %>
                 </c:when>
+                <c:when test="${param.action == 'inscription'}">
+                    <%@ include file="inscription.jsp" %>
+                </c:when>
+                <c:when test="${param.action == 'connexion'}">
+                    <%@ include file="connexion.jsp" %>
+                </c:when>
+                <c:when test="${param.action == 'classement'}">
+                    <%@ include file="classement.jsp" %>
+                </c:when>
+                <c:when test="${param.action == 'screen'}">
+                    <%@ include file="screen.jsp" %>
+                </c:when>
+                <c:when test="${param.action == 'apropos'}">
+                    <%@ include file="apropos.jsp" %>
+                </c:when>
                 <c:otherwise>
-                    <%@ include file="jeu.jsp" %>
+                    <%@ include file="home.jsp" %>
                 </c:otherwise> 
             </c:choose>	
                 
@@ -60,4 +75,3 @@
 <script type="text/javascript" src="js/interaction.js"></script>
 </body>
 </html>
-
