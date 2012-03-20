@@ -117,8 +117,8 @@ public class Serveur implements DispatcherInterface {
 	@Override
 	public void disbandGroup(UID groupID) throws RemoteException {
 		for(Player p : listeJoueurs){
-			if(p.getGroupe().getID().equals(groupID))
-			getReferenceCorrespondante(p).disbandGroup();
+			if(p.getGroupe()!=null && p.getGroupe().getID().equals(groupID))
+				getReferenceCorrespondante(p).disbandGroup();
 		}
 	}
 

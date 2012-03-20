@@ -68,6 +68,6 @@ public class Groupe extends ArrayList<UID> implements Serializable{
 	public int getPosition(Player p){
 		return this.indexOf(p.getId());
 	}
-	
+
 	
 }

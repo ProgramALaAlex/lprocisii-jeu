@@ -177,17 +177,14 @@ public class Player extends Combattant implements Mover {
 					MainGame.disbandGroup(groupe.getID());
 				}
 				else groupe=null;
-				if(container instanceof AppletGameContainer.Container){
-					Applet applet = ((AppletGameContainer.Container) container).getApplet();
-					JSObject jso = JSObject.getWindow(applet);
-					jso.call("voirListeJoueurs", null);
-				}
+				MainGame.updateListHTML(container);
 			}
 
 			//accepter invitation (rejoindre groupe)
 			if (input.isKeyPressed(Input.KEY_O)){
 				if(groupe==null && !listeInvitation.isEmpty()){
 					accepterInvitation();
+					MainGame.updateListHTML(container);
 				}
 			}
 
@@ -581,11 +578,17 @@ public class Player extends Combattant implements Mover {
 		return(this.groupe!=null && this.groupe.size()>1);
 	}
 
-	public void synchroniserStats(Player p){
+	public void synchroniserStats(Player p, GameContainer container){
+		boolean change = false;
+		if((this.groupe != null && !this.groupe.equals(p.getGroupe())) || p.getGroupe()!=null && !p.getGroupe().equals(this.groupe)){
+			change = true;
+		}
 		this.groupe = p.getGroupe();
 		this.mapName = p.getMapId();
 		this.pvCourant = p.getPvCourant();
 		this.listeJoueursCombatEnCours = p.getListeJoueursCombatEnCours();
+		if(change)
+			MainGame.updateListHTML(container);
 	}
 
 
