@@ -32,7 +32,7 @@
                      <jsp:include page="nav.jsp"/>
                 </c:when>
                 <c:otherwise>
-                     <jsp:include page="nav.jsp"/>
+                     <jsp:include page="nav_log.jsp"/>
                 </c:otherwise> 
             </c:choose>
            
