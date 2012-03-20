@@ -286,3 +286,11 @@ table#inventaire td{
 .joueurAutreGroupe{
     color: yellow;
 }
+
+table#formulaire{
+    text-align: right;
+}
+
+table#formulaire td{
+    padding: 5px;
+}
