@@ -11,7 +11,7 @@
             <td><input type="password" name="pass"/></td>
         </tr>
         <tr>
-            <td></td><td><input type="submit" value="Connexion"/></td>
+            <td></td><td><input type="submit" name="submit" value="Connexion"/></td>
         </tr>
     </table>
 </form>

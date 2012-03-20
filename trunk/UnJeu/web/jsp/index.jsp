@@ -28,7 +28,7 @@
         </header>
 	
             <c:choose>
-                <c:when test="${!empty joueur } ">
+                <c:when test="${empty sessionScope['id']}">
                      <jsp:include page="nav.jsp"/>
                 </c:when>
                 <c:otherwise>
