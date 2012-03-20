@@ -42,7 +42,47 @@ public class InventaireBean {
     slot15_qte,
     slot16_idObjet,
     slot16_qte;
-
+    
+    public InventaireBean(){
+         
+    }
+    
+    public InventaireBean( int id ){
+        idJoueur = id;
+        slot1_idObjet = -1;
+        slot1_qte = 0;	
+        slot2_idObjet = -1;	
+        slot2_qte = 0;	
+        slot3_idObjet = -1;	
+        slot3_qte = 0;
+        slot4_idObjet = -1;
+        slot4_qte = 0;
+        slot5_idObjet = -1;
+        slot5_qte = 0;
+        slot6_idObjet = -1;
+        slot6_qte = 0;
+        slot7_idObjet = -1;
+        slot7_qte = 0;
+        slot8_idObjet = -1;
+        slot8_qte = 0;
+        slot9_idObjet = -1;
+        slot9_qte = 0;
+        slot10_idObjet = -1;
+        slot10_qte = 0;
+        slot11_idObjet = -1;
+        slot11_qte = 0;
+        slot12_idObjet = -1;
+        slot12_qte = 0;
+        slot13_idObjet = -1;
+        slot13_qte = 0;
+        slot14_idObjet = -1;
+        slot14_qte = 0;
+        slot15_idObjet = -1;
+        slot15_qte = 0;
+        slot16_idObjet = -1;
+        slot16_qte = 0;
+    }
+    
     public int getIdJoueur() {
         return idJoueur;
     }
@@ -307,5 +347,16 @@ public class InventaireBean {
         this.slot9_qte = slot9_qte;
     }
     
+    
+    public String getJs(){
+        String js = "objet = new Array();";
+        /*
+		+"objet[0] = new Array();"
+		+"objet[0]['url'] = "images/icone/attaque.gif";
+		
+		inventaire[0] = 0;
+		inventaire[1] = 1;*/
+        return js;
+    }
     
 }
