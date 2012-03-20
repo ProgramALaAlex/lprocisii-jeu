@@ -1,10 +1,14 @@
 package exploration;
 
+import java.applet.Applet;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.Vector;
+
+import netscape.javascript.JSObject;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
@@ -20,6 +24,7 @@ import org.newdawn.slick.util.pathfinding.PathFinder;
 import org.newdawn.slick.util.pathfinding.AStarPathFinder;
 
 import constantes.Constantes;
+import game.AppletGameContainer;
 import game.MainGame;
 import game.Player;
 
@@ -27,7 +32,7 @@ import game.Player;
 public class Exploration extends BasicGameState{
 	private int stateID;
 	private static Map currMap;
-	private static ArrayList<Player> listeJoueurLoc;
+	private static Vector<Player> listeJoueurLoc;
 	private OnlineUpdateThread onlineUpdateThread;
 
 	private static PathFinder finder;
@@ -49,14 +54,14 @@ public class Exploration extends BasicGameState{
 		setCurrMap(new Map("01"));
 		MainGame.initialisationJoueur();
 		finder = new AStarPathFinder(getCurrMap(), 500, false);
-		listeJoueurLoc = new ArrayList<Player>();
+		listeJoueurLoc = new Vector<Player>();
 		
 		if (Constantes.ONLINE){
 			try {
 				MainGame.updateListeJoueur();
 				MainGame.getRemoteReference().updatePosition(MainGame.getPlayer());
 				//on copie la liste des joueurs en local pour pour interpoler leurs mouvements apres
-				listeJoueurLoc = new ArrayList<Player>(MainGame.getListePaquetJoueurs());
+				listeJoueurLoc = new Vector<Player>(MainGame.getListePaquetJoueurs());
 				if(!listeJoueurLoc.isEmpty())
 					//On recréé les spritesheet en local
 					for(Player p : listeJoueurLoc){
@@ -69,7 +74,16 @@ public class Exploration extends BasicGameState{
 			}
 		}
 		listeJoueurLoc.add(MainGame.getPlayer());
+		updateListHTML(container);
 
+	}
+
+	private void updateListHTML(GameContainer container) {
+		if(container instanceof AppletGameContainer.Container){
+			Applet applet = ((AppletGameContainer.Container) container).getApplet();
+			JSObject jso = JSObject.getWindow(applet);
+			jso.call("voirListeJoueurs", null);
+		}
 	}
 
 	@Override
@@ -149,7 +163,8 @@ public class Exploration extends BasicGameState{
 					return (Float.compare(p1.getY(), p2.getY()));
 				}
 			});
-
+			
+			boolean change=false;
 			for(Player p : MainGame.getListePaquetJoueurs()){
 				if(listeJoueurLoc.contains(p) && (!p.equals(MainGame.getPlayer()))){
 					Player local = listeJoueurLoc.get(listeJoueurLoc.indexOf(p));
@@ -170,6 +185,7 @@ public class Exploration extends BasicGameState{
 				else {
 					listeJoueurLoc.add(p);
 					listeJoueurLoc.get(listeJoueurLoc.indexOf(p)).initAnimation(); //obligé de faire ça à cause du transient
+					change=true;
 				}
 			}
 			// si la liste locale contient un joueur qui n'est pas dans la liste updaté = il est soit déco, soit dans une autre map
@@ -179,10 +195,14 @@ public class Exploration extends BasicGameState{
 				if(!p.equals(MainGame.getPlayer()) && !MainGame.getListePaquetJoueurs().contains(p)){
 					if(p.getGroupe()!=null && p.getGroupe().getLeader().equals(p))
 						for(Player p2 : listeJoueurLoc)
-							p2.getGroupe().remove(0);
+							if(!p2.equals(p) && p2.getGroupe()!=null && p2.getGroupe().getLeader().equals(p))
+								p2.getGroupe().remove(0);
 					iterator.remove();
+					change=true;
 				}
 			}
+			if(change)
+				updateListHTML(container);
 		}
 
 
@@ -281,7 +301,7 @@ public class Exploration extends BasicGameState{
 		finder = new AStarPathFinder(getCurrMap(), 500, false);
 	}
 
-	public static ArrayList<Player> getListeJoueurLoc() {
+	public static Vector<Player> getListeJoueurLoc() {
 		return listeJoueurLoc;
 	}
 
