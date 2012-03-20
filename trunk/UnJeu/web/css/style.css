@@ -17,7 +17,7 @@ a { color: #9C0; }
 a:hover { color: #FFF; }
 p { margin: 0 0 15px 0; }
 
-a img.imgright { float: right; padding: 5px; margin: 0 0 10px 15px; border: 1px solid #333; }
+/* a img.imgright { float: right; padding: 5px; margin: 0 0 10px 15px; border: 1px solid #333; } */
 a:hover img.imgright { border: 5px solid #9C0; padding: 1px; margin: 0 0 10px 15px; }
 
 h1, h2, h3, h4, h5 { font-weight: bold; font-size: 24px; margin: 0 0 15px 0; color: #FFF; text-shadow: 2px 2px 2px #000000; }
@@ -143,6 +143,7 @@ aside#sidebar ul li
 	display: block;
 }
 
+/*
 aside#sidebar ul li a
 {
 	float: left;
@@ -151,7 +152,7 @@ aside#sidebar ul li a
 	border-left: 3px solid #222;
 	margin: 0 0 5px 0;
 	line-height: 20px;
-}
+} */
 
 aside#sidebar ul li a:hover
 {
@@ -276,4 +277,12 @@ table#inventaire td{
 	position: relative;
 	top: 100px;
 	left: 20px;
+}
+
+.joueurGroupe{
+    color: greenyellow;
+}
+
+.joueurAutreGroupe{
+    color: yellow;
 }

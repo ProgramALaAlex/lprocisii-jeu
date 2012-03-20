@@ -6,6 +6,7 @@
 package command;
 
 import java.util.concurrent.ConcurrentHashMap;
+import sun.misc.BASE64Encoder;
 
 /**
  *
