@@ -32,7 +32,7 @@
             </td>
         </tr>
         <tr>
-            <td colspan="2" align="center"><input type="submit" name="submit" value="Je m'inscris!" /></td>
+            <td></td><td><input type="submit" name="submit" value="Je m'inscris!" /></td>
         </tr>
     </table>
 </form>
