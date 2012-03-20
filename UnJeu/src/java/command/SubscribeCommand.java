@@ -51,7 +51,7 @@ public class SubscribeCommand implements Command {
                 request.setAttribute("erreur", "Erreur : mot de passe.");
             }
         }
-        return new ActionFlow(vue, vue + ".jsp", false);
+        return new ActionFlow(vue, vue + ".jsp?action=inscription", false);
     }
         
 }
