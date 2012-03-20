@@ -59,6 +59,12 @@
                 <c:when test="${param.action == 'apropos'}">
                     <%@ include file="apropos.jsp" %>
                 </c:when>
+                <c:when test="${param.action == 'armu'}">
+                    <%@ include file="armu.jsp" %>
+                </c:when>
+                <c:when test="${param.action == 'voir'}">
+                    <%@ include file="voir.jsp" %>
+                </c:when>
                 <c:otherwise>
                     <%@ include file="home.jsp" %>
                 </c:otherwise> 
