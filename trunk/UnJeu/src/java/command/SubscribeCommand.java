@@ -24,36 +24,34 @@ public class SubscribeCommand implements Command {
     @Override
     public ActionFlow actionPerform(HttpServletRequest request) {
         String vue = "index";
-        String erreur = "erreur";
         
         System.out.println(this.getCommandName());
         
-        
-        String pseudo = request.getParameter("pseudo");
-        String mail = request.getParameter("mail");
-        String pass1 = request.getParameter("pass1");
-        String pass2 = request.getParameter("pass2");
-        
-        JoueurDB db = new JoueurDB();
-        
-        // si les champs ne sont pas remplis
-        if(pseudo.equals("") || mail.equals("") || pass1.equals("") || pass1.equals(""))
-            request.setAttribute("erreur", "Erreur : tous les champs ne sont pas remplis.");
-        else
-        
-        // Si un utilisateur existe déjà
-        if (db.existe(pseudo)) {
-            // Plus tard :)
+        if (request.getParameter("submit") != null) {
+            String pseudo = ""+request.getParameter("pseudo");
+            String mail = ""+request.getParameter("mail");
+            String pass1 = ""+request.getParameter("pass1");
+            String pass2 = ""+request.getParameter("pass2");
+
+            JoueurDB db = new JoueurDB();
+
+            // si les champs ne sont pas remplis
+            if(pseudo.equals("") || mail.equals("") || pass1.equals("") || pass1.equals(""))
+                request.setAttribute("erreur", "Erreur : tous les champs ne sont pas remplis.");
+            else
+            // Si un utilisateur existe déjà
+            if (db.existe(pseudo)) {
+                request.setAttribute("erreur", "Erreur : ce pseudo existe déjà.");
+            }
+            // Si tout est OK
+            else if(pass1.equals(pass2)){
+                
+            }
+            else {
+                request.setAttribute("erreur", "Erreur : mot de passe.");
+            }
         }
-        // Si tout est OK
-        else if(pass1.equals(pass2)){
-            
-        }
-        else {
-            request.setAttribute("erreur", "Erreur : mot de passe.");
-        }
-        
         return new ActionFlow(vue, vue + ".jsp", false);
     }
-
+        
 }
