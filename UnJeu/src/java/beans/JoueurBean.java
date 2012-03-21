@@ -63,6 +63,10 @@ public class JoueurBean {
         return groupe;
     }
 
+    public static boolean estAdmin(int groupe) {
+        return (groupe == 2);
+    }
+    
     public void setGroupe(int groupe) {
         this.groupe = groupe;
     }
