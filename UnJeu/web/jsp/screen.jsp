@@ -1,1 +1,1 @@
-<h3>Capture d'ecran!</h3>
+<h3>Captures d'écran!</h3>
