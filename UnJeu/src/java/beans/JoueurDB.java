@@ -58,7 +58,6 @@ public class JoueurDB {
                     +"pseudo='"+joueur.getPseudo()
                     + "', mail='"+joueur.getMail()
                     + "', pass='"+joueur.getPass()
-                    + "', dateInscription='"+joueur.getDateInscription()
                     + "', attaque='"+joueur.getAttaque()
                     + "', vitesse='"+joueur.getVitesse()
                     + "', pvMax='"+joueur.getPvMax()
