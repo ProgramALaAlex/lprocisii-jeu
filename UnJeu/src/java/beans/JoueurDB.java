@@ -56,24 +56,24 @@ public class JoueurDB {
             Statement statement = con.createStatement(); 
             String query = "UPDATE unjeu.joueur SET "
                     +"pseudo='"+joueur.getPseudo()
-                    + "', mail="+joueur.getMail()
-                    + "', pass="+joueur.getPass()
-                    + "', dateInscription="+joueur.getDateInscription()
-                    + "', attaque="+joueur.getAttaque()
-                    + "', vitesse="+joueur.getVitesse()
-                    + "', pvMax="+joueur.getPvMax()
-                    + "', pvActuels="+joueur.getPvActuels()
-                    + "', totalCombats="+joueur.getTotalCombats()
-                    + "', totalMonstres="+joueur.getTotalMonstres()
-                    + "', dernierX="+joueur.getDernierX()
-                    + "', dernierY="+joueur.getDernierY()
-                    + "', idMap="+joueur.getIdMap()
-                    + "', idArme="+joueur.getIdArme()
-                    + "', idArmure="+joueur.getIdArmure()
-                    + "', idApparance="+joueur.getIdApparance()
-                    + "', newsletter="+joueur.getNewsletter()
-                    + "', groupe="+joueur.getGroupe()
-                    + " WHERE idJoueur='"+joueur.getIdJoueur()+"'";
+                    + "', mail='"+joueur.getMail()
+                    + "', pass='"+joueur.getPass()
+                    + "', dateInscription='"+joueur.getDateInscription()
+                    + "', attaque='"+joueur.getAttaque()
+                    + "', vitesse='"+joueur.getVitesse()
+                    + "', pvMax='"+joueur.getPvMax()
+                    + "', pvActuels='"+joueur.getPvActuels()
+                    + "', totalCombats='"+joueur.getTotalCombats()
+                    + "', totalMonstres='"+joueur.getTotalMonstres()
+                    + "', dernierX='"+joueur.getDernierX()
+                    + "', dernierY='"+joueur.getDernierY()
+                    + "', idMap='"+joueur.getIdMap()
+                    + "', idArme='"+joueur.getIdArme()
+                    + "', idArmure='"+joueur.getIdArmure()
+                    + "', idApparance='"+joueur.getIdApparance()
+                    + "', newsletter='"+joueur.getNewsletter()
+                    + "', groupe='"+joueur.getGroupe()
+                    + "' WHERE idJoueur='"+joueur.getIdJoueur()+"'";
             System.out.println(query);
             statement.executeUpdate(query);
         }
