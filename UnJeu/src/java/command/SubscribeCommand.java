@@ -59,6 +59,9 @@ public class SubscribeCommand implements Command {
                 joueur.setVitesse(vitesse);
                 joueur.setPvMax(pv);
                 joueur.setPvActuels(pv);
+                joueur.setIdMap(1);
+                joueur.setDernierX(250);
+                joueur.setDernierY(330);
                 
                 // ID de map? Coordonnées ? Apparence ?
                 
