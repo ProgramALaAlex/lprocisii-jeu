@@ -5,6 +5,7 @@
  */
 package command;
 
+import beans.JoueurBean;
 import beans.JoueurDB;
 import javax.servlet.http.*;
 
@@ -29,12 +30,21 @@ public class SubscribeCommand implements Command {
             String mail = ""+request.getParameter("mail");
             String pass1 = ""+request.getParameter("pass1");
             String pass2 = ""+request.getParameter("pass2");
+            int attaque = Integer.parseInt(request.getParameter("attaque"));
+            int vitesse = Integer.parseInt(request.getParameter("vitesse"));
+            int pv = Integer.parseInt(request.getParameter("pv"));
+            
+            request.setAttribute("distrib", 100 - attaque - vitesse - pv);
 
             JoueurDB db = new JoueurDB();
-
+            
             // si les champs ne sont pas remplis
-            if(pseudo.equals("") || mail.equals("") || pass1.equals("") || pass1.equals(""))
+            if(pseudo.equals("") || mail.equals("") || pass1.equals("") || pass2.equals(""))
                 request.setAttribute("erreur", "Erreur : tous les champs ne sont pas remplis.");
+            else
+            // Si tous les points de stat ne sont pas distribués
+            if (attaque+vitesse+pv != 100)
+                request.setAttribute("erreur", "Erreur : tous les points de statistique n'ont pas été distribués.");
             else
             // Si un utilisateur existe déjà
             if (db.existe(pseudo)) {
@@ -42,10 +52,24 @@ public class SubscribeCommand implements Command {
             }
             // Si tout est OK
             else if(pass1.equals(pass2)){
+                JoueurBean joueur = new JoueurBean(pseudo, mail, pass1);
+                joueur.setAttaque(attaque);
+                joueur.setVitesse(vitesse);
+                joueur.setPvMax(pv);
+                joueur.setPvActuels(pv);
                 
+                // ID de map? Coordonnées ? Apparence ?
+                
+                db.creerJoueur(joueur);
+                
+                // A l'inscription, connexion automatique
+                HttpSession session = request.getSession(false);
+                session.setAttribute("id", joueur.getIdJoueur());
+                session.setAttribute("pseudo", joueur.getPseudo());
+                return new ActionFlow(vue, vue + ".jsp", false);
             }
             else {
-                request.setAttribute("erreur", "Erreur : mot de passe.");
+                request.setAttribute("erreur", "Erreur : mauvaise confirmation du mot de passe.");
             }
         }
         return new ActionFlow(vue, vue + ".jsp?action=inscription", false);
