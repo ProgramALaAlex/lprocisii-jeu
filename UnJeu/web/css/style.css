@@ -299,3 +299,7 @@ table#formulaire td{
 table#formulaire input{
     width: 200px;
 }
+
+.errorMessage{
+    color: firebrick;
+}
