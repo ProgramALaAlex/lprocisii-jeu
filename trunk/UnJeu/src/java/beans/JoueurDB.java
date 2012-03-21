@@ -50,6 +50,55 @@ public class JoueurDB {
         }
     }
     
+    public void majJoueur(JoueurBean joueur){
+        try {
+            Connection con = Singleton.getInstance().getConnection();
+            Statement statement = con.createStatement(); 
+            String query = "UPDATE unjeu.joueur SET "
+                    +"pseudo='"+joueur.getPseudo()
+                    + "', mail="+joueur.getMail()
+                    + "', pass="+joueur.getPass()
+                    + "', dateInscription="+joueur.getDateInscription()
+                    + "', attaque="+joueur.getAttaque()
+                    + "', vitesse="+joueur.getVitesse()
+                    + "', pvMax="+joueur.getPvMax()
+                    + "', pvActuels="+joueur.getPvActuels()
+                    + "', totalCombats="+joueur.getTotalCombats()
+                    + "', totalMonstres="+joueur.getTotalMonstres()
+                    + "', dernierX="+joueur.getDernierX()
+                    + "', dernierY="+joueur.getDernierY()
+                    + "', idMap="+joueur.getIdMap()
+                    + "', idArme="+joueur.getIdArme()
+                    + "', idArmure="+joueur.getIdArmure()
+                    + "', idApparance="+joueur.getIdApparance()
+                    + "', newsletter="+joueur.getNewsletter()
+                    + "', groupe="+joueur.getGroupe()
+                    + " WHERE idJoueur='"+joueur.getIdJoueur()+"'";
+            System.out.println(query);
+            statement.executeUpdate(query);
+        }
+        catch(Exception ex) 
+        { 
+            System.out.println("Fail du chargement du driver J mysql");
+            System.out.println(ex.toString());
+        }
+    }
+    
+    public void deleteJoueur(String id){
+        try {
+            Connection con = Singleton.getInstance().getConnection();
+            Statement statement = con.createStatement(); 
+            String query = "DELETE FROM unjeu.joueur WHERE idJoueur='"+id+"'";
+            System.out.println(query);
+            statement.executeUpdate(query);
+        }
+        catch(Exception ex) 
+        { 
+            System.out.println("Fail du chargement du driver J mysql");
+            System.out.println(ex.toString());
+        }
+    }
+    
     public JoueurBean getById( String id ){
         try {
             Connection con = Singleton.getInstance().getConnection();
