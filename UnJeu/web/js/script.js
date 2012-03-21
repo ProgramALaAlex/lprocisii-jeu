@@ -2,6 +2,11 @@ var name = "Test";
 var ongletCourant = "general";
 
 
+function getApplet(){
+    var appletloader = document.getElementById('unJeu');
+    return appletloader.getApplet().getGame();
+}
+
 function ajoutMsg( user, msg, onglet){
     var div = document.createElement('div');
     var span1 = document.createElement('span');
@@ -17,55 +22,44 @@ function ajoutMsg( user, msg, onglet){
 function envoi(){
     var msg = document.getElementById('msg').value;
     document.getElementById('msg').value = "";
-    var appletloader = document.getElementById('unJeu');
-    var applet = appletloader.getApplet().getGame();
-    applet.goMsg(msg);
+    getApplet().goMsg(msg);
     return false;
 }
 
 function switchOnglet ( ong ){
     switch ( ong ){
-	case "general" :
-	    document.getElementById('general').style.display = "";
-	    document.getElementById('guild').style.display = "none";
-	    document.getElementById('whisp').style.display = "none";
-	    break;
+    case "general" :
+        document.getElementById('general').style.display = "";
+        document.getElementById('guild').style.display = "none";
+        document.getElementById('whisp').style.display = "none";
+        break;
 
-	case "whisp" :
-	    document.getElementById('general').style.display = "none";
-	    document.getElementById('guild').style.display = "none";
-	    document.getElementById('whisp').style.display = "";
-	    break;
+    case "whisp" :
+        document.getElementById('general').style.display = "none";
+        document.getElementById('guild').style.display = "none";
+        document.getElementById('whisp').style.display = "";
+        break;
 
-	case "guild" :
-	    document.getElementById('general').style.display = "none";
-	    document.getElementById('guild').style.display = "";
-	    document.getElementById('whisp').style.display = "none";
-	    break;
+    case "guild" :
+        document.getElementById('general').style.display = "none";
+        document.getElementById('guild').style.display = "";
+        document.getElementById('whisp').style.display = "none";
+        break;
     }
 }
 
 
-
 function sysout(){
-    var appletloader = document.getElementById('unJeu');
-    var applet = appletloader.getApplet().getGame();
-    applet.testJavaScript();
+    getApplet().testJavaScript();
 }
 function equiperArmure(a){
-    var appletloader = document.getElementById('unJeu');
-    var applet = appletloader.getApplet().getGame();
-    applet.equiperArmure(a);
+    getApplet().equiperArmure(a);
 }
 function desequiperArmure(){
-    var appletloader = document.getElementById('unJeu');
-    var applet = appletloader.getApplet().getGame();
-    applet.desequiperArmure();
+    getApplet().desequiperArmure();
 }
 function voirInventaire(){
-    var appletloader = document.getElementById('unJeu');
-    var applet = appletloader.getApplet().getGame();
-    var inv = applet.voirInventaire();
+    var inv = getApplet().voirInventaire();
     $("#butInv").hide();
     $("#inventaire").html(inv);
 }
@@ -76,16 +70,33 @@ function activerBoutons() {
     $("input").removeAttr("disabled");
 }
 function voirListeJoueurs(){
-    var appletloader = document.getElementById('unJeu');
-    var applet = appletloader.getApplet().getGame();
-    var liste = applet.afficherListeJoueurMapHTML();
+    var liste = getApplet().afficherListeJoueurMapHTML();
     $("#listeJoueur").html(liste);
 }
 
 function inviter(id){
-    var appletloader = document.getElementById('unJeu');
-    var applet = appletloader.getApplet().getGame();
-    applet.inviterAuGroupeByID(id);
-    var liste = applet.afficherListeJoueurMapHTML();
-    $("#listeJoueur").html(liste);
+    getApplet().inviterAuGroupeByID(id);
+    voirListeJoueurs();
+}
+
+function creerGroupe(nomGroupe){
+    getApplet().creerGroupe(nomGroupe);
+    voirListeJoueurs();
+}
+
+function voirListeInvitations(){
+    var liste = getApplet().afficherListeInvitationHTML();
+    $("#listeInvitation").html(liste);
+}
+
+function rejoindre(id){
+    getApplet().rejoindreGroupe(id);
+    voirListeJoueurs();
+    voirListeInvitations();
+}
+
+function nepasrejoindre(id){
+    getApplet().refuserGroupe(id);
+    voirListeJoueurs();
+    voirListeInvitations();
 }
