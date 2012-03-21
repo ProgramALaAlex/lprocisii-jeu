@@ -36,6 +36,7 @@ public class ConnectCommand implements Command {
                     System.out.println("Connection successful");
                     session.setAttribute("id", joueur.getIdJoueur());
                     session.setAttribute("pseudo", joueur.getPseudo());
+                    session.setAttribute("groupe", joueur.getGroupe());
                     return new ActionFlow(vue, vue + ".jsp", false);
                 } else {
                     System.out.println("connection failed");
