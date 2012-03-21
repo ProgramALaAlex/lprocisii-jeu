@@ -6,6 +6,10 @@
 %>
 <h3>Rechercher un joueur</h3>
 
+<c:if test="${not empty requestScope['info']}">
+    <p class="infoMessage"><c:out value="${requestScope['info']}" /></p>
+</c:if>
+
 <form methode="get" action="./">
     <input type="hidden" name="action" value="armu"/>
     <input type="text" name="pseudo"/>

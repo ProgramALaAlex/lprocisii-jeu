@@ -26,6 +26,8 @@ public class CommandManager {
         cmds.put("inscription", new SubscribeCommand());
         cmds.put("connexion", new ConnectCommand());
         cmds.put("deconnexion", new DisconnectCommand());
+        cmds.put("supprimer", new DeleteCommand());
+        
 
     }
 
