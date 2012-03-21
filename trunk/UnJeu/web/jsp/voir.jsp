@@ -12,6 +12,9 @@
 <c:if test="${not empty requestScope['info']}">
     <p class="infoMessage"><c:out value="${requestScope['info']}" /></p>
 </c:if>
+<c:if test="${not empty requestScope['erreur']}">
+    <p class="errorMessage"><c:out value="${requestScope['erreur']}" /></p>
+</c:if>
     
 <% if(admin) {%>
 <a href="javascript: void(0);" onClick="$('#adminPanel').slideToggle();">Admin</a>
