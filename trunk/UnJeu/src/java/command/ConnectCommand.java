@@ -42,7 +42,7 @@ public class ConnectCommand implements Command {
                     request.setAttribute("erreur", "Erreur : identifiants invalides.");
                 }
             } else {
-                request.setAttribute("erreur", "Erreur : tous les champs sont obligatoires.");
+                request.setAttribute("erreur", "Erreur : entrez un pseudo et un mot de passe.");
             }
         }
         return new ActionFlow(vue, vue + ".jsp?action=connexion", false);

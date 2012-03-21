@@ -195,11 +195,9 @@ public class JoueurDB {
             Connection con = Singleton.getInstance().getConnection();
             PreparedStatement ps = con.prepareStatement("SELECT idJoueur FROM unjeu.joueur WHERE pseudo='"+pseudo+"'");
             ResultSet rs = ps.executeQuery();
+            System.out.println("pseudo : "+pseudo);
             if (rs.next()) {
                 return true;
-            }
-            else{
-                return false;
             }
         } catch (Exception ex) {
             Logger.getLogger(JoueurDB.class.getName()).log(Level.SEVERE, null, ex);

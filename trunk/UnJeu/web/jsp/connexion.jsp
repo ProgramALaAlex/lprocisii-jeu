@@ -7,11 +7,11 @@
 <form method="post" action="connexion.do">
     <table id="formulaire">
         <tr>
-            <td class="label">Login</td>
-            <td><input type="text" name="login"/></td>
+            <td class="label">Pseudo</td>
+            <td><input type="text" name="login" value="<%=request.getParameter("login") != null ? request.getParameter("login") : ""%>"  /></td>
         </tr>
         <tr>
-            <td class="label">Password</td>
+            <td class="label">Mot de passe</td>
             <td><input type="password" name="pass"/></td>
         </tr>
         <tr>
