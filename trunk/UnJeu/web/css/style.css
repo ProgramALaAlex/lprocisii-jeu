@@ -305,10 +305,11 @@ table#inscription input{
 }
 
 .adminField{
-	width: 400px;
+	width: 300px;
 	height: 90px;
 	border: 1px solid #888;
 	background-color: #191919;
+        margin: 0 auto;
 	padding: 20px;
 }
 .adminField legend{
