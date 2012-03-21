@@ -101,7 +101,7 @@ public class JoueurDB {
     public JoueurBean getById( String id ){
         try {
             Connection con = Singleton.getInstance().getConnection();
-            PreparedStatement ps = con.prepareStatement("SELECT * FROM unjeu.joueur WHERE idJoueur="+id);
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM unjeu.joueur WHERE idJoueur='"+id+"'");
             ResultSet rs = ps.executeQuery();
             JoueurBean joueur = null;
             if (rs.next()) {

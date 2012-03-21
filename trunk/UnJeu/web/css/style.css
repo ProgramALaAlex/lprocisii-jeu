@@ -309,7 +309,7 @@ table#inscription input{
 }
 
 #adminPanel{
-	width: 300px;
+	width: 200px;
         display: none;
 	border: 1px solid #191919;
 	padding: 5px 10px;
@@ -322,4 +322,8 @@ table#inscription input{
 #adminPanel input{
     vertical-align: middle;
     cursor: pointer;
+}
+
+form#profilModif {
+    display: none;
 }
