@@ -1,5 +1,9 @@
 <h3>Connnexion!</h3>
 
+<c:if test="${not empty requestScope['erreur']}">
+    <p class="errorMessage"><c:out value="${requestScope['erreur']}" /></p>
+</c:if>
+
 <form method="post" action="connexion.do">
     <table id="formulaire">
         <tr>

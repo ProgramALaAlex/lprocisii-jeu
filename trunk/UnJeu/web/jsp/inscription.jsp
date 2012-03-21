@@ -1,6 +1,10 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <h3>Inscription!</h3>
 
+<c:if test="${not empty requestScope['erreur']}">
+    <p class="errorMessage"><c:out value="${requestScope['erreur']}" /></p>
+</c:if>
+    
 <form method="post" action="inscription.do">
     <table id="formulaire">
         <tr>
