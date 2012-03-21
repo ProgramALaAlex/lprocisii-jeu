@@ -5,9 +5,9 @@
     <p class="errorMessage"><c:out value="${requestScope['erreur']}" /></p>
 </c:if>
     
-<fieldset>
+<fieldset class="adminField">
     <legend>Légende</legend>
-    <form method="post" action="inscription.do">
+    <form method="post" action="">
         <table id="formulaire">
             
         </table>

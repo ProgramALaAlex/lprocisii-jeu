@@ -303,3 +303,20 @@ table#formulaire input{
 .errorMessage{
     color: firebrick;
 }
+
+.adminField{
+	width: 400px;
+	height: 90px;
+	border: 1px solid #888;
+	background-color: #191919;
+	padding-top: 20px;
+}
+.adminField legend{
+	margin-left: 30px;
+	padding: 0px 20px;
+	border:1px solid #888;
+	background-color: #111;
+	color: gainsboro;
+	font-weight: bold;
+	font-size:90%;
+}
