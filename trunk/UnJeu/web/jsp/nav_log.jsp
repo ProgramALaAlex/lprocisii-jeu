@@ -13,8 +13,5 @@
                 <li><a title="Screenshots" href="./?action=screen">Screenshots</a></li>
 		<li><a title="A propos" href="./?action=apropos">A propos</a></li>
                 <li><a title="Armurerie" href="./?action=armu">Armurerie</a></li>
-                <c:if test="${sessionScope['groupe'] == 2}">
-                    <li><a title="Administration" href="./?action=admin">Admin</a></li>
-                </c:if>
             </ul>
         </nav>
