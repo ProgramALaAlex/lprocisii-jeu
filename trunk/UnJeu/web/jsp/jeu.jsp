@@ -1,4 +1,9 @@
-      <section id="content">
+<%@page import="beans.ClefDB"%>
+<%
+    ClefDB cle = new ClefDB();
+    String clef = cle.createInvenaire(session.getAttribute("id")+"");
+%>    
+<section id="content">
     
               <applet mayscript="true"
 			code="org.lwjgl.util.applet.AppletLoader"
@@ -18,7 +23,8 @@
                      value="game.AppletGameContainer">
               <param name="game"
                      value="game.MainGame">
-
+              <param name="clef"
+                     value="<%= clef %>">
               <!-- logo to paint while loading, will be centered -->
              <!-- <param name="al_logo"
                      value="appletlogo.png">
