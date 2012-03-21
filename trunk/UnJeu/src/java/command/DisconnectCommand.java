@@ -24,7 +24,8 @@ public class DisconnectCommand implements Command {
         String vue = "index";
         
         HttpSession session = request.getSession(false);
-        session.invalidate();
+        if (session != null)
+            session.invalidate();
         
         return new ActionFlow(vue, vue + ".jsp", false);
     }
