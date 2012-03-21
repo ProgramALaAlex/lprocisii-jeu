@@ -79,11 +79,11 @@ public class JoueurBean {
         this.idJoueur = id;
     }
     
-    public float getAttaque() {
-        return attaque;
+    public int getAttaque() {
+        return (int)attaque;
     }
 
-    public void setAttaque(float attaque) {
+    public void setAttaque(int attaque) {
         this.attaque = attaque;
     }
 
@@ -207,11 +207,11 @@ public class JoueurBean {
         this.totalMonstres = totalMonstres;
     }
 
-    public float getVitesse() {
-        return vitesse;
+    public int getVitesse() {
+        return (int)vitesse;
     }
 
-    public void setVitesse(float vitesse) {
+    public void setVitesse(int vitesse) {
         this.vitesse = vitesse;
     }
         

@@ -16,11 +16,15 @@ import javax.servlet.http.*;
  */
 public class SubscribeCommand implements Command {
 
+    public SubscribeCommand(){
+        super();
+    }
+    
     @Override
     public String getCommandName() {
         return "subscribeCommand";
     }
-
+    
     @Override
     public ActionFlow actionPerform(HttpServletRequest request) {
         String vue = "index";
@@ -55,10 +59,10 @@ public class SubscribeCommand implements Command {
             // Si tout est OK
             else if(pass1.equals(pass2)){
                 JoueurBean joueur = new JoueurBean(pseudo, mail, pass1);
-                joueur.setAttaque(attaque);
-                joueur.setVitesse(vitesse);
-                joueur.setPvMax(pv);
-                joueur.setPvActuels(pv);
+                joueur.setAttaque(100+attaque);
+                joueur.setVitesse(100+vitesse);
+                joueur.setPvMax(100+pv);
+                joueur.setPvActuels(100+pv);
                 joueur.setIdMap(1);
                 joueur.setDernierX(250);
                 joueur.setDernierY(330);

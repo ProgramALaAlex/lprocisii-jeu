@@ -22,11 +22,11 @@ public class CommandManager {
 
     public static void init() {
         cmds.put("view", new ViewCommand());
-        //cmds.put("test", new TestCommand());
         cmds.put("inscription", new SubscribeCommand());
         cmds.put("connexion", new ConnectCommand());
         cmds.put("deconnexion", new DisconnectCommand());
         cmds.put("supprimer", new DeleteCommand());
+        cmds.put("modifier", new UpdateCommand());
         
 
     }
