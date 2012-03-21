@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Client: localhost
--- Généré le : Mer 21 Mars 2012 à 13:21
+-- Généré le : Mer 21 Mars 2012 à 15:56
 -- Version du serveur: 5.5.16
 -- Version de PHP: 5.3.8
 
@@ -69,6 +69,14 @@ CREATE TABLE IF NOT EXISTS `clef` (
   PRIMARY KEY (`clef`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Contenu de la table `clef`
+--
+
+INSERT INTO `clef` (`clef`, `idJoueur`) VALUES
+('3f914495-423d-4c82-888b-915b397b3f52', 30),
+('a0bf57ce-a642-46b6-b2a6-dab5004b0679', 30),
+('bfa8d0f9-a07c-4c70-8a08-8be124585d17', 30);
 
 -- --------------------------------------------------------
 
@@ -127,10 +135,7 @@ CREATE TABLE IF NOT EXISTS `inventaire` (
   UNIQUE KEY `idJoueur` (`idJoueur`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Contenu de la table `inventaire`
---
---------------------------------------------------------
+-- --------------------------------------------------------
 
 --
 -- Structure de la table `joueur`
@@ -155,9 +160,9 @@ CREATE TABLE IF NOT EXISTS `joueur` (
   `idArmure` int(11) NOT NULL,
   `idApparance` int(11) NOT NULL,
   `newsletter` int(11) NOT NULL,
+  `groupe` int(2) NOT NULL DEFAULT '1',
   PRIMARY KEY (`idJoueur`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=32 ;
-
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=33 ;
 
 -- --------------------------------------------------------
 
