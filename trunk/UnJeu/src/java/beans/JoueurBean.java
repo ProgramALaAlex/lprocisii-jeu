@@ -31,6 +31,7 @@ public class JoueurBean {
 	int idArmure;
 	int idApparance;
 	int newsletter;
+        int groupe;
         
     public static java.sql.Date getCurrentJavaSqlDate() {
         java.util.Date today = new java.util.Date();
@@ -55,6 +56,15 @@ public class JoueurBean {
 	this.idArmure = 0;
 	this.idApparance = 0;
 	this.newsletter = 0;
+        this.groupe = 1;
+    }
+
+    public int getGroupe() {
+        return groupe;
+    }
+
+    public void setGroupe(int groupe) {
+        this.groupe = groupe;
     }
 
     public int getIdJoueur() {
