@@ -76,6 +76,7 @@ public class SubscribeCommand implements Command {
                 HttpSession session = request.getSession(false);
                 session.setAttribute("id", joueur.getIdJoueur());
                 session.setAttribute("pseudo", joueur.getPseudo());
+                session.setAttribute("groupe", joueur.getGroupe());
                 return new ActionFlow(vue, vue + ".jsp", false);
             }
             else {

@@ -4,8 +4,6 @@
  */
 package command;
 
-import beans.JoueurBean;
-import beans.JoueurDB;
 import javax.servlet.http.*;
 
 /**
