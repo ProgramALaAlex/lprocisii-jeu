@@ -287,16 +287,16 @@ table#inventaire td{
     color: yellow;
 }
 
-table#formulaire td.label{
+table td.label{
     text-align: right;
     font-weight: bold;
 }
 
-table#formulaire td{
+table td{
     padding: 5px;
 }
 
-table#formulaire input{
+table#inscription input{
     width: 200px;
 }
 
@@ -309,7 +309,7 @@ table#formulaire input{
 	height: 90px;
 	border: 1px solid #888;
 	background-color: #191919;
-	padding-top: 20px;
+	padding: 20px;
 }
 .adminField legend{
 	margin-left: 30px;

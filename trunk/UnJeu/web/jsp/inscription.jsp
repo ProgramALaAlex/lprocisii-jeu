@@ -6,7 +6,7 @@
 </c:if>
     
 <form method="post" action="inscription.do">
-    <table id="formulaire">
+    <table id="inscription">
         <tr>
             <td class="label">Pseudo</td>
             <td><input type="text" name="pseudo" value="<%=request.getParameter("pseudo") != null ? request.getParameter("pseudo") : ""%>" /></td>

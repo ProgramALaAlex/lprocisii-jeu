@@ -6,10 +6,11 @@
 </c:if>
     
 <fieldset class="adminField">
-    <legend>Légende</legend>
+    <legend>Chercher un joueur</legend>
     <form method="post" action="">
-        <table id="formulaire">
-            
+        <table>
+            <tr><td>Pseudo</td><td><input type="text" name="pseudo" /></td></tr>
+            <tr><td></td><td><input type="submit" name="submit" value="Chercher" /></td></tr>
         </table>
     </form>
 </fieldset>
