@@ -20,7 +20,15 @@ public class Groupe extends ArrayList<UID> implements Serializable{
 		nom = "Groupe de "+leader.getNom();
 		this.add(leader.getId());
 		groupeId = new UID();
-		System.out.println(nom+" créé!");
+		System.out.println("\""+nom+"\" créé!");
+	}
+	
+	public Groupe(Player leader, String nomGroupe) {
+		super(4);
+		nom = nomGroupe.replaceAll("\\<.*?\\>", "");;
+		this.add(leader.getId());
+		groupeId = new UID();
+		System.out.println("\""+nom+"\" créé!");
 	}
 
 	public String getNom() {
@@ -67,6 +75,10 @@ public class Groupe extends ArrayList<UID> implements Serializable{
 	
 	public int getPosition(Player p){
 		return this.indexOf(p.getId());
+	}
+	
+	public boolean isLeader(Player p){
+		return(p.getId().equals(this.get(0)));
 	}
 
 	

@@ -117,8 +117,11 @@ public class Serveur implements DispatcherInterface {
 	@Override
 	public void disbandGroup(UID groupID) throws RemoteException {
 		for(Player p : listeJoueurs){
-			if(p.getGroupe()!=null && p.getGroupe().getID().equals(groupID))
+			if(p.getGroupe()!=null && p.getGroupe().getID().equals(groupID)){
 				getReferenceCorrespondante(p).disbandGroup();
+			}
+			else if(p.getGroupe()==null && p.containsInvitation(groupID))
+				getReferenceCorrespondante(p).removeInvitation(groupID);
 		}
 	}
 
@@ -181,6 +184,16 @@ public class Serveur implements DispatcherInterface {
 	@Override
 	public boolean isConnected(Player p) throws RemoteException {
 		return listeJoueurs.contains(p);
+	}
+
+	@Override
+	public void refuserInvitation(UID groupID, Player refus) throws RemoteException {
+		for(Player p : listeJoueurs){
+			if(p.getGroupe()!=null && p.getGroupe().getID().equals(groupID) && p.getGroupe().isLeader(p)){
+				ReceiverInterface ri = getReferenceCorrespondante(p);
+				ri.invitationRefusee(refus);
+			}
+		}
 	}
 
 }
