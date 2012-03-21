@@ -6,6 +6,7 @@
 
         <nav>
             <ul class="menu">
+                <li><a title="Jouer!" href="./?action=jeu">Jouer!</a></li>
                 <li><a title="Actualité" href="./">Actualité</a></li>
                 <li><a title="Se déconnecter" href="deconnexion.do">Se déconnecter</a></li>
                 <li><a title="Classement du mois" href="./?action=classement">Classement du mois</a></li>
