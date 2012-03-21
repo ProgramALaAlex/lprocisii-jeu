@@ -7,8 +7,11 @@
 %>
 <c:set var="joueur" value="${jvoir}"/>
 <h3>Profil</h3>
-<% if(JoueurBean.estAdmin((String)session.getAttribute("groupe")))) {%>
-    truc truc
+<% if(JoueurBean.estAdmin((Integer)session.getAttribute("groupe"))) {%>
+<fieldset class="adminField">
+    <legend>Admin</legend>
+    je changerai le css après manger :>
+</fieldset>
 <% } %>
 <table>
     <tr><td class="label">Pseudo :</td><td><%= joueur.getPseudo() %></td></tr>
