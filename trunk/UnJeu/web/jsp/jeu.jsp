@@ -82,7 +82,8 @@
             
             <aside id="sidebar">
             
-		<div id="listeJoueur"><i>Aucun joueur dans la map</i></div>
+		<div id="listeJoueur"><i>Attente de communication avec l'applet...</i></div>
+		<div id="listeInvitation"></div>
 		
                 <a class="chatSection" onclick="switchOnglet('general');">Général</a> - 
                 <a class="chatSection" onclick="switchOnglet('guild');">Guild</a> - 
