@@ -53,6 +53,9 @@ public class Player extends Combattant implements Mover {
 	private ArrayList<Player> listeJoueursCombatEnCours;
 	private transient StateBasedGame game;
 	private boolean leaderCombat;
+	
+	//brico
+	private transient boolean changementInvitation = false;
 
 	public Player(String nom, String spriteSheetName, float x, float y, int pvMax, int pvCourant, int attaque, int vitesse){
 		super(nom, pvMax, pvCourant, attaque, vitesse);
@@ -169,30 +172,29 @@ public class Player extends Combattant implements Mover {
 
 			// debug : création d'un groupe 
 			if (input.isKeyPressed(Input.KEY_G)){
-				if(groupe==null){
-					listeInvitation.clear();
-					groupe = new Groupe(this);
-				}
-				else if(Constantes.ONLINE){
-					MainGame.disbandGroup(groupe.getID());
-				}
-				else groupe=null;
+				toggleCreationGroupe(container);
 				MainGame.updateListHTML(container);
 			}
 
 			//accepter invitation (rejoindre groupe)
 			if (input.isKeyPressed(Input.KEY_O)){
-				if(groupe==null && !listeInvitation.isEmpty()){
 					accepterInvitation();
-					MainGame.updateListHTML(container);
-				}
+//					MainGame.updateListHTML(container);
 			}
+			
 
 			//décliner une invitation
 			if (input.isKeyPressed(Input.KEY_N)){
 				if(groupe==null && !listeInvitation.isEmpty()){
 					listeInvitation.pop();
 				}
+			}
+
+			//pour l'interface graphique vu que container est pas static
+			if(changementInvitation){
+				MainGame.updateListInvitHTML(container);
+				MainGame.updateListHTML(container);
+				changementInvitation = false;
 			}
 
 			// debug : générer combat
@@ -203,6 +205,29 @@ public class Player extends Combattant implements Mover {
 			input.clearKeyPressedRecord();
 		}
 	}
+
+
+
+	public void toggleCreationGroupe(String nomGroupe) {
+		if(groupe==null){
+			listeInvitation.clear();
+			if(nomGroupe!=null && !nomGroupe.isEmpty())
+				groupe = new Groupe(MainGame.getPlayer(), nomGroupe);
+			else groupe = new Groupe(MainGame.getPlayer());
+		}
+		else if(Constantes.ONLINE){
+			MainGame.disbandGroup(groupe.getID());
+			groupe=null;
+		}
+		else groupe=null;
+	}
+	
+	// si utilisation raccourcis clavier
+	private void toggleCreationGroupe(GameContainer container) {
+		toggleCreationGroupe("");
+		MainGame.updateListHTML(container);
+	}
+
 
 	public boolean estInvitePar(Groupe g){
 		return listeInvitation.contains(g);
@@ -548,19 +573,43 @@ public class Player extends Combattant implements Mover {
 	public void addInvitation(Groupe g) throws RemoteException {
 		System.out.println("invitation pour rejoindre le groupe \""+g.getNom()+"\" reçue !");
 		System.out.println("O pour accepter, N pour décliner.");
+		if(listeInvitation.size()>5)
+			listeInvitation.pop();
 		listeInvitation.add(g);
+		changementInvitation=true;
 	}
 
 	public boolean containsInvitation(Groupe g) {
 		return listeInvitation.contains(g);
 	}
+	
+	public boolean containsInvitation(UID id) {
+		for(Groupe g : listeInvitation)
+			if(g.getID().equals(id))
+				return true;
+		return false;
+	}
 
 	private void accepterInvitation(){
-		groupe = listeInvitation.getFirst();
-		groupe.add(userId);
-		listeInvitation.clear();
-		MainGame.accepterInvitation();
-		System.out.println("Vous avez accepté l'invitation");
+		if(groupe==null && !listeInvitation.isEmpty()){
+			groupe = listeInvitation.getFirst();
+			groupe.add(userId);
+			listeInvitation.clear();
+			MainGame.accepterInvitation();
+			System.out.println("Vous avez accepté l'invitation");
+			changementInvitation=true;
+		}
+	}
+	
+	public void accepterInvitation(int id){
+		if(groupe==null && !listeInvitation.isEmpty()){
+			groupe = listeInvitation.get(id);
+			groupe.add(userId);
+			listeInvitation.clear();
+			MainGame.accepterInvitation();
+			System.out.println("invitation acceptée");
+			changementInvitation=true;
+		}
 	}
 
 	/**
@@ -581,6 +630,7 @@ public class Player extends Combattant implements Mover {
 	public void synchroniserStats(Player p, GameContainer container){
 		boolean change = false;
 		if((this.groupe != null && !this.groupe.equals(p.getGroupe())) || p.getGroupe()!=null && !p.getGroupe().equals(this.groupe)){
+			this.listeInvitation.clear();
 			change = true;
 		}
 		this.groupe = p.getGroupe();
@@ -604,5 +654,49 @@ public class Player extends Combattant implements Mover {
 					res.add(p);
 			}
 		return res;
+	}
+	
+	public String listeInvitationHTML(){
+		if(listeInvitation.isEmpty())
+			return "";
+		String res="Liste des invitation ("+this.invitationSize()+") : <ul>";
+		for(int i=listeInvitation.size()-1; i>=0; i--){
+			Groupe g = listeInvitation.get(i);
+			res+="<li>"+g.getNom()+", par "+g.getLeader().getNom()+". <input name='Rejoindre' type='button' value='Oui' onclick='rejoindre("+i+")'/> <input name='Refuser' type='button' value='Non' onclick='nepasrejoindre("+i+")'/>";
+		}
+		return res+"</ul>";
+	}
+	
+	public int invitationSize(){
+		return listeInvitation.size();
+	}
+	
+	public void refuserInvitation(UID uid) throws RemoteException{
+		int remove = 0;
+		for(int i=0; i<listeInvitation.size(); i++)
+			if(listeInvitation.get(i).getID().equals(uid)){
+				remove=i;
+				break;
+			}
+		refuserInvitation(remove);
+	}
+	
+	public UID refuserInvitation(int id){
+		UID res = listeInvitation.get(id).getID();
+		listeInvitation.remove(id);
+		changementInvitation=true;
+		return res;
+	}
+	
+	/**
+	 * CB
+	 */
+	public void clearInvit(){
+		this.listeInvitation.clear();
+		MainGame.getPlayer().changementInvit();
+	}
+	
+	public void changementInvit(){
+		changementInvitation=true;
 	}
 }

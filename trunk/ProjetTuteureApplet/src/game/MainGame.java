@@ -211,33 +211,47 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 
 	}
 
-	public static void inviterAuGroupe(Player invite){
-		try {
-			if(remoteReference.inviterJoueur(player, invite)){
-				System.out.println("Invitation envoyée à "+invite.getNom()+" !");
-				invite.addInvitation(player.getGroupe());
-			}
-			else {
-				String erreur = "L'invitation n'a pas été envoyée : ";
-				if(invite.getGroupe()!=null)
-					erreur+="Le joueur possède déjà un groupe";
-				else if(invite.containsInvitation(invite.getGroupe()))
-					erreur+="vous avez déjà invité ce joueur";
-				System.out.println(erreur);
-			}
-		} catch (RemoteException e) {
-			System.out.println("Erreur invitation");
-			e.printStackTrace();
-		}
-	}
-
-	public static void inviterAuGroupeByID(final String id){
+	public static void inviterAuGroupe(final Player invite){
 		try{
 			java.security.AccessController.doPrivileged(
 					new java.security.PrivilegedAction<Object>() {
 						@Override
 						public Object run() {
-							int intid = Integer.parseInt(id);
+							try {
+								if(remoteReference.inviterJoueur(player, invite)){
+									System.out.println("Invitation envoyée à "+invite.getNom()+" !");
+									invite.addInvitation(player.getGroupe());
+									updateListeJoueur();
+								}
+								else {
+									String erreur = "L'invitation n'a pas été envoyée : ";
+									if(invite.getGroupe()!=null)
+										erreur+="Le joueur possède déjà un groupe";
+									else if(invite.containsInvitation(invite.getGroupe()))
+										erreur+="vous avez déjà invité ce joueur";
+									System.out.println(erreur);
+								}
+							} catch (RemoteException e) {
+								System.out.println("Erreur invitation");
+								e.printStackTrace();
+							}
+							return null;
+						}
+					});
+		}
+		catch(Exception ex){
+			ex.printStackTrace();
+		}
+
+	}
+
+	public static void inviterAuGroupeByID(final String id){
+		final int intid = Integer.parseInt(id);
+		try{
+			java.security.AccessController.doPrivileged(
+					new java.security.PrivilegedAction<Object>() {
+						@Override
+						public Object run() {
 							inviterAuGroupe(Exploration.getListeJoueurLoc().get(intid));
 							return null;
 						}
@@ -259,7 +273,7 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 	}
 
 	public static void disbandGroup(UID groupeID){
-		if(player.equals(player.getGroupe().getLeader()))
+		if(player.getGroupe()!=null && player.equals(player.getGroupe().getLeader()))
 			try {
 				remoteReference.disbandGroup(groupeID);
 			} catch (RemoteException e) {
@@ -279,12 +293,15 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 		String res = "";
 
 		if(player.getGroupe()!=null){
-			res += player.getGroupe().getNom()+"<br/>";
+			res += "Groupe : <strong>"+player.getGroupe().getNom()+"</strong><br/>";
 			if(!player.getGroupe().getLeader().equals(player)){
-				res+="Leader : <span class=\"joueurGroupe\">"+player.getGroupe().getLeader().getNom()+"</span>";
-			} else res+="Vous êtes le leader.";
+				res+="Leader : <span class=\"joueurGroupe\">"+player.getGroupe().getLeader().getNom()+"</span> <a href='#' onclick='creerGroupe()' return false;'>[Partir du groupe]</a>";
+			} else res+="Vous êtes le leader. <br/> <a href='#' onclick='creerGroupe()' return false;'>[Dissoudre]</a>" ;
 		}
-		else res+= "Vous n'appartenez à aucun groupe";
+		else { 
+			res+= "Vous n'appartenez à aucun groupe";
+			res+= "<input id='nomGroupe' name='groupe' type='text' size='15' maxlength='20' placeholder='Nom du groupe' /><input name='creer' type='button' onclick='creerGroupe(document.getElementById(\"nomGroupe\").value)' value='Créer groupe'/>";
+		}
 
 		if(Exploration.getListeJoueurLoc().size()>1){
 			res+="<br/>Autres joueurs présents dans la map : <ul>";
@@ -312,6 +329,10 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 		return res;
 	}
 
+	public static String afficherListeInvitationHTML(){
+		return player.listeInvitationHTML();
+	}
+	
 	/**
 	 * Appelle la fonciton JS qui rafraichit la liste des joueurs
 	 * @param container
@@ -321,6 +342,67 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 			Applet applet = ((AppletGameContainer.Container) container).getApplet();
 			JSObject jso = JSObject.getWindow(applet);
 			jso.call("voirListeJoueurs", null);
+		}
+	}
+	
+	public static void updateListInvitHTML(GameContainer container) {
+		if(container instanceof AppletGameContainer.Container){
+			Applet applet = ((AppletGameContainer.Container) container).getApplet();
+			JSObject jso = JSObject.getWindow(applet);
+			jso.call("voirListeInvitations", null);
+		}
+	}
+	
+	public void creerGroupe(final String nomGroupe){
+		try{
+			java.security.AccessController.doPrivileged(
+					new java.security.PrivilegedAction<Object>() {
+						@Override
+						public Object run() {
+							player.toggleCreationGroupe(nomGroupe);
+							return null;
+						}
+					});
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	public void rejoindreGroupe(final int id){
+		try{
+			java.security.AccessController.doPrivileged(
+					new java.security.PrivilegedAction<Object>() {
+						@Override
+						public Object run() {
+							player.accepterInvitation(id);
+							return null;
+						}
+					});
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void refuserGroupe(final int id){
+		try{
+			java.security.AccessController.doPrivileged(
+					new java.security.PrivilegedAction<Object>() {
+						@Override
+						public Object run() {
+							UID gid = player.refuserInvitation(id);
+							try {
+								remoteReference.refuserInvitation(gid, player);
+							} catch (RemoteException e) {
+								e.printStackTrace();
+							}
+							return null;
+						}
+					});
+		}
+		catch(Exception e){
+			e.printStackTrace();
 		}
 	}
 

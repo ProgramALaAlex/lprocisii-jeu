@@ -81,4 +81,6 @@ public interface DispatcherInterface extends Remote
      */
     public boolean isConnected(Player p) throws RemoteException;
     
+	public void refuserInvitation(UID groupID, Player refus) throws RemoteException;
+    
 }

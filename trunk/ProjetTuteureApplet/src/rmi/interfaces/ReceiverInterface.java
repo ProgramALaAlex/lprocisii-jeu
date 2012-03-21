@@ -35,4 +35,12 @@ public interface ReceiverInterface extends Remote{
 	public void attaquer(Combattant cible, int degats) throws RemoteException;
 	
 	public void seSoigner(Player emetteur, int soin) throws RemoteException;
+
+	/**
+	 * Si un groupe se fait dissoudre alors que le joueur était invité dans ce groupe
+	 * @param groupID
+	 */
+	public void removeInvitation(UID groupID) throws RemoteException;
+
+	public void invitationRefusee(Player refus) throws RemoteException;
 }

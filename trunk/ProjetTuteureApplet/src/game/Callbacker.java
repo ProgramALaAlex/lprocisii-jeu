@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import combats.Combat;
 import combats.Combattant;
 import combats.Monstre;
+import exploration.Exploration;
 
 import rmi.interfaces.ReceiverInterface;
 
@@ -65,6 +66,26 @@ public class Callbacker implements ReceiverInterface, Serializable{
 	@Override
 	public void seSoigner(Player emetteur, int soin) throws RemoteException {
 		Combat.seSoignerRecevoir(emetteur, soin);
+	}
+
+
+	@Override
+	public void removeInvitation(UID groupID) {
+		if(MainGame.getPlayer().containsInvitation(groupID))
+			try {
+				MainGame.getPlayer().refuserInvitation(groupID);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+			
+	}
+
+
+	@Override
+	public void invitationRefusee(Player refus) throws RemoteException {
+		if(Exploration.getListeJoueurLoc().contains(refus)){
+			Exploration.getListeJoueurLoc().get(Exploration.getListeJoueurLoc().indexOf(refus)).clearInvit();
+		}
 	}
 
 }
