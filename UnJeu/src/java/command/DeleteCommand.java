@@ -32,7 +32,7 @@ public class DeleteCommand implements Command {
         if (JoueurBean.estAdmin((Integer)session.getAttribute("groupe"))) {
             JoueurDB db = new JoueurDB();
             if (!id.equals(""))
-                //db.deleteJoueur(id);
+                db.deleteJoueur(id);
                 request.setAttribute("info", "Info : le joueur a été supprimé.");
                 return new ActionFlow(vue, vue + ".jsp?action=armu", false);
         }
