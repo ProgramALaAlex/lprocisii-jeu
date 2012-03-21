@@ -41,13 +41,13 @@
         <section id="main" class="clearfix">
             
             <c:choose>
-                <c:when test="${param.action == 'jeu'}">
+                <c:when test="${param.action == 'jeu' && not empty sessionScope['id']}">
                     <%@ include file="jeu.jsp" %>
                 </c:when>
                 <c:when test="${param.action == 'inscription'}">
                     <%@ include file="inscription.jsp" %>
                 </c:when>
-                <c:when test="${param.action == 'connexion'}">
+                <c:when test="${param.action == 'connexion' && empty sessionScope['id']}">
                     <%@ include file="connexion.jsp" %>
                 </c:when>
                 <c:when test="${param.action == 'classement'}">
