@@ -193,7 +193,7 @@ public class JoueurDB {
      public boolean existe(String pseudo){
         try {
             Connection con = Singleton.getInstance().getConnection();
-            PreparedStatement ps = con.prepareStatement("SELECT * FROM unjeu.joueur WHERE pseudo='"+pseudo+"'");
+            PreparedStatement ps = con.prepareStatement("SELECT idJoueur FROM unjeu.joueur WHERE pseudo='"+pseudo+"'");
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return true;
