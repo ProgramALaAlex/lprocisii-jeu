@@ -33,7 +33,7 @@ public class Monstre extends Combattant{
 			vitesse = 120;
 			dropList.put(new Potion(), 100); // == 100% de chance de dropper des potions
 			dropList.put(new Armure(1), 70);
-			dropList.put(new Armure(2), 5);
+			dropList.put(new Armure(2), 15);
 			
 		}
 		else {

@@ -4,12 +4,16 @@ import game.AppletGameContainer;
 import game.MainGame;
 import game.Player;
 
+import inventaire.Armure;
+
 import java.applet.Applet;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Vector;
+
+import netscape.javascript.JSObject;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
@@ -82,8 +86,8 @@ public class Exploration extends BasicGameState{
 		container.setVSync(true);
 		//connexion via BDD
 		if(container instanceof AppletGameContainer.Container && Constantes.ONLINE){
-			Applet applet = ((AppletGameContainer.Container) container).getApplet();
 			try {
+				Applet applet = ((AppletGameContainer.Container) container).getApplet();
 				System.out.println("Clef : "+applet.getParameter("clef"));
 				int BDD_ID = MainGame.getRemoteReference().convertirClefEnID(applet.getParameter("clef"));
 				System.out.println("Clef convertie. ID = "+BDD_ID);
@@ -229,11 +233,17 @@ public class Exploration extends BasicGameState{
 			if(change)
 				MainGame.updateListHTML(container);
 			
+			//maj apparence
 			if(updateur!=null){
 				updateur.initAnimation();
+				try {
+					MainGame.getRemoteReference().equiperArmure(updateur, getArmureId(updateur));
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
+				updateur=null;
 			}
 		}
-
 
 		// changement de map si sur teleporteur
 		for(Teleporter tp : getCurrMap().getListeTeleporter()){
@@ -286,7 +296,7 @@ public class Exploration extends BasicGameState{
 				path=null;
 			}
 		}
-
+		
 		// invitation à rejoindre un groupe via clique droit - temporaire
 		if(Constantes.ONLINE){
 			//si le joueur est leader d'un groupe
@@ -311,4 +321,8 @@ public class Exploration extends BasicGameState{
 		}
 	}
 
+	public int getArmureId(Player p){
+		return p.getInventaire().getArmureEquipeeId();
+	}
+	
 }

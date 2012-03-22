@@ -6,6 +6,10 @@ public class Arme extends Objet {
 	public Arme(int id) {
 		super(id);
 		switch(id){
+			case 0 :
+				nom = "Poings";
+				valeur = 0;
+			break;
 			case 1 :
 				nom = "épée légère";
 				valeur = 25;

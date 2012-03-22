@@ -665,8 +665,7 @@ public class Player extends Combattant implements Mover {
 
 			//pour l'interface graphique vu que container est pas static
 			if(changementInvitation){
-				MainGame.updateListInvitHTML(container);
-				MainGame.updateListHTML(container);
+				MainGame.updateTotale(container);
 				changementInvitation = false;
 			}
 
