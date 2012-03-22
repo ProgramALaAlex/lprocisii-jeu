@@ -3,15 +3,14 @@ package game;
 
 import java.io.Serializable;
 import java.rmi.server.UID;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
 import constantes.Constantes;
-
 import exploration.Exploration;
 
 // pas top en fait cette classe :x
 public class Groupe extends ArrayList<UID> implements Serializable{
+	private static final long serialVersionUID = -1275862743453772788L;
 	private String nom;
 	private UID groupeId;
 	
@@ -31,18 +30,6 @@ public class Groupe extends ArrayList<UID> implements Serializable{
 		System.out.println("\""+nom+"\" créé!");
 	}
 
-	public String getNom() {
-		return nom;
-	}
-
-	public void setNom(String nom) {
-		this.nom = nom;
-	}
-
-	public UID getID() {
-		return groupeId;
-	}
-
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -59,7 +46,11 @@ public class Groupe extends ArrayList<UID> implements Serializable{
 			return false;
 		return true;
 	}
-	
+
+	public UID getID() {
+		return groupeId;
+	}
+
 	/**
 	 * @return le joueur normal si le leader n'est pas trouvé
 	 */
@@ -72,6 +63,10 @@ public class Groupe extends ArrayList<UID> implements Serializable{
 		}
 		return MainGame.getPlayer();
 	}
+
+	public String getNom() {
+		return nom;
+	}
 	
 	public int getPosition(Player p){
 		return this.indexOf(p.getId());
@@ -79,6 +74,10 @@ public class Groupe extends ArrayList<UID> implements Serializable{
 	
 	public boolean isLeader(Player p){
 		return(p.getId().equals(this.get(0)));
+	}
+	
+	public void setNom(String nom) {
+		this.nom = nom;
 	}
 
 	

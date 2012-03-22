@@ -1,6 +1,8 @@
 package inventaire;
 
 public class Armure extends Objet{
+	private static final long serialVersionUID = 7562172149069766571L;
+
 	public Armure(int id) {
 		super(id);
 		switch(id){

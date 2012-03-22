@@ -10,6 +10,7 @@ import java.util.Observable;
  * J'aurai du utiliser une arraylist je pense mais maintenant que c'est fait..
  */
 public class Inventaire extends Observable implements Serializable{
+	private static final long serialVersionUID = -2369598613241201891L;
 	private HashMap<Objet, Nombre> inventaire;
 	public Inventaire() {
 		super();
@@ -21,22 +22,6 @@ public class Inventaire extends Observable implements Serializable{
 		inventaire.put(new Armure(2), new Nombre());
 	}
 
-	/**
-	 * @return le nombre de PV récupéré
-	 */
-	public int retirerPotion(){
-		for(Objet o : inventaire.keySet())
-			if(o instanceof Potion){
-				if(!inventaire.get(o).isEmpty()){
-					inventaire.get(o).decrementer();
-					setChanged();
-					notifyObservers();
-					return o.valeur;
-				}
-			}
-		return 0;
-	}
-	
 	/**
 	 * Ajoute un objet dans l'inventaire
 	 * @param Objet à ajouter
@@ -57,6 +42,27 @@ public class Inventaire extends Observable implements Serializable{
 		notifyObservers();
 	}
 	
+	public void desequiperArme(){
+		for (Objet possede : inventaire.keySet())
+			if(possede instanceof Arme && inventaire.get(possede).isEquipe()){
+				inventaire.get(possede).setEquipe(false);
+				System.out.println(possede.getNom()+" déséquipée.");
+				setChanged();
+				notifyObservers();
+			}
+	}
+	
+	public void desequiperArmure(){
+			for (Objet possede : inventaire.keySet())
+				if(possede instanceof Armure && inventaire.get(possede).isEquipe()){
+					inventaire.get(possede).setEquipe(false);
+					System.out.println(possede.getNom()+" déséquipée.");
+					setChanged();
+					notifyObservers();
+				}
+	}
+	
+
 	/**
 	 * équipe une arme possedée et déséquipe l'autre 
 	 * @param arme à équiper
@@ -76,7 +82,6 @@ public class Inventaire extends Observable implements Serializable{
 		return false;
 	}
 	
-
 	/**
 	 * équipe une armure possedée et déséquipe l'autre 
 	 * @param arme à équiper
@@ -96,45 +101,10 @@ public class Inventaire extends Observable implements Serializable{
 		return false;
 	}
 	
-	public void desequiperArmure(){
-			for (Objet possede : inventaire.keySet())
-				if(possede instanceof Armure && inventaire.get(possede).isEquipe()){
-					inventaire.get(possede).setEquipe(false);
-					System.out.println(possede.getNom()+" déséquipée.");
-					setChanged();
-					notifyObservers();
-				}
-	}
-	
-	public void desequiperArme(){
-		for (Objet possede : inventaire.keySet())
-			if(possede instanceof Arme && inventaire.get(possede).isEquipe()){
-				inventaire.get(possede).setEquipe(false);
-				System.out.println(possede.getNom()+" déséquipée.");
-				setChanged();
-				notifyObservers();
-			}
-	}
-	
-	/**
-	 * @return l'attaque bonus procurée par l'arme actuellement équipée.
-	 * @return 0 si aucune arme équipée
-	 */
-	public int getAttaqueBonus(){
+	public int getArmeEquipeeId(){
 		for (Objet o : inventaire.keySet())
 			if ((o instanceof Arme) && (inventaire.get(o)).isEquipe())
-				return o.valeur;
-		return 0;
-	}
-
-	/**
-	 * @return les PV bonus procurée par l'armure actuellement équipée.
-	 * @return 0 si aucune arme équipée
-	 */
-	public int getPVBonus(){
-		for (Objet o : inventaire.keySet())
-			if ((o instanceof Armure) && (inventaire.get(o)).isEquipe())
-				return o.valeur;
+				return o.id;
 		return 0;
 	}
 	
@@ -145,10 +115,41 @@ public class Inventaire extends Observable implements Serializable{
 		return 0;
 	}
 
-	public int getArmeEquipeeId(){
+	/**
+	 * @return l'attaque bonus procurée par l'arme actuellement équipée.
+	 * @return 0 si aucune arme équipée
+	 */
+	public int getAttaqueBonus(){
 		for (Objet o : inventaire.keySet())
 			if ((o instanceof Arme) && (inventaire.get(o)).isEquipe())
-				return o.id;
+				return o.valeur;
+		return 0;
+	}
+	
+	/**
+	 * @return les PV bonus procurée par l'armure actuellement équipée.
+	 * @return 0 si aucune arme équipée
+	 */
+	public int getPVBonus(){
+		for (Objet o : inventaire.keySet())
+			if ((o instanceof Armure) && (inventaire.get(o)).isEquipe())
+				return o.valeur;
+		return 0;
+	}
+
+	/**
+	 * @return le nombre de PV récupéré
+	 */
+	public int retirerPotion(){
+		for(Objet o : inventaire.keySet())
+			if(o instanceof Potion){
+				if(!inventaire.get(o).isEmpty()){
+					inventaire.get(o).decrementer();
+					setChanged();
+					notifyObservers();
+					return o.valeur;
+				}
+			}
 		return 0;
 	}
 

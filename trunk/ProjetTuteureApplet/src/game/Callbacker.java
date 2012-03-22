@@ -7,17 +7,20 @@ import java.rmi.RemoteException;
 import java.rmi.server.UID;
 import java.util.ArrayList;
 
+import rmi.interfaces.ReceiverInterface;
+
 import combats.Combat;
 import combats.Combattant;
 import combats.Monstre;
-import exploration.Exploration;
 
-import rmi.interfaces.ReceiverInterface;
+import constantes.Constantes;
+import exploration.Exploration;
 
 /**
  * TEMPORAIRE LE TEMPS DE TROUVER UNE AUTRE SOLUTION MAIS JE VOIS PAS LA
  */
 public class Callbacker implements ReceiverInterface, Serializable{
+	private static final long serialVersionUID = -4998818556133180735L;
 	private Player player;
 	
 
@@ -33,15 +36,9 @@ public class Callbacker implements ReceiverInterface, Serializable{
 	}
 
 
-	public Player getPlayer() throws RemoteException {
-		return player;
-	}
-
-
 	@Override
-	public void invitationAcceptee(Player invite) throws RemoteException {
-		System.out.println(invite.getNom()+" a accepté l'invitation.");
-		MainGame.getPlayer().getGroupe().add(invite.getId());
+	public void attaquer(Combattant cible, int degats) throws RemoteException {
+		Combat.attaqueOnline(cible, degats);
 	}
 
 
@@ -60,14 +57,40 @@ public class Callbacker implements ReceiverInterface, Serializable{
 
 
 	@Override
-	public void attaquer(Combattant cible, int degats) throws RemoteException {
-		Combat.attaqueOnline(cible, degats);
+	public void equiperArmure(Player emetteur, int armure) throws RemoteException {
+		if(Exploration.getListeJoueurLoc().contains(emetteur)){
+			Exploration.getListeJoueurLoc().get(Exploration.getListeJoueurLoc().indexOf(emetteur)).getInventaire().addObjet(new Armure(armure));
+			Exploration.getListeJoueurLoc().get(Exploration.getListeJoueurLoc().indexOf(emetteur)).getInventaire().equiperArmure(new Armure(armure));
+			Exploration.newSkin(Exploration.getListeJoueurLoc().get(Exploration.getListeJoueurLoc().indexOf(emetteur)));
+		}
 	}
 
 
 	@Override
-	public void seSoigner(Player emetteur, int soin) throws RemoteException {
-		Combat.seSoignerRecevoir(emetteur, soin);
+	public Player getPlayer() throws RemoteException {
+		return player;
+	}
+
+
+	@Override
+	public void invitationAcceptee(Player invite) throws RemoteException {
+		System.out.println(invite.getNom()+" a accepté l'invitation.");
+		MainGame.getPlayer().getGroupe().add(invite.getId());
+	}
+
+
+	@Override
+	public void invitationRefusee(Player refus) throws RemoteException {
+		if(Exploration.getListeJoueurLoc().contains(refus)){
+			Exploration.getListeJoueurLoc().get(Exploration.getListeJoueurLoc().indexOf(refus)).clearInvit();
+		}
+	}
+
+
+	@Override
+	public void kicked() throws RemoteException {
+		Constantes.ONLINE = false;
+		MainGame.getPlayer().setNom("Vous avez été banni : vous êtes maintenant en mode solo");
 	}
 
 
@@ -84,20 +107,8 @@ public class Callbacker implements ReceiverInterface, Serializable{
 
 
 	@Override
-	public void invitationRefusee(Player refus) throws RemoteException {
-		if(Exploration.getListeJoueurLoc().contains(refus)){
-			Exploration.getListeJoueurLoc().get(Exploration.getListeJoueurLoc().indexOf(refus)).clearInvit();
-		}
-	}
-
-
-	@Override
-	public void equiperArmure(Player emetteur, int armure) throws RemoteException {
-		if(Exploration.getListeJoueurLoc().contains(emetteur)){
-			Exploration.getListeJoueurLoc().get(Exploration.getListeJoueurLoc().indexOf(emetteur)).getInventaire().addObjet(new Armure(armure));
-			Exploration.getListeJoueurLoc().get(Exploration.getListeJoueurLoc().indexOf(emetteur)).getInventaire().equiperArmure(new Armure(armure));
-			Exploration.newSkin(Exploration.getListeJoueurLoc().get(Exploration.getListeJoueurLoc().indexOf(emetteur)));
-		}
+	public void seSoigner(Player emetteur, int soin) throws RemoteException {
+		Combat.seSoignerRecevoir(emetteur, soin);
 	}
 
 }

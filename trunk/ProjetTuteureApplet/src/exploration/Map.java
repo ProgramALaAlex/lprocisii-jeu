@@ -1,10 +1,8 @@
 package exploration;
 
-import game.MainGame;
-
 import java.util.ArrayList;
+
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.geom.Polygon;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.tiled.TiledMap;
 import org.newdawn.slick.util.pathfinding.PathFindingContext;
@@ -55,58 +53,6 @@ public class Map implements TileBasedMap {
 	
 	
 	
-	public ArrayList<Teleporter> getListeTeleporter() {
-		return listeTeleporter;
-	}
-
-
-
-	public String getIDMap(){
-		return this.IDMap;
-	}
-
-	public TiledMap getTmap() {
-		return tmap;
-	}
-
-	public int getMapWidth() {
-		return mapWidth;
-	}
-
-	public int getMapHeight() {
-		return mapHeight;
-	}
-
-	public ArrayList<Rectangle> getCollision() {
-		return listeCollisions;
-	}
-
-	public boolean isSafe() {
-		return safe;
-	}
-
-
-
-	@Override
-	public int getWidthInTiles() {
-		return tmap.getWidth();
-	}
-
-
-
-	@Override
-	public int getHeightInTiles() {
-		return tmap.getHeight();
-	}
-
-
-
-	@Override
-	public void pathFinderVisited(int x, int y) {
-	}
-
-
-
 	@Override
 	public boolean blocked(PathFindingContext context, int tx, int ty) {
 		for (Rectangle r : listeCollisions) {
@@ -118,9 +64,61 @@ public class Map implements TileBasedMap {
 
 
 
+	public ArrayList<Rectangle> getCollision() {
+		return listeCollisions;
+	}
+
 	@Override
 	public float getCost(PathFindingContext context, int tx, int ty) {
 		return 1;
+	}
+
+	@Override
+	public int getHeightInTiles() {
+		return tmap.getHeight();
+	}
+
+	public String getIDMap(){
+		return this.IDMap;
+	}
+
+	public ArrayList<Teleporter> getListeTeleporter() {
+		return listeTeleporter;
+	}
+
+	public int getMapHeight() {
+		return mapHeight;
+	}
+
+
+
+	public int getMapWidth() {
+		return mapWidth;
+	}
+
+
+
+	public TiledMap getTmap() {
+		return tmap;
+	}
+
+
+
+	@Override
+	public int getWidthInTiles() {
+		return tmap.getWidth();
+	}
+
+
+
+	public boolean isSafe() {
+		return safe;
+	}
+
+
+
+	@Override
+	public void pathFinderVisited(int x, int y) {
 	}
 
 	

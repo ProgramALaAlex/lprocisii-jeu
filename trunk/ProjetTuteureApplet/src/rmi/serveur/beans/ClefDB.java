@@ -21,7 +21,6 @@ public class ClefDB {
                 Statement statement = con.createStatement(); 
                 String clef = UUID.randomUUID().toString();
                 String query = "INSERT INTO unjeu.clef (clef, idJoueur) Values('"+clef+"', '"+id+"')";
-                System.out.println(query);
                 statement.executeUpdate(query);
                 return clef;
             }catch(Exception e){
@@ -39,16 +38,13 @@ public class ClefDB {
             try {
                 Connection con = Singleton.getInstance().getConnection();
                 String query = "SELECT idJoueur FROM unjeu.clef WHERE clef='"+clef+"'";
-                System.out.println(query);
                 PreparedStatement ps = con.prepareStatement(query);
                 ResultSet rs = ps.executeQuery();
                 int id = 0;
                 if (rs.next()) {
                     id =rs.getInt(1);
-                    System.out.println("TROUVE");
                 }
                 query = "DELETE FROM unjeu.clef WHERE clef='"+clef+"'";
-                System.out.println(query);
                 Statement statement = con.createStatement();
                 statement.executeUpdate(query);
                 return id;

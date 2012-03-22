@@ -11,7 +11,8 @@ import java.io.Serializable;
  * @author Loic
  */
 public class GuildeBean implements Serializable{
-    int idGuilde;
+	private static final long serialVersionUID = -5059545182339164143L;
+	int idGuilde;
     String nom;
     int totalMonstres;
 
@@ -19,20 +20,20 @@ public class GuildeBean implements Serializable{
         return idGuilde;
     }
 
-    public void setIdGuilde(int idGuilde) {
-        this.idGuilde = idGuilde;
-    }
-
     public String getNom() {
         return nom;
     }
 
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
-
     public int getTotalMonstres() {
         return totalMonstres;
+    }
+
+    public void setIdGuilde(int idGuilde) {
+        this.idGuilde = idGuilde;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
     }
 
     public void setTotalMonstres(int totalMonstres) {

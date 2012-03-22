@@ -11,11 +11,11 @@ import java.util.HashMap;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.SpriteSheet;
 
 import constantes.Constantes;
 
 public class Monstre extends Combattant{
+	private static final long serialVersionUID = -6871656682700162661L;
 	private HashMap<Objet, Integer> dropList;
 
 	/**
@@ -48,17 +48,13 @@ public class Monstre extends Combattant{
 		initAnimation();
 	}
 	
-	public ArrayList<Objet> drop(){
-		ArrayList<Objet> res = new ArrayList<Objet>();
-		int random = (int) (Math.random()*100);
-		for(Objet o : this.dropList.keySet())
-			if(random <= this.dropList.get(o)){
-				System.out.println("objet droppé ! C'est un(e)"+o.getNom());
-				res.add(o);
-			}
-		if(res.isEmpty())
-			System.out.println("pas d'objet droppé...");
-		return res;
+	/**
+	 * Ajoute une lettre à la fin du monstre, pour les différencier
+	 * (ex : Monstre A, Monstre B)
+	 * @param c
+	 */
+	public void addFinNom(String s){
+		this.nom+=" "+s;
 	}
 
 	@Override
@@ -81,6 +77,20 @@ public class Monstre extends Combattant{
 		return false;
 	}
 
+	public ArrayList<Objet> drop(){
+		ArrayList<Objet> res = new ArrayList<Objet>();
+		int random = (int) (Math.random()*100);
+		for(Objet o : this.dropList.keySet())
+			if(random <= this.dropList.get(o)){
+				System.out.println("objet droppé ! C'est un(e)"+o.getNom());
+				res.add(o);
+			}
+		if(res.isEmpty())
+			System.out.println("pas d'objet droppé...");
+		return res;
+	}
+	
+	@Override
 	public void initAnimation(){
 		sprite = new Animation();
 		if(nom.contains("Slime bleue"))
@@ -94,15 +104,6 @@ public class Monstre extends Combattant{
 		} catch (SlickException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	/**
-	 * Ajoute une lettre à la fin du monstre, pour les différencier
-	 * (ex : Monstre A, Monstre B)
-	 * @param c
-	 */
-	public void addFinNom(String s){
-		this.nom+=" "+s;
 	}
 	
 	

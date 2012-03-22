@@ -11,7 +11,8 @@ import java.io.Serializable;
  * @author Loic
  */
 public class ObjetBean implements Serializable{
-    int idObjet;
+	private static final long serialVersionUID = -6245078275352435765L;
+	int idObjet;
     String nom;
     int valeur;
     int idTypeObjet;
@@ -20,28 +21,28 @@ public class ObjetBean implements Serializable{
         return idObjet;
     }
 
-    public void setIdObjet(int idObjet) {
-        this.idObjet = idObjet;
-    }
-
     public int getIdTypeObjet() {
         return idTypeObjet;
-    }
-
-    public void setIdTypeObjet(int idTypeObjet) {
-        this.idTypeObjet = idTypeObjet;
     }
 
     public String getNom() {
         return nom;
     }
 
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
-
     public int getValeur() {
         return valeur;
+    }
+
+    public void setIdObjet(int idObjet) {
+        this.idObjet = idObjet;
+    }
+
+    public void setIdTypeObjet(int idTypeObjet) {
+        this.idTypeObjet = idTypeObjet;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
     }
 
     public void setValeur(int valeur) {

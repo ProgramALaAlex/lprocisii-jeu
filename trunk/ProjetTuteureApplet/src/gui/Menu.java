@@ -6,6 +6,7 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
+
 import constantes.Constantes;
 
 
@@ -17,11 +18,11 @@ import constantes.Constantes;
 public class Menu extends BasicGameState{
 	private int stateID;
 
-	public Menu(int stateID){
-		this.stateID = stateID;
+	public Menu(){
 	}
 
-	public Menu(){
+	public Menu(int stateID){
+		this.stateID = stateID;
 	}
 
 	@Override

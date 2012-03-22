@@ -1,7 +1,5 @@
 package rmi.interfaces;
 
-import game.Groupe;
-
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
