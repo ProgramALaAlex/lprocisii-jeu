@@ -45,6 +45,7 @@ public class Player extends Combattant implements Mover {
 	private transient Animation up, down, left, right;
 	private Inventaire inventaire;
 	private boolean deplacementAuto = false;
+	private int BDD_ID;
 
 	//ONLINE
 	private UID userId; //pour le online : id unique
@@ -57,8 +58,9 @@ public class Player extends Combattant implements Mover {
 	//brico
 	private transient boolean changementInvitation = false;
 
-	public Player(String nom, String spriteSheetName, float x, float y, int pvMax, int pvCourant, int attaque, int vitesse){
+	public Player(int BDD_ID, String nom, String spriteSheetName, float x, float y, int pvMax, int pvCourant, int attaque, int vitesse){
 		super(nom, pvMax, pvCourant, attaque, vitesse);
+		this.BDD_ID = BDD_ID;
 		this.spriteSheetName = spriteSheetName;
 		this.x = x;
 		this.y = y;
@@ -74,14 +76,12 @@ public class Player extends Combattant implements Mover {
 				x,y+22
 		});
 		collision.setLocation(x+5, y+5);
-		initAnimation();
 		directionHistorique = Constantes.BAS;
 		pasAvantProchainCombat = (int) (Math.random()*500);
 		inventaire = new Inventaire();
 		inventaire.addObjet(new Potion());
-		inventaire.addObjet(new Armure(1));
-		inventaire.equiperArmure(new Armure(1));
 		userId = new UID();
+		initAnimation();
 		leaderCombat = false;
 		listeJoueursCombatEnCours = new ArrayList<Player>();
 	}
@@ -104,7 +104,10 @@ public class Player extends Combattant implements Mover {
 	@Override
 	public void initAnimation(){
 		try {
-			spriteSheet = new SpriteSheet(Constantes.CHAR_LOCATION+this.spriteSheetName, 31, 32);
+			int armure = this.getInventaire().getArmureEquipeeId();
+			if(armure>0)
+				spriteSheet = new SpriteSheet(Constantes.CHAR_LOCATION+this.spriteSheetName+armure+".png", 31, 32);
+			else spriteSheet = new SpriteSheet(Constantes.CHAR_LOCATION+this.spriteSheetName+".png", 31, 32);
 		} catch (SlickException e) {
 			e.printStackTrace();
 		}	
@@ -200,6 +203,18 @@ public class Player extends Combattant implements Mover {
 			// debug : générer combat
 			if (input.isKeyPressed(Input.KEY_P)){
 				passerEnModeCombat(game);
+			}
+			
+			if (input.isKeyPressed(Input.KEY_A)){
+				this.inventaire.addObjet(new Armure(1));
+				int intid = 1;
+				this.getInventaire().equiperArmure(new Armure(intid));
+				this.initAnimation();
+				try {
+					MainGame.getRemoteReference().equiperArmure(this, intid);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
 			}
 			
 			input.clearKeyPressedRecord();
@@ -699,4 +714,12 @@ public class Player extends Combattant implements Mover {
 	public void changementInvit(){
 		changementInvitation=true;
 	}
+
+
+
+	public int getBDD_ID() {
+		return BDD_ID;
+	}
+	
+	
 }

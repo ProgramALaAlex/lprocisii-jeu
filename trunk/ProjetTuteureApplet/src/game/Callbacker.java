@@ -1,5 +1,7 @@
 package game;
 
+import inventaire.Armure;
+
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.UID;
@@ -85,6 +87,16 @@ public class Callbacker implements ReceiverInterface, Serializable{
 	public void invitationRefusee(Player refus) throws RemoteException {
 		if(Exploration.getListeJoueurLoc().contains(refus)){
 			Exploration.getListeJoueurLoc().get(Exploration.getListeJoueurLoc().indexOf(refus)).clearInvit();
+		}
+	}
+
+
+	@Override
+	public void equiperArmure(Player emetteur, int armure) throws RemoteException {
+		if(Exploration.getListeJoueurLoc().contains(emetteur)){
+			Exploration.getListeJoueurLoc().get(Exploration.getListeJoueurLoc().indexOf(emetteur)).getInventaire().addObjet(new Armure(armure));
+			Exploration.getListeJoueurLoc().get(Exploration.getListeJoueurLoc().indexOf(emetteur)).getInventaire().equiperArmure(new Armure(armure));
+			Exploration.newSkin(Exploration.getListeJoueurLoc().get(Exploration.getListeJoueurLoc().indexOf(emetteur)));
 		}
 	}
 

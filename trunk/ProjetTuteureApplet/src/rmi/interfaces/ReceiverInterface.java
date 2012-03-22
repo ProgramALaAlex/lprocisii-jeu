@@ -43,4 +43,6 @@ public interface ReceiverInterface extends Remote{
 	public void removeInvitation(UID groupID) throws RemoteException;
 
 	public void invitationRefusee(Player refus) throws RemoteException;
+	
+	public void equiperArmure(Player emetteur, int armure) throws RemoteException;
 }

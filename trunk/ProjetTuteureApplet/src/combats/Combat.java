@@ -98,7 +98,7 @@ public class Combat extends BasicGameState{
 		MainGame.getPlayer().setLeaderCombat(false);
 		MainGame.getPlayer().getListeJoueursCombatEnCours().clear();
 		if(MainGame.getPlayer().isKO())
-			MainGame.getPlayer().setPvCourant(1);
+			MainGame.getPlayer().setPvCourant(MainGame.getPlayer().getPvMax()/2);
 		combatDeGroupe = false;
 		// fin de l'affichage
 		listeJoueursKO = null;
@@ -114,6 +114,14 @@ public class Combat extends BasicGameState{
 	public void enter(GameContainer container, StateBasedGame game)
 			throws SlickException {
 		super.enter(container, game);
+		
+		if(container instanceof AppletGameContainer.Container && Constantes.ONLINE){
+			try {
+				MainGame.getRemoteReference().incrementerCombat(MainGame.getPlayer().getBDD_ID());
+			} catch(Exception ex){
+				ex.printStackTrace();
+			}
+		}
 
 		//on désactive les boutons de la page
 		if(container instanceof AppletGameContainer.Container){
@@ -375,7 +383,7 @@ public class Combat extends BasicGameState{
 		for (Iterator<Player> iterator = listeJoueurs.iterator(); iterator.hasNext();) {
 			Player p = (Player) iterator.next();
 			try {
-				if(!MainGame.getRemoteReference().isConnected(p)){
+				if(Constantes.ONLINE && !MainGame.getRemoteReference().isConnected(p)){
 					reaffecterLeader(p);
 					if(MainGame.getPlayer().isLeaderCombat())
 						attendreReponse=false;
@@ -638,6 +646,12 @@ public class Combat extends BasicGameState{
 					e.printStackTrace();
 				}
 			degatsDisplay = new GUIValeursCombats(listeMonstre.get(definirCible).getXCombat(), listeMonstre.get(definirCible).getYCombat(), Integer.toString(degats));
+			if(Constantes.ONLINE && !listeMonstre.get(definirCible).estEnVie())
+				try {
+					MainGame.getRemoteReference().incrementerMonstreTues(getPlayer().getBDD_ID());
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
 			drop(listeMonstre.get(definirCible));
 			selectionCible=false;
 			tourJoueur=false;
@@ -666,7 +680,7 @@ public class Combat extends BasicGameState{
 				String drop = "";
 				if(drops.size()>1){
 					for (Objet o : drops)
-						drop+=o.getNom()+", ";
+						drop+=o.getNom()+" + ";
 					drop+=" droppés!";
 				}
 				else drop+=drops.get(0).getNom()+" droppé!";

@@ -20,6 +20,9 @@ import game.Player;
 import rmi.interfaces.ChatRemoteInterface;
 import rmi.interfaces.DispatcherInterface;
 import rmi.interfaces.ReceiverInterface;
+import rmi.serveur.beans.ClefDB;
+import rmi.serveur.beans.JoueurBean;
+import rmi.serveur.beans.JoueurDB;
 
 /**
  * LE SERVEUR RMI
@@ -134,6 +137,18 @@ public class Serveur implements DispatcherInterface {
 				ri.getPlayer();
 			} catch (RemoteException e) {
 				try{
+					Player p = listeJoueurs.get(i);
+					try {
+						JoueurDB db = new JoueurDB();
+						JoueurBean jb = db.getById(Integer.toString(p.getBDD_ID()));
+						jb.setDernierX((int) p.getX());
+						jb.setDernierY((int) p.getY());
+						jb.setIdMap(Integer.parseInt(p.getMapId()));
+						jb.setPvActuels(p.getPvCourant());
+						db.majJoueur(jb);
+					} catch (Exception e1) {
+						System.out.println("erreur bdd");
+					}
 					listeJoueurs.remove(i);
 					i--;
 					iterator.remove();
@@ -194,6 +209,54 @@ public class Serveur implements DispatcherInterface {
 				ri.invitationRefusee(refus);
 			}
 		}
+	}
+
+	@Override
+	public JoueurBean getJoueurByID(String id) throws RemoteException {
+		JoueurDB db = new JoueurDB();
+		return db.getById(id);
+	}
+
+	@Override
+	public String getJoueurMapByID(int id) throws RemoteException {
+		JoueurDB db = new JoueurDB();
+		return db.getSprite(id);
+	}
+
+	@Override
+	public int convertirClefEnID(String clef) throws RemoteException {
+		ClefDB db = new ClefDB();
+		return db.getId(clef);
+	}
+
+	@Override
+	public void incrementerMonstreTues(int BDD_ID) throws RemoteException {
+		for(Player p : listeJoueurs)
+			if(p.getBDD_ID()==BDD_ID){
+				JoueurDB db = new JoueurDB();
+				db.incrementerMonstreTues(db.getById(Integer.toString(BDD_ID)));
+			}
+	}
+
+	@Override
+	public void incrementerCombat(int BDD_ID) throws RemoteException {
+		for(Player p : listeJoueurs)
+			if(p.getBDD_ID()==BDD_ID){
+				JoueurDB db = new JoueurDB();
+				db.incrementerCombat(db.getById(Integer.toString(BDD_ID)));
+			}
+	}
+
+	@Override
+	public void testSysout() throws RemoteException {
+		System.out.println("LOL CA MARCHE J'Y CROIS PAS MAIS C'EST GEANT !!");
+	}
+
+	@Override
+	public void equiperArmure(Player emetteur, int armure) throws RemoteException {
+		for(Player p : listeJoueurs)
+			if(!p.equals(emetteur))
+				getReferenceCorrespondante(p).equiperArmure(emetteur, armure);
 	}
 
 }

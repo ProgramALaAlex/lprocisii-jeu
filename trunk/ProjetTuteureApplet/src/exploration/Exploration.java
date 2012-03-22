@@ -23,6 +23,8 @@ import org.newdawn.slick.util.pathfinding.Path.Step;
 import org.newdawn.slick.util.pathfinding.PathFinder;
 import org.newdawn.slick.util.pathfinding.AStarPathFinder;
 
+import rmi.serveur.beans.JoueurBean;
+
 import constantes.Constantes;
 import game.AppletGameContainer;
 import game.MainGame;
@@ -39,6 +41,7 @@ public class Exploration extends BasicGameState{
 	private Path path;
 	private int compteurChemin=1;
 	private float clicX, clicY;
+	private static Player updateur;
 	
 	public Exploration(int id){
 		this.stateID = id;
@@ -51,8 +54,32 @@ public class Exploration extends BasicGameState{
 	public void init(GameContainer container, StateBasedGame game)
 			throws SlickException {
 		container.setVSync(true);
-		setCurrMap(new Map("01"));
-		MainGame.initialisationJoueur();
+		//connexion via BDD
+		if(container instanceof AppletGameContainer.Container && Constantes.ONLINE){
+			Applet applet = ((AppletGameContainer.Container) container).getApplet();
+			try {
+				System.out.println("Clef : "+applet.getParameter("clef"));
+				int BDD_ID = MainGame.getRemoteReference().convertirClefEnID(applet.getParameter("clef"));
+				System.out.println("Clef convertie. ID = "+BDD_ID);
+				JoueurBean jb = MainGame.getRemoteReference().getJoueurByID(Integer.toString(BDD_ID));
+				System.out.println("ID DE LA MAP : "+jb.getIdMap());
+				setCurrMap(new Map("0"+jb.getIdMap()));
+				String pseudo = jb.getPseudo();
+				String sprite = MainGame.getRemoteReference().getJoueurMapByID(jb.getIdApparence());
+				int x = jb.getDernierX();
+				int y = jb.getDernierY();
+				int hpMax = jb.getPvMax();
+				int hpCourant = jb.getPvActuels();
+				int attaque = (int) jb.getAttaque();
+				int vitesse = (int) jb.getVitesse();
+				MainGame.initialisationJoueur(BDD_ID, pseudo, sprite, x, y, hpMax, hpCourant, attaque, vitesse);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			} 
+		} else {
+			setCurrMap(new Map("01"));
+			MainGame.initialisationJoueur();
+		}
 		finder = new AStarPathFinder(getCurrMap(), 500, false);
 		listeJoueurLoc = new Vector<Player>();
 		
@@ -196,6 +223,10 @@ public class Exploration extends BasicGameState{
 			}
 			if(change)
 				MainGame.updateListHTML(container);
+			
+			if(updateur!=null){
+				updateur.initAnimation();
+			}
 		}
 
 
@@ -281,6 +312,11 @@ public class Exploration extends BasicGameState{
 		return 0;
 	}
 
+	//bricolage mais pas le choix
+	public static void newSkin(Player p){
+		updateur = p;
+	}
+	
 	public static void setBlockMap(Map blockMap){
 		setCurrMap(blockMap);
 	}

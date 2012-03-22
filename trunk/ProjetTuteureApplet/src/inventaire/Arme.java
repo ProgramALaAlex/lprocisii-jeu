@@ -6,12 +6,12 @@ public class Arme extends Objet {
 		super(id);
 		switch(id){
 			case 1 :
-				nom = "épée 1";
-				valeur = 15;
+				nom = "épée légère";
+				valeur = 25;
 				break;
 			case 2 :
-				nom = "épée 2";
-				valeur = 20;
+				nom = "épée sacrée";
+				valeur = 130;
 				break;
 		}
 	}

@@ -5,6 +5,8 @@ import java.rmi.RemoteException;
 import java.rmi.server.UID;
 import java.util.ArrayList;
 
+import rmi.serveur.beans.JoueurBean;
+
 import combats.Combattant;
 import combats.Monstre;
 
@@ -82,5 +84,24 @@ public interface DispatcherInterface extends Remote
     public boolean isConnected(Player p) throws RemoteException;
     
 	public void refuserInvitation(UID groupID, Player refus) throws RemoteException;
+	
+	public JoueurBean getJoueurByID(String id) throws RemoteException;
+	public String getJoueurMapByID(int id) throws RemoteException;
+	
+	/**
+	 * Converti la clef en ID et la supprime
+	 * @param id
+	 * @return
+	 * @throws RemoteException
+	 */
+	public int convertirClefEnID(String clef) throws RemoteException;
+	
+	public void incrementerMonstreTues(int BDD_ID) throws RemoteException;
+	public void incrementerCombat(int BDD_ID) throws RemoteException;
+//	public String incrementerNbCombat(int id) throws RemoteException;
+	
+	public void testSysout() throws RemoteException;
+	
+	public void equiperArmure(Player emetteur, int armure) throws RemoteException;
     
 }

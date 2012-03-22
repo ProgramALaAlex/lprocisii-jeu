@@ -106,6 +106,16 @@ public class Inventaire extends Observable implements Serializable{
 				}
 	}
 	
+	public void desequiperArme(){
+		for (Objet possede : inventaire.keySet())
+			if(possede instanceof Arme && inventaire.get(possede).isEquipe()){
+				inventaire.get(possede).setEquipe(false);
+				System.out.println(possede.getNom()+" déséquipée.");
+				setChanged();
+				notifyObservers();
+			}
+	}
+	
 	/**
 	 * @return l'attaque bonus procurée par l'arme actuellement équipée.
 	 * @return 0 si aucune arme équipée
@@ -125,6 +135,20 @@ public class Inventaire extends Observable implements Serializable{
 		for (Objet o : inventaire.keySet())
 			if ((o instanceof Armure) && (inventaire.get(o)).isEquipe())
 				return o.valeur;
+		return 0;
+	}
+	
+	public int getArmureEquipeeId(){
+		for (Objet o : inventaire.keySet())
+			if ((o instanceof Armure) && (inventaire.get(o)).isEquipe())
+				return o.id;
+		return 0;
+	}
+
+	public int getArmeEquipeeId(){
+		for (Objet o : inventaire.keySet())
+			if ((o instanceof Arme) && (inventaire.get(o)).isEquipe())
+				return o.id;
 		return 0;
 	}
 

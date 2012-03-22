@@ -1,6 +1,7 @@
 package combats;
 
 import inventaire.Arme;
+import inventaire.Armure;
 import inventaire.Objet;
 import inventaire.Potion;
 
@@ -31,6 +32,8 @@ public class Monstre extends Combattant{
 			attaque = 10;
 			vitesse = 120;
 			dropList.put(new Potion(), 100); // == 100% de chance de dropper des potions
+			dropList.put(new Armure(1), 70);
+			dropList.put(new Armure(2), 5);
 			
 		}
 		else {
@@ -39,7 +42,8 @@ public class Monstre extends Combattant{
 			pvCourant = 300;
 			attaque = 15;
 			vitesse = 115;
-			dropList.put(new Arme(1), 50);
+			dropList.put(new Arme(1), 70);
+			dropList.put(new Arme(2), 25);
 		}
 		initAnimation();
 	}
