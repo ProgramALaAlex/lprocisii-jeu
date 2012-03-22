@@ -36,10 +36,11 @@ public class SubscribeCommand implements Command {
             String mail = ""+request.getParameter("mail");
             String pass1 = ""+request.getParameter("pass1");
             String pass2 = ""+request.getParameter("pass2");
+            int apparence = Integer.parseInt(request.getParameter("apparence"));
             int attaque = Integer.parseInt(request.getParameter("attaque"));
             int vitesse = Integer.parseInt(request.getParameter("vitesse"));
             int pv = Integer.parseInt(request.getParameter("pv"));
-            
+            System.out.println("truc: "+apparence);
             request.setAttribute("distrib", 100 - attaque - vitesse - pv);
 
             JoueurDB db = new JoueurDB();
@@ -63,6 +64,7 @@ public class SubscribeCommand implements Command {
                 joueur.setVitesse(100+vitesse);
                 joueur.setPvMax(100+pv);
                 joueur.setPvActuels(100+pv);
+                joueur.setIdApparance(apparence);
                 joueur.setIdMap(1);
                 joueur.setDernierX(250);
                 joueur.setDernierY(330);

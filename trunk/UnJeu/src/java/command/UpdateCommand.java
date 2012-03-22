@@ -41,6 +41,7 @@ public class UpdateCommand implements Command {
             
             String pseudo = ""+request.getParameter("pseudo");
             String mail = ""+request.getParameter("mail");
+            int apparence = Integer.parseInt(request.getParameter("apparence"));
             int attaque = Integer.parseInt(request.getParameter("attaque"));
             int vitesse = Integer.parseInt(request.getParameter("vitesse"));
             int pv = Integer.parseInt(request.getParameter("pv"));
@@ -78,6 +79,7 @@ public class UpdateCommand implements Command {
                 JoueurBean joueur = db.getById(id);
                 joueur.setPseudo(pseudo);
                 joueur.setMail(mail);
+                joueur.setIdApparance(apparence);
                 joueur.setAttaque(attaque);
                 joueur.setVitesse(vitesse);
                 joueur.setPvMax(pv);
