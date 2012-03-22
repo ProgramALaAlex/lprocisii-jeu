@@ -6,6 +6,7 @@ package beans;
 
 
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -248,7 +249,7 @@ public class JoueurDB {
             Connection con = Singleton.getInstance().getConnection();
             PreparedStatement ps = con.prepareStatement("SELECT idJoueur FROM unjeu.joueur WHERE pseudo='"+pseudo+"'");
             ResultSet rs = ps.executeQuery();
-            System.out.println("pseudo : "+pseudo);
+            
             if (rs.next()) {
                 return true;
             }
@@ -256,5 +257,65 @@ public class JoueurDB {
             Logger.getLogger(JoueurDB.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
+     }
+     
+     public void bannirJoueur(String id, String raison, String date){
+        Connection con;
+        try {
+            con = Singleton.getInstance().getConnection();
+            PreparedStatement ps = con.prepareStatement("SELECT idJoueur, raison, dateFin FROM unjeu.blacklist WHERE idJoueur='"+id+"'");
+            ResultSet rs = ps.executeQuery();
+            
+            if (rs.next()) {
+                ps = con.prepareStatement("UPDATE unjeu.blacklist SET raison=?, dateFin="+(!date.equals("") ? date : "null"));
+                ps.setString(1, raison);
+                ps.executeUpdate();
+                
+                
+            } else {
+                ps = con.prepareStatement("INSERT INTO unjeu.blacklist(idJoueur, raison, dateFin) VALUES('"+id+"',?"+(!date.equals("") ? ","+date+")" : ",null)"));
+                ps.setString(1, raison);
+                ps.executeUpdate();
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(JoueurDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+     
+     public void debannirJoueur(String id){
+        Connection con;
+        try {
+            con = Singleton.getInstance().getConnection();
+            PreparedStatement ps = con.prepareStatement("DELETE FROM unjeu.blacklist WHERE idJoueur='"+id+"'");
+            ps.executeUpdate();
+        } catch (Exception ex) {
+            Logger.getLogger(JoueurDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+     
+     public String[] estBanni(int id){
+        String[] ban = null;
+        try {
+            Connection con = Singleton.getInstance().getConnection();
+            PreparedStatement ps = con.prepareStatement("SELECT idJoueur, raison, dateFin FROM unjeu.blacklist WHERE idJoueur='"+id+"'");
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                if (rs.getString(3) != null) {
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    java.util.Date dateBan = sdf.parse(rs.getString(3));
+                    if (dateBan.before(new java.util.Date())) {
+                        this.debannirJoueur(""+id);
+                        return null;
+                    }
+                }
+                
+                ban = new String[2];
+                ban[0] = rs.getString(2);
+                ban[1] = rs.getString(3) != null ? rs.getString(3) : "définitif";
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(JoueurDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return ban;
      }
 }

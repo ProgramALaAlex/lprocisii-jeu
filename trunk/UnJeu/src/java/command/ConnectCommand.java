@@ -33,13 +33,16 @@ public class ConnectCommand implements Command {
                 JoueurDB db = new JoueurDB();
                 JoueurBean joueur;
                 if ((joueur = db.checkJoueur(login, password)) != null) {
-                    System.out.println("Connection successful");
-                    session.setAttribute("id", joueur.getIdJoueur());
-                    session.setAttribute("pseudo", joueur.getPseudo());
-                    session.setAttribute("groupe", joueur.getGroupe());
-                    return new ActionFlow(vue, vue + ".jsp", false);
+                    String[] ban = db.estBanni(joueur.getIdJoueur());
+                    if (ban == null) {
+                        session.setAttribute("id", joueur.getIdJoueur());
+                        session.setAttribute("pseudo", joueur.getPseudo());
+                        session.setAttribute("groupe", joueur.getGroupe());
+                        return new ActionFlow(vue, vue + ".jsp", false);
+                    } else {
+                        request.setAttribute("erreur", "Erreur : vous avez été banni ( Echéance: "+ban[1]+(ban[0].equals("") ? "" : " / Raison: "+ban[0])+" )");
+                    }
                 } else {
-                    System.out.println("connection failed");
                     request.setAttribute("erreur", "Erreur : identifiants invalides.");
                 }
             } else {

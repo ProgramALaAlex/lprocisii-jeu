@@ -5,36 +5,40 @@
  */
 package command;
 
-import beans.InventaireBean;
-import beans.InventaireDB;
 import beans.JoueurBean;
 import beans.JoueurDB;
+import java.rmi.Naming;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.*;
+import rmi.interfaces.DispatcherInterface;
 
 /**
  * @author Yan
  */
-public class DeleteCommand implements Command {
+public class DebanCommand implements Command {
 
     @Override
     public String getCommandName() {
-        return "deleteCommand";
+        return "debanCommand";
     }
 
     @Override
     public ActionFlow actionPerform(HttpServletRequest request) {
         String vue = "index";
+        
         System.out.println(this.getCommandName());
         
         HttpSession session = request.getSession(false);
         String id = ""+request.getParameter("id");
         
         if (JoueurBean.estAdmin((Integer)session.getAttribute("groupe")) && !id.equals("")) {
+            
             JoueurDB db = new JoueurDB();
-            if (!id.equals(""))
-                db.deleteJoueur(id);
-                request.setAttribute("info", "Info : le joueur a été supprimé.");
-                return new ActionFlow(vue, vue + ".jsp?action=armu", false);
+            db.debannirJoueur(id);
+            request.setAttribute("info", "Info : le joueur a été débanni.");
         }
         return new ActionFlow(vue, vue + ".jsp?action=voir&id="+id, false);
     }

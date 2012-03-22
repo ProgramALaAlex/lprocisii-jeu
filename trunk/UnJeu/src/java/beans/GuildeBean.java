@@ -6,7 +6,7 @@ package beans;
 
 /**
  *
- * @author Loic
+ * @author Yan
  */
 public class GuildeBean {
     int idGuilde;

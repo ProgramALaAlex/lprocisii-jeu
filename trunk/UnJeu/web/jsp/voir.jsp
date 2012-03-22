@@ -5,10 +5,10 @@
     JoueurDB jdb = new JoueurDB();
     JoueurBean joueur = jdb.getById(request.getParameter("id"));
     boolean admin = session.getAttribute("groupe") != null ? JoueurBean.estAdmin((Integer)session.getAttribute("groupe")) : false;
+    String[] ban = jdb.estBanni(joueur.getIdJoueur());
 %>
 <c:set var="joueur" value="${jvoir}"/>
 <h3>Profil</h3>
-
 <c:if test="${not empty requestScope['info']}">
     <p class="infoMessage"><c:out value="${requestScope['info']}" /></p>
 </c:if>
@@ -24,9 +24,33 @@
         <input type="image" title="Supprimer le joueur" src="images/supprimer.png" onClick="if (!confirm('Supprimer le joueur?')) return false;" />
     </form>
     <input type="image" title="Modifier le joueur" src="images/modifier.png" onClick="$('#profilVoir, #profilModif').toggle();" />
+    <input type="image" title="Bannir le joueur" src="images/bannir.png" onClick="$('#bannir').slideToggle();" />
+    <% if (ban != null) { %>
+        <form method="post" action="debannir.do">
+            <input type="hidden" name="id" value="<%= joueur.getIdJoueur() %>" />
+            <input type="image" title="Débannir le joueur" src="images/debannir.png" onClick="if (!confirm('Débannir le joueur?')) return false;" />
+        </form>
+    <% } %>
+</fieldset>
+<fieldset id="bannir">
+    <form method="post" action="bannir.do">
+        Bannir pour :<br />
+        <input type="hidden" name="id" value="<%= joueur.getIdJoueur() %>" />
+        <input type="number" value="0" min="0" name="semaines"/> semaines<br />
+        <input type="number" value="0" min="0" name="jours"/> jours<br />
+        <input type="checkbox" name="definitif" value="1" /> définitivement<br />
+        Raison <input type="text" name="raison" /><br />
+        <input type="submit" name="submit" value="Bannir" onClick="if (!confirm('Bannir le joueur?')) return false;" />
+    </form>
 </fieldset>
 <% } %>
-
+<% if (ban != null) { %>
+<fieldset id="banField">
+    <p><strong>Joueur banni</strong><br />
+    <%= !ban[0].equals("") ? "<strong>Raison:</strong> "+ban[0]+"<br />" : "" %>
+    <strong>Echéance:</strong> <%= ban[1] %></p>
+</fieldset>
+<%} %>
 <table id="profilVoir">
     <tr>
         <td class="label">Pseudo :</td>
