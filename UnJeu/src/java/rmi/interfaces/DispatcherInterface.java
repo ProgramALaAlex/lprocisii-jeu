@@ -12,5 +12,5 @@ import java.util.ArrayList;
  */
 public interface DispatcherInterface extends Remote
 {
-    public void testSysout() throws RemoteException;
+    public void kick(String id) throws RemoteException;
 }

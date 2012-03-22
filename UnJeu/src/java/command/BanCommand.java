@@ -60,7 +60,7 @@ public class BanCommand implements Command {
                 Registry registry = LocateRegistry.getRegistry(IP_SERVEUR, REGISTRY_PORT);
                 DispatcherInterface remoteReference = (DispatcherInterface) Naming.lookup("rmi://"+IP_SERVEUR+":"+REGISTRY_PORT+"/"+REGISTRY_NAME);
 
-                remoteReference.testSysout();
+                remoteReference.kick(id);
             } catch (Exception ex) {
                 Logger.getLogger(UpdateCommand.class.getName()).log(Level.SEVERE, null, ex);
             }
