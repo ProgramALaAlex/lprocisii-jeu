@@ -15,8 +15,8 @@ public class Chat implements ChatRemoteInterface
 	private ArrayList<String> name = new ArrayList<String>();
 
 	@Override
-	public void addClient(ChatReceiverInterface client, String pseudo) {
-		String user = pseudo;
+	public void addClient(ChatReceiverInterface client) {
+		String user = "Joueur"+clients.size();
 		System.out.println("Ajout d'un client nommé: "+user);
 		System.out.println( createUniKey() );
 		clients.add(client);
