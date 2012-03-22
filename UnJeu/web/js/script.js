@@ -1,6 +1,6 @@
 var name = "Test";
 var ongletCourant = "general";
-
+var nOk = false;
 
 function getApplet(){
     var appletloader = document.getElementById('unJeu');
@@ -64,9 +64,11 @@ function voirInventaire(){
     $("#inventaire").html(inv);
 }
 function desactiverBoutons() {
+    nOk = true;
     $("input").attr("disabled", "disabled");
 }
 function activerBoutons() {
+    nOk = false;
     $("input").removeAttr("disabled");
 }
 function voirListeJoueurs(){
