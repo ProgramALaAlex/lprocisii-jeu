@@ -13,6 +13,7 @@ public class ObjetBean {
     String nom;
     int valeur;
     int idTypeObjet;
+    String url;
 
     public int getIdObjet() {
         return idObjet;
@@ -25,6 +26,15 @@ public class ObjetBean {
     public int getIdTypeObjet() {
         return idTypeObjet;
     }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+    
 
     public void setIdTypeObjet(int idTypeObjet) {
         this.idTypeObjet = idTypeObjet;

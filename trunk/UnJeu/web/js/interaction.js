@@ -30,16 +30,18 @@ function show ( value )
 
 $( init );
 
-	var inventaire;
-	var objet;
+	
 	
 	function init(){
 		inventaire = new Array();
 		for(var i = 0; i<17; i++){
 			inventaire[i] = -1;
 		}
+                
+                rpl();
 		
 		// test
+                /*
 		objet = new Array();
 		objet[0] = new Array();
 		objet[0]['url'] = "images/icone/attaque.gif";
@@ -48,7 +50,7 @@ $( init );
 		
 		inventaire[0] = 0;
 		inventaire[1] = 1;
-		
+		*/
 		//creation de l'inventaire
 		for(var i = 0; i < 4; i++){
 			var tr = document.createElement('tr');
@@ -81,14 +83,72 @@ $( init );
 			drop: handleDropEvent
 		} );
 		
-		$('.equip').droppable( {
-			drop: dropInventaire
+		$('.equip2').droppable( {
+			drop: dropArme
+		} );
+                
+                $('.equip1').droppable( {
+			drop: dropArmure
 		} );
 	}
 	
-	function dropInventaire( event, ui ) {
+	
+        function dropArmure( event, ui ) {
 		var draggable = ui.draggable;
+		if(objet[draggable.attr('id').replace('obj', '')]['type'] != "armure"){
+                    alert("Vous ne pouvez pas equipez cet objet");
+                    return null;
+                }
+                equiperArmure(1);
+		if(this.getElementsByTagName('img').length > 0){
+			var old = this.getElementsByTagName('img')[0];
+			this.getElementsByTagName('img')[0].parentNode.removeChild(this.getElementsByTagName('img')[0]);
+			var img1 = document.getElementById(draggable.attr('id')).cloneNode(true);
+			img1.className = "item2";
+			this.appendChild(img1);
+			
+			for(var i = 0; i < inventaire.length ;i++){
+				if(inventaire[i] == draggable.attr('id').replace('obj', '')){
+					inventaire[i] = old.id.replace('obj', '');
+					document.getElementById(draggable.attr('id')).parentNode.appendChild(old);
+					document.getElementById(draggable.attr('id')).parentNode.removeChild(document.getElementById(draggable.attr('id')));
+					break;
+				}
+			}
+			
+			return null;
+		}
+			
 		
+		var img = document.getElementById(draggable.attr('id')).cloneNode(true);
+		img.className = "item2";
+		this.appendChild(img);	
+		for(var i = 0; i < inventaire.length ;i++){
+			if(inventaire[i] == draggable.attr('id').replace('obj', '')){
+				inventaire[i] = -1;
+				document.getElementById(draggable.attr('id')).parentNode.removeChild(document.getElementById(draggable.attr('id')));
+				break;
+			}
+		}
+		
+		$('.item2').draggable( {
+			helper: myHelper
+		} );
+	}
+        
+        function equiperArme(a){
+    var appletloader = document.getElementById('unJeu');
+    var applet = appletloader.getApplet().getGame();
+    applet.equiperArme(a);
+}
+        
+        function dropArme( event, ui ) {
+		var draggable = ui.draggable;
+		if(objet[draggable.attr('id').replace('obj', '')]['type'] != "arme"){
+                    alert("Vous ne pouvez pas equipez cet objet");
+                    return null;
+                }
+                equiperArme(1);
 		if(this.getElementsByTagName('img').length > 0){
 			var old = this.getElementsByTagName('img')[0];
 			this.getElementsByTagName('img')[0].parentNode.removeChild(this.getElementsByTagName('img')[0]);
@@ -176,7 +236,7 @@ $( init );
 			$('.item').draggable( {
 				helper: myHelper
 			} );
-			
+			majInventaire();
 			return null;
 		}
 		
@@ -195,9 +255,35 @@ $( init );
 		$('.item').draggable( {
 			helper: myHelper
 		} );
-		
+		majInventaire();
 	}
 	
 	function myHelper( event ) {
 		return '<img src="'+objet[this.id.replace('obj', '')]['url']+'"/>';
 	}
+        
+        function majInventaire (){
+            var lol = "?";
+            var lol2 ="";
+            if(inventaire[0] == -1){
+                    lol += "inv[0]=-1"; 
+                    lol2 += "&qte[0]=0"; 
+                }
+                else{
+                    lol += "inv[0]="+objet[inventaire[0]]['id'];
+                    lol2 += "&qte[0]="+objet[inventaire[0]]['qte']; 
+                }
+            for(var i = 1; i < 16; i++){
+                if(inventaire[i] == -1){
+                    lol += "&inv["+i+"]=-1"; 
+                    lol2 += "&qte["+i+"]=0"; 
+                }
+                else{
+                    lol += "&inv["+i+"]="+objet[inventaire[i]]['id'];
+                    lol2 += "&qte["+i+"]="+objet[inventaire[i]]['qte']; 
+                }
+            }
+            $.ajax({
+            url: "./inventaire.do"+lol+lol2
+            });
+        }
