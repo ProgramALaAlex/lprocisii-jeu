@@ -29,6 +29,7 @@ public class CommandManager {
         cmds.put("supprimer", new DeleteCommand());
         cmds.put("modifier", new UpdateCommand());
         cmds.put("equipe", new EquipCommand());
+        cmds.put("actualise", new ActualiseCommand());
     }
 
     public static Command getCommand(String commandName) {

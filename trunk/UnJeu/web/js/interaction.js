@@ -287,3 +287,12 @@ $( init );
             url: "./inventaire.do"+lol+lol2
             });
         }
+        
+        
+        function actualise(){
+                $.ajax({
+                    type: "GET",
+                    url: "actualise.do",
+                    dataType: "script"
+                });
+        }
