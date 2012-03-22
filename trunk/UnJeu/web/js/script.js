@@ -58,10 +58,16 @@ function equiperArmure(a){
 function desequiperArmure(){
     getApplet().desequiperArmure();
 }
+function desequiperArme(){
+    getApplet().desequiperArme();
+}
+function equiperArme(a){
+    getApplet().equiperArme(a);
+}
 function voirInventaire(){
     var inv = getApplet().voirInventaire();
     $("#butInv").hide();
-    $("#inventaire").html(inv);
+    $("#inventaireTxt").html(inv);
 }
 function desactiverBoutons() {
     nOk = true;
@@ -97,4 +103,11 @@ function rejoindre(id){
 
 function nepasrejoindre(id){
     getApplet().refuserGroupe(id);
+}
+
+function voirListeTotale(){
+    var liste = getApplet().afficherListeInvitationHTML();
+    $("#listeInvitation").html(liste);
+    var liste2 = getApplet().afficherListeJoueurMapHTML();
+    $("#listeJoueur").html(liste2);
 }
