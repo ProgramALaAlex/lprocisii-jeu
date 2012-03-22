@@ -34,6 +34,8 @@ var inventaire = new Array();
                      value="game.MainGame">
               <param name="clef"
                      value="<%= clef %>">
+	    <param name="pseudo"
+		   value="<%= session.getAttribute("pseudo") %>">
               <!-- logo to paint while loading, will be centered -->
              <!-- <param name="al_logo"
                      value="appletlogo.png">
