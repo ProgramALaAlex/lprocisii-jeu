@@ -4,7 +4,7 @@
     Author     : Yan
 --%>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="ISO-8859-1"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!doctype html>
 <html lang="fr">
@@ -74,7 +74,7 @@
 
         <footer>
             
-            <p><em>&copy; 2012 IUT Anonymousse Team</em><br /><a title="Un Jeu" href="view.do">Un Jeu</a> est un projet Ã©tudiant strictement expÃ©rimental</p>
+            <p><em>&copy; 2012 IUT Anonymousse Team</em><br /><a title="Un Jeu" href="view.do">Un Jeu</a> est un projet étudiant strictement expérimental</p>
 			
         </footer>
       
