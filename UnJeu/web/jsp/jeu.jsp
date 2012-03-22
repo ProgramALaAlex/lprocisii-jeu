@@ -110,6 +110,9 @@ var inventaire = new Array();
             </aside>
             
             <section id="action">
+		<input type="button" value="Voir Inventaire local" id="butInv" onClick="voirInventaire();"/>
+		<div id="inventaireTxt"></div>
+		
                 <section id="iconeMenu">
                     <img onclick="show('sac');" src="images/sac.jpg" height="40px"/>
                     <img onclick="show('equipement');" src="images/equipement.jpg" height="40px"/>
