@@ -4,6 +4,8 @@
  */
 package beans;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author Loic
@@ -350,13 +352,212 @@ public class InventaireBean {
     
     public String getJs(){
         String js = "objet = new Array();";
+        String jsInv = "";
+        int i = 0;
+        ObjetDB odb = new ObjetDB();
+        TypeObjetDB typeodb = new TypeObjetDB();
+        TypeObjetBean type;
+        ObjetBean objet;
+        System.out.println(this.slot1_idObjet);
+        if(this.slot1_idObjet > 0){
+            objet = odb.getById(this.slot1_idObjet);
+            type = typeodb.getById(objet.getIdTypeObjet());
+            js += "objet["+i+"] = new Array();";
+            js += "objet["+i+"]['url'] = '"+objet.getUrl()+"';";
+            js += "objet["+i+"]['type'] = '"+type.getNom()+"';";
+            js += "objet["+i+"]['qte'] = "+this.getSlot1_qte()+";";
+            js += "objet["+i+"]['id'] = "+objet.idObjet+";";
+            jsInv += "inventaire[0] = "+i+";";
+            i++;
+        }
+        
+        if(this.slot2_idObjet > 0){
+            objet = odb.getById(this.slot2_idObjet);
+            type = typeodb.getById(objet.getIdTypeObjet());
+            js += "objet["+i+"] = new Array();";
+            js += "objet["+i+"]['url'] = '"+objet.getUrl()+"';";
+            js += "objet["+i+"]['type'] = '"+type.getNom()+"';";
+            js += "objet["+i+"]['qte'] = "+this.getSlot2_qte()+";";
+            js += "objet["+i+"]['id'] = "+objet.idObjet+";";
+            jsInv += "inventaire[1] = "+i+";";
+            i++;
+        }
+        
+        if(this.slot3_idObjet > 0){
+            objet = odb.getById(this.slot3_idObjet);
+            type = typeodb.getById(objet.getIdTypeObjet());
+            js += "objet["+i+"] = new Array();";
+            js += "objet["+i+"]['url'] = '"+objet.getUrl()+"';";
+            js += "objet["+i+"]['type'] = '"+type.getNom()+"';";
+            js += "objet["+i+"]['qte'] = "+this.getSlot3_qte()+";";
+            js += "objet["+i+"]['id'] = "+objet.idObjet+";";
+            jsInv += "inventaire[2] = "+i+";";
+            i++;
+        }
+        
+        if(this.slot4_idObjet > 0){
+            objet = odb.getById(this.slot4_idObjet);
+            type = typeodb.getById(objet.getIdTypeObjet());
+            js += "objet["+i+"] = new Array();";
+            js += "objet["+i+"]['url'] = '"+objet.getUrl()+"';";
+            js += "objet["+i+"]['type'] = '"+type.getNom()+"';";
+            js += "objet["+i+"]['qte'] = "+this.getSlot4_qte()+";";
+            js += "objet["+i+"]['id'] = "+objet.idObjet+";";
+            jsInv += "inventaire[3] = "+i+";";
+            i++;
+        }
+        
+        if(this.slot5_idObjet > 0){
+            objet = odb.getById(this.slot5_idObjet);
+            type = typeodb.getById(objet.getIdTypeObjet());
+            js += "objet["+i+"] = new Array();";
+            js += "objet["+i+"]['url'] = '"+objet.getUrl()+"';";
+            js += "objet["+i+"]['type'] = '"+type.getNom()+"';";
+            js += "objet["+i+"]['qte'] = "+this.getSlot5_qte()+";";
+            js += "objet["+i+"]['id'] = "+objet.idObjet+";";
+            jsInv += "inventaire[4] = "+i+";";
+            i++;
+        }
+        
+        if(this.slot6_idObjet > 0){
+            objet = odb.getById(this.slot6_idObjet);
+            type = typeodb.getById(objet.getIdTypeObjet());
+            js += "objet["+i+"] = new Array();";
+            js += "objet["+i+"]['url'] = '"+objet.getUrl()+"';";
+            js += "objet["+i+"]['type'] = '"+type.getNom()+"';";
+            js += "objet["+i+"]['qte'] = "+this.getSlot6_qte()+";";
+            js += "objet["+i+"]['id'] = "+objet.idObjet+";";
+            jsInv += "inventaire[5] = "+i+";";
+            i++;
+        }
+        
+        if(this.slot7_idObjet > 0){
+            objet = odb.getById(this.slot7_idObjet);
+            type = typeodb.getById(objet.getIdTypeObjet());
+            js += "objet["+i+"] = new Array();";
+            js += "objet["+i+"]['url'] = '"+objet.getUrl()+"';";
+            js += "objet["+i+"]['type'] = '"+type.getNom()+"';";
+            js += "objet["+i+"]['qte'] = "+this.getSlot7_qte()+";";
+            js += "objet["+i+"]['id'] = "+objet.idObjet+";";
+            jsInv += "inventaire[6] = "+i+";";
+            i++;
+        }
+        
+        if(this.slot8_idObjet > 0){
+            objet = odb.getById(this.slot8_idObjet);
+            type = typeodb.getById(objet.getIdTypeObjet());
+            js += "objet["+i+"] = new Array();";
+            js += "objet["+i+"]['url'] = '"+objet.getUrl()+"';";
+            js += "objet["+i+"]['type'] = '"+type.getNom()+"';";
+            js += "objet["+i+"]['qte'] = "+this.getSlot8_qte()+";";
+            js += "objet["+i+"]['id'] = "+objet.idObjet+";";
+            jsInv += "inventaire[7] = "+i+";";
+            i++;
+        }
+        
+        if(this.slot9_idObjet > 0){
+            objet = odb.getById(this.slot9_idObjet);
+            type = typeodb.getById(objet.getIdTypeObjet());
+            js += "objet["+i+"] = new Array();";
+            js += "objet["+i+"]['url'] = '"+objet.getUrl()+"';";
+            js += "objet["+i+"]['type'] = '"+type.getNom()+"';";
+            js += "objet["+i+"]['qte'] = "+this.getSlot9_qte()+";";
+            js += "objet["+i+"]['id'] = "+objet.idObjet+";";
+            jsInv += "inventaire[8] = "+i+";";
+            i++;
+        }
+        
+        if(this.slot10_idObjet > 0){
+            objet = odb.getById(this.slot10_idObjet);
+            type = typeodb.getById(objet.getIdTypeObjet());
+            js += "objet["+i+"] = new Array();";
+            js += "objet["+i+"]['url'] = '"+objet.getUrl()+"';";
+            js += "objet["+i+"]['type'] = '"+type.getNom()+"';";
+            js += "objet["+i+"]['qte'] = "+this.getSlot10_qte()+";";
+            js += "objet["+i+"]['id'] = "+objet.idObjet+";";
+            jsInv += "inventaire[9] = "+i+";";
+            i++;
+        }
+        
+        if(this.slot11_idObjet > 0){
+            objet = odb.getById(this.slot11_idObjet);
+            type = typeodb.getById(objet.getIdTypeObjet());
+            js += "objet["+i+"] = new Array();";
+            js += "objet["+i+"]['url'] = '"+objet.getUrl()+"';";
+            js += "objet["+i+"]['type'] = '"+type.getNom()+"';";
+            js += "objet["+i+"]['qte'] = "+this.getSlot11_qte()+";";
+            js += "objet["+i+"]['id'] = "+objet.idObjet+";";
+            jsInv += "inventaire[10] = "+i+";";
+            i++;
+        }
+        
+        if(this.slot12_idObjet > 0){
+            objet = odb.getById(this.slot12_idObjet);
+            type = typeodb.getById(objet.getIdTypeObjet());
+            js += "objet["+i+"] = new Array();";
+            js += "objet["+i+"]['url'] = '"+objet.getUrl()+"';";
+            js += "objet["+i+"]['type'] = '"+type.getNom()+"';";
+            js += "objet["+i+"]['qte'] = "+this.getSlot12_qte()+";";
+            js += "objet["+i+"]['id'] = "+objet.idObjet+";";
+            jsInv += "inventaire[11] = "+i+";";
+            i++;
+        }
+        
+        if(this.slot13_idObjet > 0){
+            objet = odb.getById(this.slot13_idObjet);
+            type = typeodb.getById(objet.getIdTypeObjet());
+            js += "objet["+i+"] = new Array();";
+            js += "objet["+i+"]['url'] = '"+objet.getUrl()+"';";
+            js += "objet["+i+"]['type'] = '"+type.getNom()+"';";
+            js += "objet["+i+"]['qte'] = "+this.getSlot13_qte()+";";
+            js += "objet["+i+"]['id'] = "+objet.idObjet+";";
+            jsInv += "inventaire[12] = "+i+";";
+            i++;
+        }
+        
+        if(this.slot14_idObjet > 0){
+            objet = odb.getById(this.slot14_idObjet);
+            type = typeodb.getById(objet.getIdTypeObjet());
+            js += "objet["+i+"] = new Array();";
+            js += "objet["+i+"]['url'] = '"+objet.getUrl()+"';";
+            js += "objet["+i+"]['type'] = '"+type.getNom()+"';";
+            js += "objet["+i+"]['qte'] = "+this.getSlot14_qte()+";";
+            js += "objet["+i+"]['id'] = "+objet.idObjet+";";
+            jsInv += "inventaire[13] = "+i+";";
+            i++;
+        }
+        
+        if(this.slot15_idObjet > 0){
+            objet = odb.getById(this.slot15_idObjet);
+            type = typeodb.getById(objet.getIdTypeObjet());
+            js += "objet["+i+"] = new Array();";
+            js += "objet["+i+"]['url'] = '"+objet.getUrl()+"';";
+            js += "objet["+i+"]['type'] = '"+type.getNom()+"';";
+            js += "objet["+i+"]['qte'] = "+this.getSlot15_qte()+";";
+            js += "objet["+i+"]['id'] = "+objet.idObjet+";";
+            jsInv += "inventaire[14] = "+i+";";
+            i++;
+        }
+        
+        if(this.slot16_idObjet > 0){
+            objet = odb.getById(this.slot16_idObjet);
+            type = typeodb.getById(objet.getIdTypeObjet());
+            js += "objet["+i+"] = new Array();";
+            js += "objet["+i+"]['url'] = '"+objet.getUrl()+"';";
+            js += "objet["+i+"]['type'] = '"+type.getNom()+"';";
+            js += "objet["+i+"]['qte'] = "+this.getSlot16_qte()+";";
+            js += "objet["+i+"]['id'] = "+objet.idObjet+";";
+            jsInv += "inventaire[15] = "+i+";";
+            i++;
+        }
+        
         /*
 		+"objet[0] = new Array();"
 		+"objet[0]['url'] = "images/icone/attaque.gif";
 		
 		inventaire[0] = 0;
 		inventaire[1] = 1;*/
-        return js;
+        return js+jsInv;
     }
     
 }

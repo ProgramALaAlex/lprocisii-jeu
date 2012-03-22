@@ -252,9 +252,9 @@ table#inventaire td{
 
 #perso{
 	border : 2px solid red;
-	width: 200px;
-	height: 250px;
-	background-image: url('images/equip.png');
+	width: 100px;
+	height: 150px;
+	background-color: black;
         display: inline-block;
         vertical-align: top;
 }
@@ -275,7 +275,7 @@ table#inventaire td{
 	height: 40px;
 	background-color: yellow;
 	position: relative;
-	top: 100px;
+	top: 50px;
 	left: 20px;
 }
 

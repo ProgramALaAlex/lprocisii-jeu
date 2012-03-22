@@ -50,10 +50,7 @@ public class TestCommand implements Command {
         InventaireBean inv = new InventaireBean(j.getIdJoueur());
         InventaireDB idb = new InventaireDB();
         idb.createInvenaire(inv);
-        
-        InventaireBean inv2 = idb.jsonInventaire(j.getIdJoueur());
-        System.out.println (inv2.getIdJoueur());
-        
+
         String vue = "index";
         return new ActionFlow(vue, vue+".jsp", false);
     }

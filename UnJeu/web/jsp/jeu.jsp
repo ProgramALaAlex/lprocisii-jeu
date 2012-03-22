@@ -1,8 +1,19 @@
+<%@page import="beans.InventaireDB"%>
+<%@page import="beans.InventaireBean"%>
 <%@page import="beans.ClefDB"%>
 <%
     ClefDB cle = new ClefDB();
     String clef = cle.createInvenaire(session.getAttribute("id")+"");
+    
+    InventaireDB idb = new InventaireDB();
+    String inventaire = idb.jsonInventaire(session.getAttribute("id")+"").getJs();
 %>    
+<script>
+var inventaire = new Array();
+	var objet = new Array();
+        function rpl(){
+<%= inventaire %>
+}</script>
 <section id="content">
     
               <applet mayscript="true"
@@ -104,8 +115,9 @@
                 <aside id="fenetresInteraction">
                     <table id="inventaire" style="display: none;"></table>
                     <div id="perso" style="display: none;">
-                            <div id="armure" class="equip"></div>
-                            <div id="arme" class="equip"></div>
+                           
+                            <div id="armure" class="equip1"></div>
+                            <div id="arme" class="equip2"></div>
                     </div>
                 </aside>
                 <!--    
