@@ -24,7 +24,14 @@
             <td><input type="text" name="mail" value="<%=request.getParameter("mail") != null ? request.getParameter("mail") : ""%>" /></td>
         </tr>
         <tr>
-            <td class="label">Statistiques du personnage</td>
+            <td class="label">Genre du personnage</td>
+            <td>
+                <input type="radio" name="apparence" value="0" <%=request.getParameter("apparence") != null ? (request.getParameter("apparence").equals("0") ? "Checked" : "") : "Checked" %>/>Homme
+                <input type="radio" name="apparence" value="1" <%=request.getParameter("apparence") != null ? (request.getParameter("apparence").equals("1") ? "Checked" : "") : "" %>/>Femme
+            </td>
+        </tr>
+        <tr>
+            <td class="label">Statistiques</td>
             <td>
                 <%
                     int pv = (request.getParameter("pv")!=null ? Integer.parseInt(request.getParameter("pv"))+100 : 100);

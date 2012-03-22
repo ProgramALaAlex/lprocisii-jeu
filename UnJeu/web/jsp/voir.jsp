@@ -61,6 +61,12 @@
         <td><%= joueur.getMail() %></td>
     </tr>
     <tr>
+        <td class="label">Apparence</td>
+        <td>
+            <%=joueur.getIdApparance() == 0 ? "Homme" : "Femme" %>
+        </td>
+    </tr>
+    <tr>
         <td class="label">Pv :</td>
         <td><%= joueur.getPvMax() %></td>
     </tr>
@@ -93,6 +99,13 @@
     <tr>
         <td class="label">Mail :</td>
         <td><input type="text" name="mail" value="<%= joueur.getMail() %>" /></td>
+    </tr>
+    <tr>
+        <td class="label">Genre</td>
+        <td>
+            <input type="radio" name="apparence" value="0" <%=joueur.getIdApparance() == 0 ? "Checked" : "" %>/>Homme
+            <input type="radio" name="apparence" value="1" <%=joueur.getIdApparance() == 1 ? "Checked" : "" %>/>Femme
+        </td>
     </tr>
     <tr>
         <td class="label">Pv :</td>

@@ -301,6 +301,9 @@ table td{
 table#inscription input{
     width: 200px;
 }
+table#inscription input[type="radio"]{
+    width: auto;
+}
 
 .errorMessage{
     color: firebrick;
