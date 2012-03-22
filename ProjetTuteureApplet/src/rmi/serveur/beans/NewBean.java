@@ -12,14 +12,16 @@ import java.util.Date;
  * @author Loic
  */
 public class NewBean implements Serializable{
-    int id;
-    String titre, contenu;
-    Date date;	
+	private static final long serialVersionUID = -6409271487417041030L;
 
-    public static java.sql.Date getCurrentJavaSqlDate() {
+	public static java.sql.Date getCurrentJavaSqlDate() {
         java.util.Date today = new java.util.Date();
         return new java.sql.Date(today.getTime());
     }
+    int id;
+    String titre, contenu;	
+
+    Date date;
     
     public NewBean (){
         
@@ -34,28 +36,28 @@ public class NewBean implements Serializable{
         return contenu;
     }
 
-    public void setContenu(String contenu) {
-        this.contenu = contenu;
-    }
-
     public Date getDate() {
         return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
     }
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public String getTitre() {
         return titre;
+    }
+
+    public void setContenu(String contenu) {
+        this.contenu = contenu;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setTitre(String titre) {

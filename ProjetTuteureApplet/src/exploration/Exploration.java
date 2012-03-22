@@ -1,14 +1,15 @@
 package exploration;
 
+import game.AppletGameContainer;
+import game.MainGame;
+import game.Player;
+
 import java.applet.Applet;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Vector;
-
-import netscape.javascript.JSObject;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
@@ -18,36 +19,61 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
-import org.newdawn.slick.util.pathfinding.Path;
-import org.newdawn.slick.util.pathfinding.Path.Step;
-import org.newdawn.slick.util.pathfinding.PathFinder;
 import org.newdawn.slick.util.pathfinding.AStarPathFinder;
+import org.newdawn.slick.util.pathfinding.Path;
+import org.newdawn.slick.util.pathfinding.PathFinder;
 
 import rmi.serveur.beans.JoueurBean;
-
 import constantes.Constantes;
-import game.AppletGameContainer;
-import game.MainGame;
-import game.Player;
 
 
 public class Exploration extends BasicGameState{
+	public static Map getCurrMap() {
+		return currMap;
+	}
+	public static Vector<Player> getListeJoueurLoc() {
+		return listeJoueurLoc;
+	}
+	//bricolage mais pas le choix
+	public static void newSkin(Player p){
+		updateur = p;
+	}
+	public static void setBlockMap(Map blockMap){
+		setCurrMap(blockMap);
+	}
+
+	public static void setCurrMap(Map currMap) {
+		Exploration.currMap = currMap;
+		finder = new AStarPathFinder(getCurrMap(), 500, false);
+	}
+	@SuppressWarnings("unused")
 	private int stateID;
 	private static Map currMap;
 	private static Vector<Player> listeJoueurLoc;
 	private OnlineUpdateThread onlineUpdateThread;
-
-	private static PathFinder finder;
-	private Path path;
-	private int compteurChemin=1;
-	private float clicX, clicY;
-	private static Player updateur;
 	
+	private static PathFinder finder;
+
+	private Path path;
+
+	private int compteurChemin=1;
+
+
+	private float clicX, clicY;
+
+	private static Player updateur;
+
+
+	public Exploration(){
+	}
+
 	public Exploration(int id){
 		this.stateID = id;
 	}
-
-	public Exploration(){
+	
+	@Override
+	public int getID() {
+		return 0;
 	}
 
 	@Override
@@ -105,7 +131,6 @@ public class Exploration extends BasicGameState{
 
 	}
 
-
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g)
 			throws SlickException {
@@ -130,41 +155,21 @@ public class Exploration extends BasicGameState{
 
 		//HUD
 		if(getCurrMap().isSafe()){
-			g.setColor(Color.black);
-			g.drawString("Map non dangereuse", 10, 24);
-			g.setColor(Color.green);
-			g.drawString("Map non dangereuse", 10, 23);
+			g.setColor(new Color(0, 65, 0));
+			g.drawString("Zone non dangereuse", 10, 9);
+			g.drawString("Zone non dangereuse", 10, 8);
+			g.setColor(Color.white);
+			g.drawString("Zone non dangereuse", 10, 8);
 		}
 		else {
 			g.setColor(Color.black);
-			g.drawString("Map dangereuse", 10, 24);
+			g.drawString("Zone dangereuse", 10, 9);
+			g.drawString("Zone dangereuse", 10, 8);
 			g.setColor(Color.red);
-			g.drawString("Map dangereuse", 10, 23);
-
+			g.drawString("Zone dangereuse", 10, 8);
 		}
 
 		g.setColor(Color.black);
-
-		int t=50;
-		if(Constantes.ONLINE){
-		for(Player p : listeJoueurLoc)
-			g.drawString(p.toString()+":"+p.getMapId(), 10, t+=20);
-		g.setColor(Color.white);
-		t=49;
-		for(Player p : listeJoueurLoc)
-			g.drawString(p.toString()+":"+p.getMapId(), 10, t+=20);
-		}
-		//DEBUG
-		//		Affiche la hitbox du joueur
-		//						g.draw(MainGame.getPlayer().getCollision());
-		//		Afficher les collisions du terrain
-		//						for(Rectangle p : currMap.getCollision())
-		//							g.draw(p);
-		//	Afficher les TP
-		//		for(Teleporter tp : currMap.getListeTeleporter())
-		//			g.draw(tp);
-		// affiche les différents poitns
-
 	}
 
 	@Override
@@ -211,7 +216,7 @@ public class Exploration extends BasicGameState{
 			// si la liste locale contient un joueur qui n'est pas dans la liste updaté = il est soit déco, soit dans une autre map
 			for (Iterator<Player> iterator = listeJoueurLoc.iterator(); iterator
 					.hasNext();) {
-				Player p = (Player) iterator.next();
+				Player p = iterator.next();
 				if(!p.equals(MainGame.getPlayer()) && !MainGame.getListePaquetJoueurs().contains(p)){
 					if(p.getGroupe()!=null && p.getGroupe().getLeader().equals(p))
 						for(Player p2 : listeJoueurLoc)
@@ -304,34 +309,6 @@ public class Exploration extends BasicGameState{
 				}
 			}
 		}
-	}
-
-
-	@Override
-	public int getID() {
-		return 0;
-	}
-
-	//bricolage mais pas le choix
-	public static void newSkin(Player p){
-		updateur = p;
-	}
-	
-	public static void setBlockMap(Map blockMap){
-		setCurrMap(blockMap);
-	}
-
-	public static Map getCurrMap() {
-		return currMap;
-	}
-
-	public static void setCurrMap(Map currMap) {
-		Exploration.currMap = currMap;
-		finder = new AStarPathFinder(getCurrMap(), 500, false);
-	}
-
-	public static Vector<Player> getListeJoueurLoc() {
-		return listeJoueurLoc;
 	}
 
 }

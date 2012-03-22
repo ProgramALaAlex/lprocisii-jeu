@@ -1,5 +1,7 @@
 package rmi.serveur;
 
+import game.Player;
+
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -10,13 +12,6 @@ import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.Vector;
 
-import combats.Combattant;
-import combats.Monstre;
-
-import constantes.Constantes;
-import game.Callbacker;
-import game.Player;
-
 import rmi.interfaces.ChatRemoteInterface;
 import rmi.interfaces.DispatcherInterface;
 import rmi.interfaces.ReceiverInterface;
@@ -24,20 +19,16 @@ import rmi.serveur.beans.ClefDB;
 import rmi.serveur.beans.JoueurBean;
 import rmi.serveur.beans.JoueurDB;
 
+import combats.Combattant;
+import combats.Monstre;
+
+import constantes.Constantes;
+
 /**
  * LE SERVEUR RMI
  * NE PAS IMPORTER DANS LE JEU
  */
 public class Serveur implements DispatcherInterface {
-	private Vector<ReceiverInterface> listeRefJoueurs;
-	private Vector<Player> listeJoueurs;
-
-	public Serveur(){
-		listeRefJoueurs = new Vector<ReceiverInterface>();
-		listeJoueurs = new Vector<Player>();
-		new SupprimerOfflineThread(this).start();
-	}
-
 	public static void main(String[] args){
 		System.out.println("Dispatcher");
 		System.setSecurityManager (null);
@@ -60,51 +51,14 @@ public class Serveur implements DispatcherInterface {
 			System.exit(1);
 		}
 	}
+	private Vector<ReceiverInterface> listeRefJoueurs;
 
-	@Override
-	public void inscription(Player p, ReceiverInterface client) throws RemoteException {
-		this.listeRefJoueurs.add(client);
-		this.listeJoueurs.add(p);
-	}
+	private Vector<Player> listeJoueurs;
 
-	/**
-	 * @return les joueurs d'une même map et toujours le leader du groupe auquel appartient le joueur
-	 */
-	@Override
-	public ArrayList<Player> updateListe(UID id, String idMap) throws RemoteException {
-		ArrayList<Player> res = new ArrayList<Player>();
-		for (Player p : listeJoueurs)
-			if(!p.getId().equals(id) && (p.getMapId().equals(idMap) || (p.getGroupe()!=null && p.getGroupe().contains(id))))
-				res.add(p);
-		return res;
-	}
-
-	/**
-	 * On update le joueur dans notre liste
-	 */
-	@Override
-	public void updatePosition(Player recu) throws RemoteException {
-		if(listeJoueurs.contains(recu)){
-			listeJoueurs.set(listeJoueurs.indexOf(recu), recu);
-		}
-	}
-
-	@Override
-	public boolean inviterJoueur(Player leader, Player invite) throws RemoteException{
-		for(Player p : listeJoueurs){
-			if(invite.equals(p)){
-				ReceiverInterface ri = getReferenceCorrespondante(p);
-				if(!ri.getPlayer().containsInvitation(leader.getGroupe())){
-					ri.addInvitation(leader.getGroupe());
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	private ReceiverInterface getReferenceCorrespondante(Player p){
-		return listeRefJoueurs.get(listeJoueurs.indexOf(p));
+	public Serveur(){
+		listeRefJoueurs = new Vector<ReceiverInterface>();
+		listeJoueurs = new Vector<Player>();
+		new SupprimerOfflineThread(this).start();
 	}
 
 	@Override
@@ -118,6 +72,26 @@ public class Serveur implements DispatcherInterface {
 	}
 
 	@Override
+	public void attaquer(Player emetteur, Combattant cible, int degats) throws RemoteException {
+		// on récupère les joueurs du groupe de l'emetteur
+		System.out.println("Methode attaquer détectée");
+		for(Player p : emetteur.getListeJoueursCombatEnCours()){
+			System.out.println(p.getId());
+			if(!p.equals(emetteur)){
+				//			if(!p.equals(emetteur) && p.getGroupe()!=null && p.getGroupe().equals(emetteur.getGroupe())){
+				getReferenceCorrespondante(p).attaquer(cible, degats);
+				//			}
+			}
+		}
+	}
+
+	@Override
+	public int convertirClefEnID(String clef) throws RemoteException {
+		ClefDB db = new ClefDB();
+		return db.getId(clef);
+	}
+
+	@Override
 	public void disbandGroup(UID groupID) throws RemoteException {
 		for(Player p : listeJoueurs){
 			if(p.getGroupe()!=null && p.getGroupe().getID().equals(groupID)){
@@ -128,11 +102,112 @@ public class Serveur implements DispatcherInterface {
 		}
 	}
 
+	@Override
+	public void entreEnModeCombat(Player leader, ArrayList<Player> listeJoueurs, ArrayList<Monstre> listeMonstre) throws RemoteException {
+		// on récupère les joueurs du groupe du leader
+		for(Player p : listeJoueurs){
+			if(!p.equals(leader))
+				//			if(p.getGroupe()!=null && p.getGroupe().equals(leader.getGroupe())){
+				getReferenceCorrespondante(p).entrerEnCombat(listeJoueurs, listeMonstre);
+			//			}
+		}
+	}
+
+	@Override
+	public void equiperArmure(Player emetteur, int armure) throws RemoteException {
+		for(Player p : listeJoueurs)
+			if(!p.equals(emetteur))
+				getReferenceCorrespondante(p).equiperArmure(emetteur, armure);
+	}
+
+	@Override
+	public JoueurBean getJoueurByID(String id) throws RemoteException {
+		JoueurDB db = new JoueurDB();
+		return db.getById(id);
+	}
+
+	@Override
+	public String getJoueurMapByID(int id) throws RemoteException {
+		JoueurDB db = new JoueurDB();
+		return db.getSprite(id);
+	}
+
+	private ReceiverInterface getReferenceCorrespondante(Player p){
+		return listeRefJoueurs.get(listeJoueurs.indexOf(p));
+	}
+
+	@Override
+	public void incrementerCombat(int BDD_ID) throws RemoteException {
+		for(Player p : listeJoueurs)
+			if(p.getBDD_ID()==BDD_ID){
+				JoueurDB db = new JoueurDB();
+				db.incrementerCombat(db.getById(Integer.toString(BDD_ID)));
+			}
+	}
+
+	@Override
+	public void incrementerMonstreTues(int BDD_ID) throws RemoteException {
+		for(Player p : listeJoueurs)
+			if(p.getBDD_ID()==BDD_ID){
+				JoueurDB db = new JoueurDB();
+				db.incrementerMonstreTues(db.getById(Integer.toString(BDD_ID)));
+			}
+	}
+
+	@Override
+	public void inscription(Player p, ReceiverInterface client) throws RemoteException {
+		this.listeRefJoueurs.add(client);
+		this.listeJoueurs.add(p);
+	}
+
+	@Override
+	public boolean inviterJoueur(Player leader, Player invite) throws RemoteException{
+		for(Player p : listeJoueurs){
+			if(invite.equals(p)){
+				if(!p.containsInvitation(leader.getGroupe())){
+					ReceiverInterface ri = getReferenceCorrespondante(p);
+					ri.addInvitation(leader.getGroupe());
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isConnected(Player p) throws RemoteException {
+		return listeJoueurs.contains(p);
+	}
+
+	@Override
+	public void kick(String id) throws RemoteException {
+		Player del = null;
+		for(Player p : listeJoueurs)
+			if(p.getBDD_ID()==Integer.parseInt(id)){
+				del = p;
+				break;
+			}
+		if(del!=null){
+			getReferenceCorrespondante(del).kicked();
+			listeRefJoueurs.remove(getReferenceCorrespondante(del));
+			listeJoueurs.remove(del);
+		}
+	}
+
+	@Override
+	public void refuserInvitation(UID groupID, Player refus) throws RemoteException {
+		for(Player p : listeJoueurs){
+			if(p.getGroupe()!=null && p.getGroupe().getID().equals(groupID) && p.getGroupe().isLeader(p)){
+				ReceiverInterface ri = getReferenceCorrespondante(p);
+				ri.invitationRefusee(refus);
+			}
+		}
+	}
+
 	public synchronized void retirerReferencesNeRepondantPas(){
-		int i=-1;
+		int i=0;
 		for (Iterator<ReceiverInterface> iterator = listeRefJoueurs.iterator(); iterator.hasNext();) {
-			ReceiverInterface ri = (ReceiverInterface) iterator.next();
-			i++;
+			ReceiverInterface ri = iterator.next();
 			try {
 				ri.getPlayer();
 			} catch (RemoteException e) {
@@ -158,31 +233,7 @@ public class Serveur implements DispatcherInterface {
 					new SupprimerOfflineThread(this).start();
 				}
 			}
-		}
-	}
-
-	@Override
-	public void entreEnModeCombat(Player leader, ArrayList<Player> listeJoueurs, ArrayList<Monstre> listeMonstre) throws RemoteException {
-		// on récupère les joueurs du groupe du leader
-		for(Player p : listeJoueurs){
-			if(!p.equals(leader))
-				//			if(p.getGroupe()!=null && p.getGroupe().equals(leader.getGroupe())){
-				getReferenceCorrespondante(p).entrerEnCombat(listeJoueurs, listeMonstre);
-			//			}
-		}
-	}
-
-	@Override
-	public void attaquer(Player emetteur, Combattant cible, int degats) throws RemoteException {
-		// on récupère les joueurs du groupe de l'emetteur
-		System.out.println("Methode attaquer détectée");
-		for(Player p : emetteur.getListeJoueursCombatEnCours()){
-			System.out.println(p.getId());
-			if(!p.equals(emetteur)){
-				//			if(!p.equals(emetteur) && p.getGroupe()!=null && p.getGroupe().equals(emetteur.getGroupe())){
-				getReferenceCorrespondante(p).attaquer(cible, degats);
-				//			}
-			}
+			i++;
 		}
 	}
 
@@ -196,67 +247,26 @@ public class Serveur implements DispatcherInterface {
 		}
 	}
 
+	/**
+	 * @return les joueurs d'une même map et toujours le leader du groupe auquel appartient le joueur
+	 */
 	@Override
-	public boolean isConnected(Player p) throws RemoteException {
-		return listeJoueurs.contains(p);
+	public ArrayList<Player> updateListe(UID id, String idMap) throws RemoteException {
+		ArrayList<Player> res = new ArrayList<Player>();
+		for (Player p : listeJoueurs)
+			if(!p.getId().equals(id) && (p.getMapId().equals(idMap) || (p.getGroupe()!=null && p.getGroupe().contains(id))))
+				res.add(p);
+		return res;
 	}
 
+	/**
+	 * On update le joueur dans notre liste
+	 */
 	@Override
-	public void refuserInvitation(UID groupID, Player refus) throws RemoteException {
-		for(Player p : listeJoueurs){
-			if(p.getGroupe()!=null && p.getGroupe().getID().equals(groupID) && p.getGroupe().isLeader(p)){
-				ReceiverInterface ri = getReferenceCorrespondante(p);
-				ri.invitationRefusee(refus);
-			}
+	public void updatePosition(Player recu) throws RemoteException {
+		if(listeJoueurs.contains(recu)){
+			listeJoueurs.set(listeJoueurs.indexOf(recu), recu);
 		}
-	}
-
-	@Override
-	public JoueurBean getJoueurByID(String id) throws RemoteException {
-		JoueurDB db = new JoueurDB();
-		return db.getById(id);
-	}
-
-	@Override
-	public String getJoueurMapByID(int id) throws RemoteException {
-		JoueurDB db = new JoueurDB();
-		return db.getSprite(id);
-	}
-
-	@Override
-	public int convertirClefEnID(String clef) throws RemoteException {
-		ClefDB db = new ClefDB();
-		return db.getId(clef);
-	}
-
-	@Override
-	public void incrementerMonstreTues(int BDD_ID) throws RemoteException {
-		for(Player p : listeJoueurs)
-			if(p.getBDD_ID()==BDD_ID){
-				JoueurDB db = new JoueurDB();
-				db.incrementerMonstreTues(db.getById(Integer.toString(BDD_ID)));
-			}
-	}
-
-	@Override
-	public void incrementerCombat(int BDD_ID) throws RemoteException {
-		for(Player p : listeJoueurs)
-			if(p.getBDD_ID()==BDD_ID){
-				JoueurDB db = new JoueurDB();
-				db.incrementerCombat(db.getById(Integer.toString(BDD_ID)));
-			}
-	}
-
-	@Override
-	public void testSysout() throws RemoteException {
-		System.out.println("LOL CA MARCHE J'Y CROIS PAS MAIS C'EST GEANT !!");
-	}
-
-	@Override
-	public void equiperArmure(Player emetteur, int armure) throws RemoteException {
-		for(Player p : listeJoueurs)
-			if(!p.equals(emetteur))
-				getReferenceCorrespondante(p).equiperArmure(emetteur, armure);
 	}
 
 }

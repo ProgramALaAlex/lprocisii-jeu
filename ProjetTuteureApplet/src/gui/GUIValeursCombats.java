@@ -50,6 +50,10 @@ public class GUIValeursCombats {
 		this.afficher = true;
 	}
 	
+	public String getDegats() {
+		return degats;
+	}
+
 	public int getDegatsX() {
 		return degatsX;
 	}
@@ -58,8 +62,8 @@ public class GUIValeursCombats {
 		return degatsY;
 	}
 
-	public String getDegats() {
-		return degats;
+	public boolean isAffiche() {
+		return afficher;
 	}
 
 	public void render(GameContainer container, StateBasedGame game, Graphics g){
@@ -85,10 +89,6 @@ public class GUIValeursCombats {
 			}
 		}
 		else afficher = false;
-	}
-
-	public boolean isAffiche() {
-		return afficher;
 	}
 	
 	

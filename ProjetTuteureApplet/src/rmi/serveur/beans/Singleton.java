@@ -15,17 +15,6 @@ import java.sql.DriverManager;
  public final class Singleton {
      private static volatile Singleton instance = null;
  
-     private Connection con;
-
-     private Singleton() throws Exception {
-         Class.forName("com.mysql.jdbc.Driver");
-            
-         String url = "jdbc:mysql://localhost:3306/unjeu";
-         String user = "root";
-         String password = null;
-         con = DriverManager.getConnection( url, user, password ) ;
-     }
-
      public final static Singleton getInstance() throws Exception{
          if (Singleton.instance == null) {
             synchronized(Singleton.class) {
@@ -35,6 +24,17 @@ import java.sql.DriverManager;
             }
          }
          return Singleton.instance;
+     }
+
+     private Connection con;
+
+     private Singleton() throws Exception {
+         Class.forName("com.mysql.jdbc.Driver");
+            
+         String url = "jdbc:mysql://localhost:3306/unjeu";
+         String user = "root";
+         String password = null;
+         con = DriverManager.getConnection( url, user, password ) ;
      }
  
      public Connection getConnection(){

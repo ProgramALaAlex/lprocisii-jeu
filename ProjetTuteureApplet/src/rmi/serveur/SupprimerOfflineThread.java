@@ -1,10 +1,5 @@
 package rmi.serveur;
 
-import java.rmi.RemoteException;
-
-import exploration.OnlineUpdateThread;
-import game.MainGame;
-
 /**
  * Vérifier toutes les 5 secondes les joueurs qui répondent
  * Si ils ne répondent pas, on les retire
@@ -17,11 +12,12 @@ public class SupprimerOfflineThread extends Thread{
 		this.serveur = serveur;
 	}
 	
+	@Override
 	public synchronized void run(){
 		while(true){
 					serveur.retirerReferencesNeRepondantPas();
 				try {
-					SupprimerOfflineThread.sleep(5000);
+					Thread.sleep(5000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

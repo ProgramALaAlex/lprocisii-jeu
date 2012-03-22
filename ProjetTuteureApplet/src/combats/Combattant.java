@@ -5,12 +5,12 @@ import java.io.Serializable;
 import org.newdawn.slick.Animation;
 
 public abstract class Combattant implements Serializable {
+	private static final long serialVersionUID = 924099034084323818L;
 	protected String nom;
 	protected int pvMax, pvCourant, attaque, vitesse;
 	protected int xCombat, yCombat;
 	protected boolean enAttaque;
 	protected transient Animation sprite;
-	
 	
 	public Combattant(){
 		this.enAttaque = true;
@@ -66,71 +66,12 @@ public abstract class Combattant implements Serializable {
 		}
 	}
 	
-	public boolean estEnVie(){
-		return this.getPvCourant() > 0;
-	}
-	
 	/**
 	 * Déplace un combattant lorsqu'il attaque
 	 * @return true quand le combattant a terminé son déplacement.
 	 */
 	public abstract boolean deplacementAttaque(int delta, int departX, int destinationX);
-
-	public int getPvCourant() {
-		return pvCourant;
-	}
-
-
-	public void setPvCourant(int pvCourant) {
-		this.pvCourant = pvCourant;
-	}
-
-
-	public String getNom() {
-		return nom;
-	}
-
-
-	public int getPvMax() {
-		return pvMax;
-	}
-
-
-	public int getAttaque() {
-		return attaque;
-	}
-
-
-	public int getVitesse() {
-		return vitesse;
-	}
-
-	public Animation getSprite() {
-		return sprite;
-	}
-
-	public int getXCombat() {
-		return xCombat;
-	}
-
-	public void setXCombat(int xCombat) {
-		this.xCombat = xCombat;
-	}
-
-	public int getYCombat() {
-		return yCombat;
-	}
-
-	public void setYCombat(int yCombat) {
-		this.yCombat = yCombat;
-	}
-
-	/**
-	 * Nécessaire de mettre ça dans une méthode à part pour
-	 * recréer localement les animations.
-	 */
-	public abstract void initAnimation();
-
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -147,9 +88,68 @@ public abstract class Combattant implements Serializable {
 			return false;
 		return true;
 	}
-	
+
+	public boolean estEnVie(){
+		return this.getPvCourant() > 0;
+	}
+
+
+	public int getAttaque() {
+		return attaque;
+	}
+
+
+	public String getNom() {
+		return nom;
+	}
+
+
+	public int getPvCourant() {
+		return pvCourant;
+	}
+
+
+	public int getPvMax() {
+		return pvMax;
+	}
+
+
+	public Animation getSprite() {
+		return sprite;
+	}
+
+	public int getVitesse() {
+		return vitesse;
+	}
+
+	public int getXCombat() {
+		return xCombat;
+	}
+
+	public int getYCombat() {
+		return yCombat;
+	}
+
+	/**
+	 * Nécessaire de mettre ça dans une méthode à part pour
+	 * recréer localement les animations.
+	 */
+	public abstract void initAnimation();
+
 	public boolean isKO(){
 		return pvCourant<=0;
+	}
+
+	public void setPvCourant(int pvCourant) {
+		this.pvCourant = pvCourant;
+	}
+
+	public void setXCombat(int xCombat) {
+		this.xCombat = xCombat;
+	}
+	
+	public void setYCombat(int yCombat) {
+		this.yCombat = yCombat;
 	}
 	
 }

@@ -3,6 +3,7 @@ package exploration;
 import org.newdawn.slick.geom.Rectangle;
 
 public class Teleporter extends Rectangle{
+	private static final long serialVersionUID = 5107913113102700061L;
 	private String idMapDepart;
 	private String idMapDestination;
 	private int destinationX;
@@ -18,20 +19,20 @@ public class Teleporter extends Rectangle{
 		this.destinationY = destinationY;
 	}
 
-	public String getIdMapDepart() {
-		return idMapDepart;
-	}
-
-	public String getIdMapDestination() {
-		return idMapDestination;
-	}
-
 	public int getDestinationX() {
 		return destinationX;
 	}
 
 	public int getDestinationY() {
 		return destinationY;
+	}
+
+	public String getIdMapDepart() {
+		return idMapDepart;
+	}
+
+	public String getIdMapDestination() {
+		return idMapDestination;
 	}
 	
 	

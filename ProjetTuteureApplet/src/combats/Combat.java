@@ -1,6 +1,10 @@
 package combats;
 
 
+import game.AppletGameContainer;
+import game.MainGame;
+import game.Player;
+import gui.GUIValeursCombats;
 import inventaire.Objet;
 
 import java.applet.Applet;
@@ -20,11 +24,8 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
+
 import constantes.Constantes;
-import game.AppletGameContainer;
-import game.MainGame;
-import game.Player;
-import gui.GUIValeursCombats;
 
 
 
@@ -56,24 +57,170 @@ public class Combat extends BasicGameState{
 	private static Combattant cibleRecuTemp;
 	private static int degatsRecuTemp;
 
-	public Combat(int stateID){
-		this.stateID = stateID;
+	/**
+	 * Lorsque l'ennemi attaque (recevoir)
+	 * @param delta
+	 * @param cible
+	 * @param Degats
+	 * @return true quand l'animation est terminée
+	 */
+	private static boolean attaqueEnnemiRecevoir(int delta, Combattant cible, int degats) {
+		if(combattantPlusRapide.deplacementAttaque(delta, Constantes.POSX_COMBAT_MONSTRE, Constantes.POSX_ATTAQUE_MONSTRE)){
+			tourEnnemi = false;
+			if(combatDeGroupe){
+				degatsDisplay = new GUIValeursCombats(cible.getXCombat(), cible.getYCombat(), Integer.toString(degats));
+			}
+			playerDown((Player) cible);
+			return true;
+		}
+		return false;
 	}
 
-	public Combat(){
+	/**
+	 * Attaque du joueur (recevoir)
+	 * @return true quand l'animation est terminée
+	 */
+	private static boolean attaqueJoueurRecevoir(int delta, Combattant cible, int degats) {
+		if (combattantPlusRapide.deplacementAttaque(delta, attaqueJoueurX, destinationAttaqueJoueurX)){
+			degatsDisplay = new GUIValeursCombats(cible.getXCombat(), cible.getYCombat(), Integer.toString(degats));
+			drop((Monstre)cible);
+			return true;
+		}
+		return false;
 	}
 
-	@Override
-	public int getID() {
-		return stateID;
+	/**
+	 * Lorsque le joueur reçoit une attaque, appelé en callback
+	 * @param cibleRecu
+	 * @param degats
+	 * @return
+	 */
+	public static boolean attaqueOnline(Combattant cibleRecu, int degats){
+		//txt+dgt
+		if(!enTrainDeRepondre){
+			Combattant cible = null;
+			System.out.println(cibleRecu.getClass());
+			if(cibleRecu instanceof Player){
+				for(Player p : listeJoueurs)
+					if(p.equals(cibleRecu)){
+						cible = p;
+						break;
+					}
+			} else if (cibleRecu instanceof Monstre){
+				for(Monstre m : listeMonstre)
+					if(m.equals(cibleRecu)){
+						cible = m;
+						break;
+					}
+			}
+			cibleRecuTemp = cible;
+			degatsRecuTemp = degats;
+			combattantPlusRapide.attaquer(cible, degats);
+		}
+		enTrainDeRepondre=true;
+		//anim attaque
+		if(combattantPlusRapide instanceof Player){
+			if(attaqueJoueurRecevoir(delta, cibleRecuTemp, degats))
+				return true;
+		}
+		else{
+			if(attaqueEnnemiRecevoir(delta, cibleRecuTemp, degats))
+				return true;
+		}
+		return false;
 	}
 
-	@Override
-	public void init(GameContainer container, StateBasedGame game)
-			throws SlickException {
-		background = new Image(Constantes.BATTLE_BACKGROUND_LOCATION+"battleBackground.jpg");
+	private static void drop(Monstre monstre) {
+		if(!monstre.estEnVie()){
+			// si l'ennemi est KO
+			ArrayList<Objet> drops = monstre.drop();
+			// si drop
+			if(drops!=null && !drops.isEmpty()){
+				String drop = "";
+				if(drops.size()>1){
+					for (Objet o : drops)
+						drop+=o.getNom()+" + ";
+					drop+=" droppés!";
+				}
+				else drop+=drops.get(0).getNom()+" droppé!";
+				dropDisplay = new GUIValeursCombats(monstre.getXCombat(), monstre.getYCombat(), drop, 3);
+				MainGame.getPlayer().getInventaire().addObjets(drops);
+			}
+			listeMonstre.remove(monstre);
+			definirCible=0;
+		}
 	}
 
+
+	/**
+	 * @return le joueur local
+	 */
+	private static Player getPlayer(){
+//		if(!MainGame.getPlayer().isLeaderCombat()){
+			if(listeJoueurs.contains(MainGame.getPlayer()))
+				return listeJoueurs.get(listeJoueurs.indexOf(MainGame.getPlayer()));
+			return listeJoueursKO.get(listeJoueursKO.indexOf(MainGame.getPlayer()));
+//		} else return MainGame.getPlayer();
+	}
+	
+
+	private static void playerDown(Player cible) {
+		if(cible.isKO()){
+			reaffecterLeader(cible);
+			listeJoueursKO.add(cible);
+			listeJoueurs.remove(cible);
+			//TODO
+		}
+	}
+
+	private static void reaffecterLeader(Player JoueurQuiVaPartir) {
+		if(JoueurQuiVaPartir.isLeaderCombat()){
+			for(Player p : listeJoueurs)
+				if(!p.isKO() && !p.isLeaderCombat()){
+					p.setLeaderCombat(true);
+					if(p.equals(MainGame.getPlayer()))
+						MainGame.getPlayer().setLeaderCombat(true);
+					break;
+				}
+			JoueurQuiVaPartir.setLeaderCombat(false);
+		}
+	}
+
+	/**
+	 * On se soigne (envoyer) 
+	 * @param emetteur
+	 * @param soin
+	 */
+	public static void seSoignerEnvoyer(int soin) {
+		tourJoueur=false;
+		degatsDisplay = new GUIValeursCombats(getPlayer().getXCombat(), getPlayer().getYCombat(), Integer.toString(soin), 2);
+		if(combatDeGroupe)
+			try {
+				MainGame.getRemoteReference().seSoigner(getPlayer(), soin);
+			} catch (RemoteException e) {
+				System.out.println("Erreur lors de l'attaque");
+				e.printStackTrace();
+			}
+	}
+
+	/**
+	 * Un autre joueur se soigne (recevoir)
+	 * @param emetteur
+	 * @param soin
+	 */
+	public static void seSoignerRecevoir(Player emetteur, int soin) {
+		tourJoueur=false;
+		degatsDisplay = new GUIValeursCombats(emetteur.getXCombat(), emetteur.getYCombat(), Integer.toString(soin), 2);
+
+		for(Player p : listeJoueurs)
+			if(p.equals(emetteur)){
+				p.setPvCourant(p.getPvCourant()+soin);
+				break;
+			}
+
+		attendreReponse = false;
+		tour++;
+	}
 
 	/**
 	 * Utilisé par le callbacker
@@ -82,33 +229,125 @@ public class Combat extends BasicGameState{
 		Combat.listeJoueurs = listeJoueurs;
 		Combat.listeMonstre = listeMonstre;
 	}
-	
 
-	@Override
-	public void leave(GameContainer container, StateBasedGame game)
-			throws SlickException {
-		super.leave(container, game);
-		// réactivaiton des boutons
-		if(container instanceof AppletGameContainer.Container){
-			Applet applet = ((AppletGameContainer.Container) container).getApplet();
-			JSObject jso = JSObject.getWindow(applet);
-			jso.call("activerBoutons", null);
-		}
-		MainGame.getPlayer().synchroniserStats(getPlayer(), container);
-		MainGame.getPlayer().setLeaderCombat(false);
-		MainGame.getPlayer().getListeJoueursCombatEnCours().clear();
-		if(MainGame.getPlayer().isKO())
-			MainGame.getPlayer().setPvCourant(MainGame.getPlayer().getPvMax()/2);
-		combatDeGroupe = false;
-		// fin de l'affichage
-		listeJoueursKO = null;
-		degatsDisplay = null;
-		dropDisplay = null;
-		listeMonstre = null;
-		listeJoueurs = null;
-		
-		MainGame.getPlayer().finCombat();
+	public Combat(){
 	}
+
+	public Combat(int stateID){
+		this.stateID = stateID;
+	}
+
+	/**
+	 * Attaque ennemi (envoyer)
+	 * @param delta
+	 */
+	private void attaqueEnnemiEnvoyer(int delta) {
+		if(!combatDeGroupe || MainGame.getPlayer().isLeaderCombat()){
+			if(combattantPlusRapide.deplacementAttaque(delta, Constantes.POSX_COMBAT_MONSTRE, Constantes.POSX_ATTAQUE_MONSTRE)){
+				tourEnnemi = false;
+				int degats;
+				//on choisit un joueur au hasard si c'est un combat de groupe et si on est le leader
+				if(combatDeGroupe && MainGame.getPlayer().isLeaderCombat()){
+					int cible = (int) Math.round(Math.random()*(listeJoueurs.size()-1));
+					degats = combattantPlusRapide.attaquer(listeJoueurs.get(cible));
+					degatsDisplay = new GUIValeursCombats(listeJoueurs.get(cible).getXCombat(), listeJoueurs.get(cible).getYCombat(), Integer.toString(degats));
+					try {
+						MainGame.getRemoteReference().attaquer(MainGame.getPlayer(), listeJoueurs.get(cible), degats);
+					} catch (RemoteException e) {
+						System.out.println("Erreur attaque de l'ennemi");
+						e.printStackTrace();
+					}
+					
+					playerDown(listeJoueurs.get(cible));
+				}
+				else {
+					degats = combattantPlusRapide.attaquer(getPlayer());
+					degatsDisplay = new GUIValeursCombats(getPlayer().getXCombat(), getPlayer().getYCombat(), Integer.toString(degats));
+					playerDown(getPlayer());
+				}
+			}
+		}
+	}
+
+	/**
+	 * Attaque du joueur (envoyer)
+	 * @param delta
+	 */
+	private void attaqueJoueurEnvoyer(int delta) {
+		if (getPlayer().deplacementAttaque(delta, attaqueJoueurX, destinationAttaqueJoueurX)){
+			joueurAttaque = false;
+			int degats = MainGame.getPlayer().attaquer(listeMonstre.get(definirCible));
+			//si online, on envoit l'attaque aux autres joueurs
+			if(combatDeGroupe)
+				try {
+					MainGame.getRemoteReference().attaquer(MainGame.getPlayer(), listeMonstre.get(definirCible), degats);
+				} catch (RemoteException e) {
+					System.out.println("Erreur lors de l'attaque");
+					e.printStackTrace();
+				}
+			degatsDisplay = new GUIValeursCombats(listeMonstre.get(definirCible).getXCombat(), listeMonstre.get(definirCible).getYCombat(), Integer.toString(degats));
+			if(Constantes.ONLINE && !listeMonstre.get(definirCible).estEnVie())
+				try {
+					MainGame.getRemoteReference().incrementerMonstreTues(getPlayer().getBDD_ID());
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
+			drop(listeMonstre.get(definirCible));
+			selectionCible=false;
+			tourJoueur=false;
+		}
+	}
+
+
+	/**
+	 * Lorsque le joueur choisit une action dans le menu
+	 * (c'est donc à son tour de jouer)
+	 */
+	public void choisirAction(Input input, int delta){
+		// naviguation dans le "menu"
+
+		if(!joueurAttaque){
+			if(!selectionCible){
+				if(input.isKeyPressed(Input.KEY_DOWN) || input.isKeyPressed(Input.KEY_UP))
+					attaquer = !attaquer;
+
+				if(input.isKeyPressed(Input.KEY_ENTER)){
+					// s'il choisit d'attaquer
+					if(attaquer && !selectionCible){
+						selectionCible = true;
+					}
+					else {
+						int soin = getPlayer().utiliserPotion();
+						seSoignerEnvoyer(soin);
+					}
+				}
+			}
+
+			//selection d'une cible
+			else {
+				if(input.isKeyPressed(Input.KEY_DOWN))
+					if(definirCible < listeMonstre.size()-1)
+						definirCible++;
+					else definirCible=0;
+				else if(input.isKeyPressed(Input.KEY_UP))
+					if(definirCible>0)
+						definirCible--;
+					else definirCible=listeMonstre.size()-1;
+				else if(input.isKeyPressed(Input.KEY_ENTER)){
+					// on attaque
+					joueurAttaque = true;
+				}
+				else if (input.isKeyPressed(Input.KEY_ESCAPE)){
+					//on annule
+					selectionCible = false;
+				}
+			}
+		}
+		else {
+			attaqueJoueurEnvoyer(delta);
+		}
+	}
+
 
 	@Override
 	public void enter(GameContainer container, StateBasedGame game)
@@ -205,6 +444,126 @@ public class Combat extends BasicGameState{
 			m.setXCombat(Constantes.POSX_COMBAT_MONSTRE);
 			m.setYCombat(espace+=60);
 		}
+	}
+
+	/**
+	 * permet de gérer les déconnections
+	 * (moche)
+	 */
+	private void gererDeconnexions() {
+		for (Iterator<Player> iterator = listeJoueurs.iterator(); iterator.hasNext();) {
+			Player p = iterator.next();
+			try {
+				if(Constantes.ONLINE && !MainGame.getRemoteReference().isConnected(p)){
+					reaffecterLeader(p);
+					if(MainGame.getPlayer().isLeaderCombat())
+						attendreReponse=false;
+					iterator.remove();
+					// liste de tous les combattants
+					ArrayList<Combattant> listeCombattant = new ArrayList<Combattant>();
+					listeCombattant.addAll(listeJoueurs);
+					listeCombattant.addAll(listeMonstre);
+					if(combattantPlusRapide != null && combattantPlusRapide.equals(p)){
+						if(tour>=listeCombattant.size())
+							tour=0;
+						combattantPlusRapide = getPlusRapide(listeCombattant, tour);
+					}
+					ArrayList<Player> JoueurEncorePresent = new ArrayList<Player>();
+					JoueurEncorePresent.addAll(listeJoueurs);
+					JoueurEncorePresent.addAll(listeJoueursKO);
+					if(JoueurEncorePresent.size()==1)
+						combatDeGroupe=false;
+					MainGame.getPlayer().setListeJoueursCombatEnCours(JoueurEncorePresent);
+				}
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}
+		for (Iterator<Player> iterator = listeJoueursKO.iterator(); iterator.hasNext();) {
+			Player p = iterator.next();
+			try {
+				if(!MainGame.getRemoteReference().isConnected(p)){
+					reaffecterLeader(p);
+					if(MainGame.getPlayer().isLeaderCombat())
+						attendreReponse=false;
+					iterator.remove();
+					// liste de tous les combattants
+					ArrayList<Combattant> listeCombattant = new ArrayList<Combattant>();
+					listeCombattant.addAll(listeJoueurs);
+					listeCombattant.addAll(listeMonstre);
+					if(combattantPlusRapide != null && combattantPlusRapide.equals(p)){
+						if(tour>=listeCombattant.size())
+							tour=0;
+						combattantPlusRapide = getPlusRapide(listeCombattant, tour);
+					}
+					ArrayList<Player> JoueurEncorePresent = new ArrayList<Player>();
+					JoueurEncorePresent.addAll(listeJoueurs);
+					JoueurEncorePresent.addAll(listeJoueursKO);
+					if(JoueurEncorePresent.size()==1)
+						combatDeGroupe=false;
+					p.setListeJoueursCombatEnCours(JoueurEncorePresent);
+				}
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@Override
+	public int getID() {
+		return stateID;
+	}
+	
+	/**
+	 * @param listeCombattant, la liste de combattant
+	 * @param numero
+	 * @return le Nieme combattant le plus rapide de la liste
+	 * Par exemple, getPlusRapide(liste, 0) retourne le plus rapide.
+	 */
+	private Combattant getPlusRapide(ArrayList<Combattant> listeCombattant,  int numero){
+		Collections.sort(listeCombattant, new Comparator<Combattant>() {
+			@Override
+			public int compare(Combattant c1, Combattant c2) {
+				return Float.compare(c2.getVitesse(), c1.getVitesse());
+			}
+		});
+
+		System.out.println("Le plus rapide c'est "+listeCombattant.get(numero).getNom());
+		if(listeCombattant.get(numero) instanceof Player)
+			System.out.println(((Player) listeCombattant.get(numero)).getId());
+		return listeCombattant.get(numero);
+	}
+
+	@Override
+	public void init(GameContainer container, StateBasedGame game)
+			throws SlickException {
+		background = new Image(Constantes.BATTLE_BACKGROUND_LOCATION+"battleBackground.jpg");
+	}
+
+	@Override
+	public void leave(GameContainer container, StateBasedGame game)
+			throws SlickException {
+		super.leave(container, game);
+		// réactivaiton des boutons
+		if(container instanceof AppletGameContainer.Container){
+			Applet applet = ((AppletGameContainer.Container) container).getApplet();
+			JSObject jso = JSObject.getWindow(applet);
+			jso.call("activerBoutons", null);
+		}
+		MainGame.getPlayer().synchroniserStats(getPlayer(), container);
+		MainGame.getPlayer().setLeaderCombat(false);
+		MainGame.getPlayer().getListeJoueursCombatEnCours().clear();
+		if(MainGame.getPlayer().isKO())
+			MainGame.getPlayer().setPvCourant(MainGame.getPlayer().getPvMax()/2);
+		combatDeGroupe = false;
+		// fin de l'affichage
+		listeJoueursKO = null;
+		degatsDisplay = null;
+		dropDisplay = null;
+		listeMonstre = null;
+		listeJoueurs = null;
+		
+		MainGame.getPlayer().finCombat();
 	}
 
 	@Override
@@ -373,364 +732,6 @@ public class Combat extends BasicGameState{
 			MainGame.getPlayer().finCombat();
 			game.enterState(Constantes.GAMEPLAY_MAP_STATE);
 		}
-	}
-
-	/**
-	 * permet de gérer les déconnections
-	 * (moche)
-	 */
-	private void gererDeconnexions() {
-		for (Iterator<Player> iterator = listeJoueurs.iterator(); iterator.hasNext();) {
-			Player p = (Player) iterator.next();
-			try {
-				if(Constantes.ONLINE && !MainGame.getRemoteReference().isConnected(p)){
-					reaffecterLeader(p);
-					if(MainGame.getPlayer().isLeaderCombat())
-						attendreReponse=false;
-					iterator.remove();
-					// liste de tous les combattants
-					ArrayList<Combattant> listeCombattant = new ArrayList<Combattant>();
-					listeCombattant.addAll(listeJoueurs);
-					listeCombattant.addAll(listeMonstre);
-					if(combattantPlusRapide != null && combattantPlusRapide.equals(p)){
-						if(tour>=listeCombattant.size())
-							tour=0;
-						combattantPlusRapide = getPlusRapide(listeCombattant, tour);
-					}
-					ArrayList<Player> JoueurEncorePresent = new ArrayList<Player>();
-					JoueurEncorePresent.addAll(listeJoueurs);
-					JoueurEncorePresent.addAll(listeJoueursKO);
-					if(JoueurEncorePresent.size()==1)
-						combatDeGroupe=false;
-					MainGame.getPlayer().setListeJoueursCombatEnCours(JoueurEncorePresent);
-				}
-			} catch (RemoteException e) {
-				e.printStackTrace();
-			}
-		}
-		for (Iterator<Player> iterator = listeJoueursKO.iterator(); iterator.hasNext();) {
-			Player p = (Player) iterator.next();
-			try {
-				if(!MainGame.getRemoteReference().isConnected(p)){
-					reaffecterLeader(p);
-					if(MainGame.getPlayer().isLeaderCombat())
-						attendreReponse=false;
-					iterator.remove();
-					// liste de tous les combattants
-					ArrayList<Combattant> listeCombattant = new ArrayList<Combattant>();
-					listeCombattant.addAll(listeJoueurs);
-					listeCombattant.addAll(listeMonstre);
-					if(combattantPlusRapide != null && combattantPlusRapide.equals(p)){
-						if(tour>=listeCombattant.size())
-							tour=0;
-						combattantPlusRapide = getPlusRapide(listeCombattant, tour);
-					}
-					ArrayList<Player> JoueurEncorePresent = new ArrayList<Player>();
-					JoueurEncorePresent.addAll(listeJoueurs);
-					JoueurEncorePresent.addAll(listeJoueursKO);
-					if(JoueurEncorePresent.size()==1)
-						combatDeGroupe=false;
-					p.setListeJoueursCombatEnCours(JoueurEncorePresent);
-				}
-			} catch (RemoteException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	/**
-	 * Attaque ennemi (envoyer)
-	 * @param delta
-	 */
-	private void attaqueEnnemiEnvoyer(int delta) {
-		if(!combatDeGroupe || MainGame.getPlayer().isLeaderCombat()){
-			if(combattantPlusRapide.deplacementAttaque(delta, Constantes.POSX_COMBAT_MONSTRE, Constantes.POSX_ATTAQUE_MONSTRE)){
-				tourEnnemi = false;
-				int degats;
-				//on choisit un joueur au hasard si c'est un combat de groupe et si on est le leader
-				if(combatDeGroupe && MainGame.getPlayer().isLeaderCombat()){
-					int cible = (int) Math.round(Math.random()*(listeJoueurs.size()-1));
-					degats = combattantPlusRapide.attaquer(listeJoueurs.get(cible));
-					degatsDisplay = new GUIValeursCombats(listeJoueurs.get(cible).getXCombat(), listeJoueurs.get(cible).getYCombat(), Integer.toString(degats));
-					try {
-						MainGame.getRemoteReference().attaquer(MainGame.getPlayer(), listeJoueurs.get(cible), degats);
-					} catch (RemoteException e) {
-						System.out.println("Erreur attaque de l'ennemi");
-						e.printStackTrace();
-					}
-					
-					playerDown(listeJoueurs.get(cible));
-				}
-				else {
-					degats = combattantPlusRapide.attaquer(getPlayer());
-					degatsDisplay = new GUIValeursCombats(getPlayer().getXCombat(), getPlayer().getYCombat(), Integer.toString(degats));
-					playerDown(getPlayer());
-				}
-			}
-		}
-	}
-
-	private static void playerDown(Player cible) {
-		if(cible.isKO()){
-			reaffecterLeader(cible);
-			listeJoueursKO.add(cible);
-			listeJoueurs.remove(cible);
-			//TODO
-		}
-	}
-
-	private static void reaffecterLeader(Player JoueurQuiVaPartir) {
-		if(JoueurQuiVaPartir.isLeaderCombat()){
-			for(Player p : listeJoueurs)
-				if(!p.isKO() && !p.isLeaderCombat()){
-					p.setLeaderCombat(true);
-					if(p.equals(MainGame.getPlayer()))
-						MainGame.getPlayer().setLeaderCombat(true);
-					break;
-				}
-			JoueurQuiVaPartir.setLeaderCombat(false);
-		}
-	}
-
-	/**
-	 * Lorsque l'ennemi attaque (recevoir)
-	 * @param delta
-	 * @param cible
-	 * @param Degats
-	 * @return true quand l'animation est terminée
-	 */
-	private static boolean attaqueEnnemiRecevoir(int delta, Combattant cible, int degats) {
-		if(combattantPlusRapide.deplacementAttaque(delta, Constantes.POSX_COMBAT_MONSTRE, Constantes.POSX_ATTAQUE_MONSTRE)){
-			tourEnnemi = false;
-			if(combatDeGroupe){
-				degatsDisplay = new GUIValeursCombats(cible.getXCombat(), cible.getYCombat(), Integer.toString(degats));
-			}
-			playerDown((Player) cible);
-			return true;
-		}
-		return false;
-	}
-
-
-	/**
-	 * @param listeCombattant, la liste de combattant
-	 * @param numero
-	 * @return le Nieme combattant le plus rapide de la liste
-	 * Par exemple, getPlusRapide(liste, 0) retourne le plus rapide.
-	 */
-	private Combattant getPlusRapide(ArrayList<Combattant> listeCombattant,  int numero){
-		Collections.sort(listeCombattant, new Comparator<Combattant>() {
-			@Override
-			public int compare(Combattant c1, Combattant c2) {
-				return Float.compare(c2.getVitesse(), c1.getVitesse());
-			}
-		});
-
-		System.out.println("Le plus rapide c'est "+listeCombattant.get(numero).getNom());
-		if(listeCombattant.get(numero) instanceof Player)
-			System.out.println(((Player) listeCombattant.get(numero)).getId());
-		return listeCombattant.get(numero);
-	}
-
-
-	/**
-	 * Lorsque le joueur choisit une action dans le menu
-	 * (c'est donc à son tour de jouer)
-	 */
-	public void choisirAction(Input input, int delta){
-		// naviguation dans le "menu"
-
-		if(!joueurAttaque){
-			if(!selectionCible){
-				if(input.isKeyPressed(Input.KEY_DOWN) || input.isKeyPressed(Input.KEY_UP))
-					attaquer = !attaquer;
-
-				if(input.isKeyPressed(Input.KEY_ENTER)){
-					// s'il choisit d'attaquer
-					if(attaquer && !selectionCible){
-						selectionCible = true;
-					}
-					else {
-						int soin = getPlayer().utiliserPotion();
-						seSoignerEnvoyer(soin);
-					}
-				}
-			}
-
-			//selection d'une cible
-			else {
-				if(input.isKeyPressed(Input.KEY_DOWN))
-					if(definirCible < listeMonstre.size()-1)
-						definirCible++;
-					else definirCible=0;
-				else if(input.isKeyPressed(Input.KEY_UP))
-					if(definirCible>0)
-						definirCible--;
-					else definirCible=listeMonstre.size()-1;
-				else if(input.isKeyPressed(Input.KEY_ENTER)){
-					// on attaque
-					joueurAttaque = true;
-				}
-				else if (input.isKeyPressed(Input.KEY_ESCAPE)){
-					//on annule
-					selectionCible = false;
-				}
-			}
-		}
-		else {
-			attaqueJoueurEnvoyer(delta);
-		}
-	}
-
-	/**
-	 * Un autre joueur se soigne (recevoir)
-	 * @param emetteur
-	 * @param soin
-	 */
-	public static void seSoignerRecevoir(Player emetteur, int soin) {
-		tourJoueur=false;
-		degatsDisplay = new GUIValeursCombats(emetteur.getXCombat(), emetteur.getYCombat(), Integer.toString(soin), 2);
-
-		for(Player p : listeJoueurs)
-			if(p.equals(emetteur)){
-				p.setPvCourant(p.getPvCourant()+soin);
-				break;
-			}
-
-		attendreReponse = false;
-		tour++;
-	}
-
-	/**
-	 * On se soigne (envoyer) 
-	 * @param emetteur
-	 * @param soin
-	 */
-	public static void seSoignerEnvoyer(int soin) {
-		tourJoueur=false;
-		degatsDisplay = new GUIValeursCombats(getPlayer().getXCombat(), getPlayer().getYCombat(), Integer.toString(soin), 2);
-		if(combatDeGroupe)
-			try {
-				MainGame.getRemoteReference().seSoigner(getPlayer(), soin);
-			} catch (RemoteException e) {
-				System.out.println("Erreur lors de l'attaque");
-				e.printStackTrace();
-			}
-	}
-	
-	/**
-	 * @return le joueur local
-	 */
-	private static Player getPlayer(){
-//		if(!MainGame.getPlayer().isLeaderCombat()){
-			if(listeJoueurs.contains(MainGame.getPlayer()))
-				return listeJoueurs.get(listeJoueurs.indexOf(MainGame.getPlayer()));
-			return listeJoueursKO.get(listeJoueursKO.indexOf(MainGame.getPlayer()));
-//		} else return MainGame.getPlayer();
-	}
-
-	/**
-	 * Attaque du joueur (envoyer)
-	 * @param delta
-	 */
-	private void attaqueJoueurEnvoyer(int delta) {
-		if (getPlayer().deplacementAttaque(delta, attaqueJoueurX, destinationAttaqueJoueurX)){
-			joueurAttaque = false;
-			int degats = MainGame.getPlayer().attaquer(listeMonstre.get(definirCible));
-			//si online, on envoit l'attaque aux autres joueurs
-			if(combatDeGroupe)
-				try {
-					MainGame.getRemoteReference().attaquer(MainGame.getPlayer(), listeMonstre.get(definirCible), degats);
-				} catch (RemoteException e) {
-					System.out.println("Erreur lors de l'attaque");
-					e.printStackTrace();
-				}
-			degatsDisplay = new GUIValeursCombats(listeMonstre.get(definirCible).getXCombat(), listeMonstre.get(definirCible).getYCombat(), Integer.toString(degats));
-			if(Constantes.ONLINE && !listeMonstre.get(definirCible).estEnVie())
-				try {
-					MainGame.getRemoteReference().incrementerMonstreTues(getPlayer().getBDD_ID());
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				}
-			drop(listeMonstre.get(definirCible));
-			selectionCible=false;
-			tourJoueur=false;
-		}
-	}
-
-	/**
-	 * Attaque du joueur (recevoir)
-	 * @return true quand l'animation est terminée
-	 */
-	private static boolean attaqueJoueurRecevoir(int delta, Combattant cible, int degats) {
-		if (combattantPlusRapide.deplacementAttaque(delta, attaqueJoueurX, destinationAttaqueJoueurX)){
-			degatsDisplay = new GUIValeursCombats(cible.getXCombat(), cible.getYCombat(), Integer.toString(degats));
-			drop((Monstre)cible);
-			return true;
-		}
-		return false;
-	}
-
-	private static void drop(Monstre monstre) {
-		if(!monstre.estEnVie()){
-			// si l'ennemi est KO
-			ArrayList<Objet> drops = monstre.drop();
-			// si drop
-			if(drops!=null && !drops.isEmpty()){
-				String drop = "";
-				if(drops.size()>1){
-					for (Objet o : drops)
-						drop+=o.getNom()+" + ";
-					drop+=" droppés!";
-				}
-				else drop+=drops.get(0).getNom()+" droppé!";
-				dropDisplay = new GUIValeursCombats(monstre.getXCombat(), monstre.getYCombat(), drop, 3);
-				MainGame.getPlayer().getInventaire().addObjets(drops);
-			}
-			listeMonstre.remove(monstre);
-			definirCible=0;
-		}
-	}
-
-	/**
-	 * Lorsque le joueur reçoit une attaque, appelé en callback
-	 * @param cibleRecu
-	 * @param degats
-	 * @return
-	 */
-	public static boolean attaqueOnline(Combattant cibleRecu, int degats){
-		//txt+dgt
-		if(!enTrainDeRepondre){
-			Combattant cible = null;
-			System.out.println(cibleRecu.getClass());
-			if(cibleRecu instanceof Player){
-				for(Player p : listeJoueurs)
-					if(p.equals(cibleRecu)){
-						cible = p;
-						break;
-					}
-			} else if (cibleRecu instanceof Monstre){
-				for(Monstre m : listeMonstre)
-					if(m.equals(cibleRecu)){
-						cible = m;
-						break;
-					}
-			}
-			cibleRecuTemp = cible;
-			degatsRecuTemp = degats;
-			combattantPlusRapide.attaquer(cible, degats);
-		}
-		enTrainDeRepondre=true;
-		//anim attaque
-		if(combattantPlusRapide instanceof Player){
-			if(attaqueJoueurRecevoir(delta, cibleRecuTemp, degats))
-				return true;
-		}
-		else{
-			if(attaqueEnnemiRecevoir(delta, cibleRecuTemp, degats))
-				return true;
-		}
-		return false;
 	}
 
 }

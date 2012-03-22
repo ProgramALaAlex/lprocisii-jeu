@@ -14,19 +14,36 @@ public class Chat implements ChatRemoteInterface
 	private ArrayList<ChatReceiverInterface> clients = new ArrayList<ChatReceiverInterface>();
 	private ArrayList<String> name = new ArrayList<String>();
 
-	private int idClient(ChatReceiverInterface client){
-		for(int i = 0; i < clients.size(); i++){
-			if(client.toString().compareTo(clients.get(i).toString()) == 0)
-				return i;
-		}
-		return -1;
+	@Override
+	public void addClient(ChatReceiverInterface client, String pseudo) {
+		String user = pseudo;
+		System.out.println("Ajout d'un client nommé: "+user);
+		System.out.println( createUniKey() );
+		clients.add(client);
+		name.add(user);
 	}
 	
-	private String createUniKey(){
+	private String changeName( String newName, ChatReceiverInterface client){
+		int id = idClient(client);
+		if(id != -1){
+			for(int i = 0; i < name.size(); i++){
+				if( newName.compareTo(name.get(i)) == 0){
+					System.out.println("Ce nom d'utilisateur est deja pris");
+					return "Ce nom d'utilisateur est deja pris";
+				}
+			}
+			System.out.println(name.get(id)+" se nomme maintenant "+newName);
+			name.set(id, newName);
+			return "Rename effectuee";
+		}
+		return "Erreur fonction change nom";
+	}
+	
+    private String createUniKey(){
 		return UUID.randomUUID().toString();
 	}
 	
-    @Override
+	@Override
 	public String getMessage(String msg, ChatReceiverInterface client)
     {
 		String debut = msg.substring(0,1);
@@ -59,29 +76,12 @@ public class Chat implements ChatRemoteInterface
         return "Message recu";
     }
 	
-	@Override
-	public void addClient(ChatReceiverInterface client) {
-		String user = "user"+clients.size();
-		System.out.println("Ajout d'un client nommé: "+user);
-		System.out.println( createUniKey() );
-		clients.add(client);
-		name.add(user);
-	}
-	
-	private String changeName( String newName, ChatReceiverInterface client){
-		int id = idClient(client);
-		if(id != -1){
-			for(int i = 0; i < name.size(); i++){
-				if( newName.compareTo(name.get(i)) == 0){
-					System.out.println("Ce nom d'utilisateur est deja pris");
-					return "Ce nom d'utilisateur est deja pris";
-				}
-			}
-			System.out.println(name.get(id)+" se nomme maintenant "+newName);
-			name.set(id, newName);
-			return "Rename effectuee";
+	private int idClient(ChatReceiverInterface client){
+		for(int i = 0; i < clients.size(); i++){
+			if(client.toString().compareTo(clients.get(i).toString()) == 0)
+				return i;
 		}
-		return "Erreur fonction change nom";
+		return -1;
 	}
 	
 }

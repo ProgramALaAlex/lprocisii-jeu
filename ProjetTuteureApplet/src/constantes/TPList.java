@@ -2,9 +2,11 @@ package constantes;
 
 
 import java.util.ArrayList;
+
 import exploration.Teleporter;
 
 public class TPList extends ArrayList<Teleporter>{
+	private static final long serialVersionUID = -2707622405578972370L;
 
 	public TPList() {
 		super();

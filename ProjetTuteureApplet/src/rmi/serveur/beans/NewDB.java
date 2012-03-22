@@ -55,7 +55,7 @@ public class NewDB {
     }
     
     public ArrayList<NewBean> getLestNew(  ){
-        ArrayList<NewBean> list = new ArrayList();
+        ArrayList<NewBean> list = new ArrayList<NewBean>();
         try {
             Connection con = Singleton.getInstance().getConnection();
             PreparedStatement ps = con.prepareStatement("SELECT * FROM unjeu.news");

@@ -4,15 +4,7 @@ import game.MainGame;
 import game.Player;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
 import java.util.Vector;
-
-import org.newdawn.slick.GameContainer;
-
-import constantes.Constantes;
 
 public class OnlineUpdateThread extends Thread {
 	private Vector<Player> listeJoueurLoc;
@@ -21,6 +13,11 @@ public class OnlineUpdateThread extends Thread {
 		this.listeJoueurLoc = listeJoueurLoc;
 	}
 
+	public Vector<Player> getListeJoueurLoc(){
+		return listeJoueurLoc;
+	}
+	
+	@Override
 	public void run(){
 		while(true){
 				try {
@@ -30,15 +27,11 @@ public class OnlineUpdateThread extends Thread {
 					e.printStackTrace();
 				}
 				try {
-					OnlineUpdateThread.sleep(100);
+					Thread.sleep(100);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 		}
-	}
-	
-	public Vector<Player> getListeJoueurLoc(){
-		return listeJoueurLoc;
 	}
 
 }

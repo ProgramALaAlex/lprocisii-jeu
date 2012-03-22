@@ -11,19 +11,20 @@ import java.io.Serializable;
  * @author Loic
  */
 public class TypeObjetBean implements Serializable{
-    int idType;
+	private static final long serialVersionUID = -3122066339252827371L;
+	int idType;
     String nom;
 
     public int getIdType() {
         return idType;
     }
 
-    public void setIdType(int idType) {
-        this.idType = idType;
-    }
-
     public String getNom() {
         return nom;
+    }
+
+    public void setIdType(int idType) {
+        this.idType = idType;
     }
 
     public void setNom(String nom) {

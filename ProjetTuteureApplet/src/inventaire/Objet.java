@@ -3,6 +3,7 @@ package inventaire;
 import java.io.Serializable;
 
 public abstract class Objet implements Serializable {
+	private static final long serialVersionUID = -1800842718419739533L;
 	protected String nom;
 	protected int id;
 	protected int valeur; //la valeur (pv soigné, attaque ajouté...)
@@ -28,9 +29,8 @@ public abstract class Objet implements Serializable {
 		return false;
 	}
 
-	@Override
-	public int hashCode() {
-		return valeur;
+	public int getId(){
+		return id;
 	}
 
 	public String getNom() {
@@ -41,8 +41,9 @@ public abstract class Objet implements Serializable {
 		return valeur;
 	}
 	
-	public int getId(){
-		return id;
+	@Override
+	public int hashCode() {
+		return valeur;
 	}
 	
 }

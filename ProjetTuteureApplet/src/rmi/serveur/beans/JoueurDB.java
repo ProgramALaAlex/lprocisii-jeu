@@ -5,7 +5,10 @@
 package rmi.serveur.beans;
 
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,6 +18,45 @@ import java.util.logging.Logger;
  * @author Loic
  */
 public class JoueurDB {
+    
+    public JoueurBean checkJoueur(String pseudo, String password){
+        Connection con;
+        try {
+            con = Singleton.getInstance().getConnection();
+            PreparedStatement ps = con.prepareStatement("SELECT idJoueur, pseudo, mail, pass, dateInscription, attaque, vitesse, pvMax, "
+                    +"pvActuels, totalCombats, totalMonstres, dernierX, dernierY, "
+                    +"idMap, idArme, idArmure, idApparance, newsletter, groupe "
+                    +"FROM unjeu.joueur WHERE pseudo='"+pseudo+"' AND pass='"+password+"'");
+            ResultSet rs = ps.executeQuery();
+            JoueurBean joueur = null;
+            if (rs.next()) {
+                joueur = new JoueurBean(rs.getString(2),rs.getString(3),rs.getString(4));
+                joueur.setIdJoueur(new Integer(rs.getString(1)));
+                
+                java.sql.Date mysqlDate = rs.getDate(5);
+                joueur.setDateInscription(new java.util.Date(mysqlDate.getTime()));
+
+                joueur.setAttaque(new Integer(rs.getString(6)));
+                joueur.setVitesse(new Integer(rs.getString(7)));
+                joueur.setPvMax(new Integer(rs.getString(8)));
+                joueur.setPvActuels(new Integer(rs.getString(9)));
+                joueur.setTotalCombats(new Integer(rs.getString(10)));
+                joueur.setTotalMonstres(new Integer(rs.getString(11)));
+                joueur.setDernierX(new Integer(rs.getString(12)));
+                joueur.setDernierY(new Integer(rs.getString(13)));
+                joueur.setIdMap(new Integer(rs.getString(14)));
+                joueur.setIdArme(new Integer(rs.getString(15)));
+                joueur.setIdArmure(new Integer(rs.getString(16)));
+                joueur.setIdApparance(new Integer(rs.getString(17)));
+                joueur.setNewsletter(new Integer(rs.getString(18)));
+                joueur.setGroupe(new Integer(rs.getString(19)));
+            }
+            return joueur;
+        } catch (Exception ex) {
+            Logger.getLogger(JoueurDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
     
     public void creerJoueur( JoueurBean joueur){
         try {
@@ -49,6 +91,21 @@ public class JoueurDB {
             System.out.println(ex.toString());
         }
     }
+    
+    public boolean existe(String pseudo){
+        try {
+            Connection con = Singleton.getInstance().getConnection();
+            PreparedStatement ps = con.prepareStatement("SELECT idJoueur FROM unjeu.joueur WHERE pseudo='"+pseudo+"'");
+            ResultSet rs = ps.executeQuery();
+            System.out.println("pseudo : "+pseudo);
+            if (rs.next()) {
+                return true;
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(JoueurDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+     }
     
     public JoueurBean getById( String id ){
         try {
@@ -120,8 +177,8 @@ public class JoueurDB {
         return null;
     }
     
-    public ArrayList<JoueurBean> getList( String pseudo ){
-        ArrayList<JoueurBean> list = new ArrayList();
+     public ArrayList<JoueurBean> getList( String pseudo ){
+        ArrayList<JoueurBean> list = new ArrayList<JoueurBean>();
         try {
             Connection con = Singleton.getInstance().getConnection();
             PreparedStatement ps = con.prepareStatement("SELECT * FROM unjeu.joueur WHERE pseudo LIKE '%"+pseudo+"%'");
@@ -155,60 +212,6 @@ public class JoueurDB {
         }
         return list;
     }
-    
-    public JoueurBean checkJoueur(String pseudo, String password){
-        Connection con;
-        try {
-            con = Singleton.getInstance().getConnection();
-            PreparedStatement ps = con.prepareStatement("SELECT idJoueur, pseudo, mail, pass, dateInscription, attaque, vitesse, pvMax, "
-                    +"pvActuels, totalCombats, totalMonstres, dernierX, dernierY, "
-                    +"idMap, idArme, idArmure, idApparance, newsletter, groupe "
-                    +"FROM unjeu.joueur WHERE pseudo='"+pseudo+"' AND pass='"+password+"'");
-            ResultSet rs = ps.executeQuery();
-            JoueurBean joueur = null;
-            if (rs.next()) {
-                joueur = new JoueurBean(rs.getString(2),rs.getString(3),rs.getString(4));
-                joueur.setIdJoueur(new Integer(rs.getString(1)));
-                
-                java.sql.Date mysqlDate = rs.getDate(5);
-                joueur.setDateInscription(new java.util.Date(mysqlDate.getTime()));
-
-                joueur.setAttaque(new Integer(rs.getString(6)));
-                joueur.setVitesse(new Integer(rs.getString(7)));
-                joueur.setPvMax(new Integer(rs.getString(8)));
-                joueur.setPvActuels(new Integer(rs.getString(9)));
-                joueur.setTotalCombats(new Integer(rs.getString(10)));
-                joueur.setTotalMonstres(new Integer(rs.getString(11)));
-                joueur.setDernierX(new Integer(rs.getString(12)));
-                joueur.setDernierY(new Integer(rs.getString(13)));
-                joueur.setIdMap(new Integer(rs.getString(14)));
-                joueur.setIdArme(new Integer(rs.getString(15)));
-                joueur.setIdArmure(new Integer(rs.getString(16)));
-                joueur.setIdApparance(new Integer(rs.getString(17)));
-                joueur.setNewsletter(new Integer(rs.getString(18)));
-                joueur.setGroupe(new Integer(rs.getString(19)));
-            }
-            return joueur;
-        } catch (Exception ex) {
-            Logger.getLogger(JoueurDB.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
-    }
-    
-     public boolean existe(String pseudo){
-        try {
-            Connection con = Singleton.getInstance().getConnection();
-            PreparedStatement ps = con.prepareStatement("SELECT idJoueur FROM unjeu.joueur WHERE pseudo='"+pseudo+"'");
-            ResultSet rs = ps.executeQuery();
-            System.out.println("pseudo : "+pseudo);
-            if (rs.next()) {
-                return true;
-            }
-        } catch (Exception ex) {
-            Logger.getLogger(JoueurDB.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return false;
-     }
      
      
      public String getSprite(int idApparance){
@@ -224,6 +227,32 @@ public class JoueurDB {
  			e.printStackTrace();
  		}
  		return null;
+     }
+     
+     public void incrementerCombat(JoueurBean joueur){
+    	 try {
+             Connection con = Singleton.getInstance().getConnection();
+             Statement statement = con.createStatement(); 
+             String query = "UPDATE joueur SET totalCombats=totalCombats+1 WHERE idJoueur='"+joueur.getIdJoueur()+"'";
+             statement.executeUpdate(query);
+         }
+         catch(Exception ex) 
+         { 
+             System.out.println(ex.toString());
+         }
+     }
+     
+     public void incrementerMonstreTues(JoueurBean joueur){
+    	 try {
+             Connection con = Singleton.getInstance().getConnection();
+             Statement statement = con.createStatement(); 
+             String query = "UPDATE joueur SET totalMonstres=totalMonstres+1 WHERE idJoueur='"+joueur.getIdJoueur()+"'";
+             statement.executeUpdate(query);
+         }
+         catch(Exception ex) 
+         { 
+             System.out.println(ex.toString());
+         }
      }
      
      public void majJoueur(JoueurBean joueur){
@@ -249,35 +278,6 @@ public class JoueurDB {
                      + "', newsletter='"+joueur.getNewsletter()
                      + "', groupe='"+joueur.getGroupe()
                      + "' WHERE idJoueur='"+joueur.getIdJoueur()+"'";
-             System.out.println(query);
-             statement.executeUpdate(query);
-         }
-         catch(Exception ex) 
-         { 
-             System.out.println(ex.toString());
-         }
-     }
-     
-     public void incrementerMonstreTues(JoueurBean joueur){
-    	 try {
-             Connection con = Singleton.getInstance().getConnection();
-             Statement statement = con.createStatement(); 
-             String query = "UPDATE joueur SET totalMonstres=totalMonstres+1 WHERE idJoueur='"+joueur.getIdJoueur()+"'";
-             System.out.println(query);
-             statement.executeUpdate(query);
-         }
-         catch(Exception ex) 
-         { 
-             System.out.println(ex.toString());
-         }
-     }
-     
-     public void incrementerCombat(JoueurBean joueur){
-    	 try {
-             Connection con = Singleton.getInstance().getConnection();
-             Statement statement = con.createStatement(); 
-             String query = "UPDATE joueur SET totalCombats=totalCombats+1 WHERE idJoueur='"+joueur.getIdJoueur()+"'";
-             System.out.println(query);
              statement.executeUpdate(query);
          }
          catch(Exception ex) 

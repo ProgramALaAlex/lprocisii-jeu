@@ -1,6 +1,7 @@
 package inventaire;
 
 public class Arme extends Objet {
+	private static final long serialVersionUID = -2848016707692117469L;
 
 	public Arme(int id) {
 		super(id);
