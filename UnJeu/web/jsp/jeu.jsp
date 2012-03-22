@@ -130,5 +130,5 @@ var inventaire = new Array();
                 <hr />
                 <input type="button" value="Voir Inventaire" id="butInv" onClick="voirInventaire();"/>
                 <div id="inventaire"></div>
-                 -->
+                --><input type="button" value="actualise" onclick="actualise();">
             </section>
