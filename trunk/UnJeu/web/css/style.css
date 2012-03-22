@@ -245,9 +245,11 @@ table#inventaire{
 		
 table#inventaire td{
 	border: 2px solid red;
-	width: 44px;
-	height: 44px;
+	width: 46px;
+	height: 46px;
 	background-color: black;
+        padding: 0;
+        margin: 0;
 }
 
 #perso{

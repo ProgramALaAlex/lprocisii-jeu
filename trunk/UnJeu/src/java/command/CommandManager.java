@@ -28,7 +28,7 @@ public class CommandManager {
         cmds.put("inventaire", new InventaireCommand());
         cmds.put("supprimer", new DeleteCommand());
         cmds.put("modifier", new UpdateCommand());
-
+        cmds.put("equipe", new EquipCommand());
     }
 
     public static Command getCommand(String commandName) {

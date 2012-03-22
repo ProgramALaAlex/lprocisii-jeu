@@ -40,17 +40,7 @@ $( init );
                 
                 rpl();
 		
-		// test
-                /*
-		objet = new Array();
-		objet[0] = new Array();
-		objet[0]['url'] = "images/icone/attaque.gif";
-		objet[1] = new Array();
-		objet[1]['url'] = "images/icone/force.gif";
-		
-		inventaire[0] = 0;
-		inventaire[1] = 1;
-		*/
+	
 		//creation de l'inventaire
 		for(var i = 0; i < 4; i++){
 			var tr = document.createElement('tr');
@@ -100,6 +90,9 @@ $( init );
                     alert("Vous ne pouvez pas equipez cet objet");
                     return null;
                 }
+                $.ajax({
+                url: "./equipe.do?type=armure&id="+objet[draggable.attr('id').replace('obj', '')]['id']
+                });
                 equiperArmure(1);
 		if(this.getElementsByTagName('img').length > 0){
 			var old = this.getElementsByTagName('img')[0];
@@ -150,6 +143,10 @@ $( init );
                     alert("Vous ne pouvez pas equipez cet objet");
                     return null;
                 }
+                $.ajax({
+                url: "./equipe.do?type=arme&id="+objet[draggable.attr('id').replace('obj', '')]['id']
+                });
+                
                 equiperArme(1);
 		if(this.getElementsByTagName('img').length > 0){
 			var old = this.getElementsByTagName('img')[0];
@@ -189,21 +186,22 @@ $( init );
 	
 	function handleDropEvent( event, ui ) {
 		var draggable = ui.draggable;
-
+                
 		//On teste si on drop depuis l'inventaire
-		if(draggable.attr('className') == "item2 ui-draggable"){
+		if(document.getElementById(draggable.attr('id')).className == "item2 ui-draggable"){
 			var img = document.getElementById(draggable.attr('id')).cloneNode(true);
 			img.className = "item";
 			
-			document.getElementById("obj"+draggable.attr('id').replace('obj', '')).parentNode.removeChild(document.getElementById("obj"+draggable.attr('id').replace('obj', '')));
+			document.getElementById(draggable.attr('id')).parentNode.removeChild(document.getElementById(draggable.attr('id')));
 			
 			inventaire[this.id.replace("inv_", "")] = draggable.attr('id').replace('obj', '');
 			this.appendChild(img);	
 			$('.item').draggable( {
 				helper: myHelper
 			} );
-		
-		
+                        
+
+                        majInventaire();
 			return null;
 		}
 			
