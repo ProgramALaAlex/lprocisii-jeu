@@ -116,7 +116,7 @@ public class Serveur implements DispatcherInterface {
 	@Override
 	public void equiperArmure(Player emetteur, int armure) throws RemoteException {
 		for(Player p : listeJoueurs)
-			if(!p.equals(emetteur))
+			if(!p.equals(emetteur) && p.getMapId().equals(emetteur.getMapId()))
 				getReferenceCorrespondante(p).equiperArmure(emetteur, armure);
 	}
 

@@ -34,14 +34,15 @@ public class Inventaire extends Observable implements Serializable{
 			notifyObservers();
 		}
 	}
-	
+
 	public void addObjets(ArrayList<Objet> listeO){
 		for(Objet o : listeO)
-			addObjet(o);
+			if(inventaire.containsKey(o))
+				inventaire.get(o).incrementer();
 		setChanged();
 		notifyObservers();
 	}
-	
+
 	public void desequiperArme(){
 		for (Objet possede : inventaire.keySet())
 			if(possede instanceof Arme && inventaire.get(possede).isEquipe()){
@@ -51,17 +52,17 @@ public class Inventaire extends Observable implements Serializable{
 				notifyObservers();
 			}
 	}
-	
+
 	public void desequiperArmure(){
-			for (Objet possede : inventaire.keySet())
-				if(possede instanceof Armure && inventaire.get(possede).isEquipe()){
-					inventaire.get(possede).setEquipe(false);
-					System.out.println(possede.getNom()+" déséquipée.");
-					setChanged();
-					notifyObservers();
-				}
+		for (Objet possede : inventaire.keySet())
+			if(possede instanceof Armure && inventaire.get(possede).isEquipe()){
+				inventaire.get(possede).setEquipe(false);
+				System.out.println(possede.getNom()+" déséquipée.");
+				setChanged();
+				notifyObservers();
+			}
 	}
-	
+
 
 	/**
 	 * équipe une arme possedée et déséquipe l'autre 
@@ -81,7 +82,7 @@ public class Inventaire extends Observable implements Serializable{
 		}
 		return false;
 	}
-	
+
 	/**
 	 * équipe une armure possedée et déséquipe l'autre 
 	 * @param arme à équiper
@@ -100,14 +101,14 @@ public class Inventaire extends Observable implements Serializable{
 		}
 		return false;
 	}
-	
+
 	public int getArmeEquipeeId(){
 		for (Objet o : inventaire.keySet())
 			if ((o instanceof Arme) && (inventaire.get(o)).isEquipe())
 				return o.id;
 		return 0;
 	}
-	
+
 	public int getArmureEquipeeId(){
 		for (Objet o : inventaire.keySet())
 			if ((o instanceof Armure) && (inventaire.get(o)).isEquipe())
@@ -125,7 +126,7 @@ public class Inventaire extends Observable implements Serializable{
 				return o.valeur;
 		return 0;
 	}
-	
+
 	/**
 	 * @return les PV bonus procurée par l'armure actuellement équipée.
 	 * @return 0 si aucune arme équipée
@@ -164,16 +165,28 @@ public class Inventaire extends Observable implements Serializable{
 		}
 		return res;
 	}
-	
+
 	public String toStringHTML(){
-		String res="<h3>INVENTAIRE :</h3><ul>";
+		String res="<h4>Inventaire local :</h4><ul>";
 		for(Objet o : inventaire.keySet()){
-			res+="<li>"+o.getNom()+" NOMBRE = "+inventaire.get(o).getNombre();
-			if (inventaire.get(o).isEquipe())
-				res += "(Equipé)";
-			res += "</li>";
+			if(inventaire.get(o).getNombre()>0 && o.getId()>0){
+				res+="<li>"+o.getNom()+" ("+inventaire.get(o).getNombre()+")";
+				if (!inventaire.get(o).isEquipe()){
+					if(o instanceof Arme)
+						res+="<input name='creer' type='button' onclick='equiperArme("+o.getId()+")' value='Equiper'/>";
+					else if(o instanceof Armure)
+						res+="<input name='creer' type='button' onclick='equiperArmure("+o.getId()+")' value='Equiper'/>";
+				} else if (inventaire.get(o).isEquipe()){
+					res += "(Actuellement équipé - ";
+					if(o instanceof Arme)
+						res+="<input name='creer' type='button' onclick='desequiperArme()' value='Retirer'/> )";
+					else if(o instanceof Armure)
+						res+="<input name='creer' type='button' onclick='desequiperArmure()' value='Retirer'/> )";
+				}
+				res += "</li>";
+			}
 		}
 		return res+"</ul>";
 	}
-	
+
 }

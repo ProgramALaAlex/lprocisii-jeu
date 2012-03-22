@@ -6,6 +6,10 @@ public class Armure extends Objet{
 	public Armure(int id) {
 		super(id);
 		switch(id){
+			case 0 :
+				nom = "Vêtements normaux";
+				valeur = 0;
+			break;
 			case 1 :
 				nom = "armure légère";
 				valeur = 55;

@@ -60,8 +60,8 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 		if(player.getGroupe()!=null){
 			res += "Groupe : <strong>"+player.getGroupe().getNom()+"</strong><br/>";
 			if(!player.getGroupe().getLeader().equals(player)){
-				res+="Leader : <span class=\"joueurGroupe\">"+player.getGroupe().getLeader().getNom()+"</span> <a href='#' onclick='creerGroupe()' return false;'>[Partir du groupe]</a>";
-			} else res+="Vous êtes le leader. <br/> <a href='#' onclick='creerGroupe()' return false;'>[Dissoudre]</a>" ;
+				res+="Leader : <span class=\"joueurGroupe\">"+player.getGroupe().getLeader().getNom()+"</span> <a href='#' onclick='creerGroupe(); return false;'>[Partir du groupe]</a>";
+			} else res+="Vous êtes le leader. <br/> <a href='#' onclick='creerGroupe(); return false;'>[Dissoudre]</a>" ;
 		}
 		else { 
 			res+= "Vous n'appartenez à aucun groupe";
@@ -259,6 +259,15 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 			jso.call("voirListeInvitations", null);
 		}
 	}
+	
+	// fix du désespoir pour limiter les appels JSO
+	public static void updateTotale(GameContainer container) {
+		if(container instanceof AppletGameContainer.Container){
+			Applet applet = ((AppletGameContainer.Container) container).getApplet();
+			JSObject jso = JSObject.getWindow(applet);
+			jso.call("voirListeTotale", null);
+		}
+	}
 
 	public MainGame() {
 		super("Projet Tuteuré");
@@ -319,11 +328,7 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 
 	public void desequiperArmure(){
 		player.getInventaire().desequiperArmure();
-		try {
-			MainGame.getRemoteReference().equiperArmure(player, 0);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
+		Exploration.newSkin(player);
 	}
 
 	private void enregistrerClient() {
@@ -344,17 +349,13 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 	public void equiperArme(String id){
 		int intid = Integer.parseInt(id);
 		player.getInventaire().equiperArme(new Arme(intid));
+		
 	}
 
 	public void equiperArmure(String id){
 		int intid = Integer.parseInt(id);
 		player.getInventaire().equiperArmure(new Armure(intid));
-		player.initAnimation();
-		try {
-			MainGame.getRemoteReference().equiperArmure(player, intid);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
+		Exploration.newSkin(player);
 	}
 
 	public void goMsg(String m){
