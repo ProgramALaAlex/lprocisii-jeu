@@ -10,5 +10,6 @@
 	<classpathentry kind="lib" path="lib/slick.jar" sourcepath="C:/Users/Antonin/Documents/Slick/src"/>
 	<classpathentry kind="lib" path="lib/ibxm.jar"/>
 	<classpathentry kind="lib" path="lib/plugin.jar"/>
+	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.18-bin.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

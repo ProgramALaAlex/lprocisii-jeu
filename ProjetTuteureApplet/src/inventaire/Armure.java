@@ -5,12 +5,12 @@ public class Armure extends Objet{
 		super(id);
 		switch(id){
 			case 1 :
-				nom = "armure 1";
-				valeur = 25;
+				nom = "armure légère";
+				valeur = 55;
 				break;
 			case 2 :
-				nom = "armure 2";
-				valeur = 50;
+				nom = "armure lourde";
+				valeur = 150;
 				break;
 		}
 	}

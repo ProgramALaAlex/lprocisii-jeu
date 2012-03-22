@@ -1,5 +1,6 @@
 package game;
 
+import inventaire.Arme;
 import inventaire.Armure;
 
 import java.applet.Applet;
@@ -96,7 +97,25 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 
 
 	public static void initialisationJoueur(){
-		player = new Player("Joueur", "BlackGuard.png", x, y, 133, 133, 133, 134);
+		player = new Player(0, "Joueur", "homme", x, y, 133, 133, 133, 134);
+		//		player.setPvCourant(10);
+		listePaquetJoueurs = new ArrayList<Player>();
+		if (Constantes.ONLINE){
+			try {
+				Callbacker espoir = new Callbacker(player);
+				UnicastRemoteObject.exportObject(espoir, 0);
+				remoteReference.inscription(player, espoir); 
+				listePaquetJoueurs = remoteReference.updateListe(player.getId(), player.getMapId());
+			} catch (RemoteException e) {
+				e.printStackTrace();
+				System.out.println("Erreur : le serveur du jeu ne répond pas (probablement car pas executé ou que l'objet est sur une adresse inaccessible) mais un RMI répond lawl. \nPassage en mode Hors Ligne.");
+				Constantes.ONLINE=false;
+			}
+		}
+	}
+	
+	public static void initialisationJoueur(int BDD_ID, String nomJoueur, String sprite, int x, int y, int hpMax, int hpCourant, int attaque, int vitesse){
+		player = new Player(BDD_ID, nomJoueur, sprite, x, y, hpMax, hpCourant, attaque, vitesse);
 		//		player.setPvCourant(10);
 		listePaquetJoueurs = new ArrayList<Player>();
 		if (Constantes.ONLINE){
@@ -134,10 +153,30 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 	public void equiperArmure(String id){
 		int intid = Integer.parseInt(id);
 		player.getInventaire().equiperArmure(new Armure(intid));
+		player.initAnimation();
+		try {
+			MainGame.getRemoteReference().equiperArmure(player, intid);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void equiperArme(String id){
+		int intid = Integer.parseInt(id);
+		player.getInventaire().equiperArme(new Arme(intid));
 	}
 
 	public void desequiperArmure(){
 		player.getInventaire().desequiperArmure();
+		try {
+			MainGame.getRemoteReference().equiperArmure(player, 0);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void desequiperArme(){
+		player.getInventaire().desequiperArme();
 	}
 
 	public String voirInventaire(){
