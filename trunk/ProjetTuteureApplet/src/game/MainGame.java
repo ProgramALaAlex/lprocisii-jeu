@@ -262,6 +262,10 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 
 	public MainGame() {
 		super("Projet Tuteuré");
+		initialisationRMI();
+	}
+
+	private void initialisationRMI() {
 		try { 
 			if (Constantes.ONLINE){
 				System.out.println("Connexion en cours...");
@@ -325,13 +329,7 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 	private void enregistrerClient() {
 		try {
 			UnicastRemoteObject.exportObject(this, 0);
-
-			if(getContainer() instanceof AppletGameContainer.Container){
-				Applet applet = ((AppletGameContainer.Container) getContainer()).getApplet();
-				String pseudo = applet.getParameter("clef");
-				remoteReferenceChat.addClient(this, pseudo);
-			}
-			
+			remoteReferenceChat.addClient(this);
 		}
 		catch (RemoteException e) {
 			System.out.println("Remote exception: " + e.getMessage());
