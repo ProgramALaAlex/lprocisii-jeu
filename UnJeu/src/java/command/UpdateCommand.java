@@ -16,7 +16,6 @@ import java.rmi.registry.Registry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.*;
-import rmi.DispatcherInterface;
 
 /**
  * @author Yan
