@@ -16,6 +16,7 @@ import java.rmi.registry.Registry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.*;
+import rmi.interfaces.DispatcherInterface;
 
 /**
  * @author Yan
@@ -33,9 +34,10 @@ public class UpdateCommand implements Command {
         
         System.out.println(this.getCommandName());
         
+        HttpSession session = request.getSession(false);
         String id = ""+request.getParameter("id");
         
-        if (request.getParameter("submit") != null) {
+        if (JoueurBean.estAdmin((Integer)session.getAttribute("groupe")) && !id.equals("") && request.getParameter("submit") != null) {
             
             String pseudo = ""+request.getParameter("pseudo");
             String mail = ""+request.getParameter("mail");
@@ -56,17 +58,23 @@ public class UpdateCommand implements Command {
                 request.setAttribute("erreur", "Erreur : les nombres doivent être positifs.");
             // Si tout est OK
             else {
-                /*
-                String IP_SERVEUR = (String)request.getServletContext().getAttribute("IP_SERVEUR");
-                int REGISTRY_PORT = (Integer)request.getServletContext().getAttribute("REGISTRY_PORT");
-                String REGISTRY_NAME = (String)request.getServletContext().getAttribute("REGISTRY_NAME");
+                
+                String IP_SERVEUR = "localhost";
+                int REGISTRY_PORT = 25565;
+                String REGISTRY_NAME = "RMI_JEU";
+                System.out.println(IP_SERVEUR);
+                System.out.println(REGISTRY_PORT);
+                System.out.println(REGISTRY_NAME);
+                
                 try {
                     Registry registry = LocateRegistry.getRegistry(IP_SERVEUR, REGISTRY_PORT);
                     DispatcherInterface remoteReference = (DispatcherInterface) Naming.lookup("rmi://"+IP_SERVEUR+":"+REGISTRY_PORT+"/"+REGISTRY_NAME);
+                    
+                    remoteReference.testSysout();
                 } catch (Exception ex) {
                     Logger.getLogger(UpdateCommand.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                */
+                
                 JoueurBean joueur = db.getById(id);
                 joueur.setPseudo(pseudo);
                 joueur.setMail(mail);

@@ -28,6 +28,8 @@ public class CommandManager {
         cmds.put("inventaire", new InventaireCommand());
         cmds.put("supprimer", new DeleteCommand());
         cmds.put("modifier", new UpdateCommand());
+        cmds.put("bannir", new BanCommand());
+        cmds.put("debannir", new DebanCommand());
         cmds.put("equipe", new EquipCommand());
         cmds.put("actualise", new ActualiseCommand());
     }
