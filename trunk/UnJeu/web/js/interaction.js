@@ -94,6 +94,7 @@ $( init );
 	
 	
         function dropArmure( event, ui ) {
+            if(nOk) return null;
 		var draggable = ui.draggable;
 		if(objet[draggable.attr('id').replace('obj', '')]['type'] != "armure"){
                     alert("Vous ne pouvez pas equipez cet objet");
@@ -144,6 +145,7 @@ $( init );
         
         function dropArme( event, ui ) {
 		var draggable = ui.draggable;
+                if(nOk) return null;
 		if(objet[draggable.attr('id').replace('obj', '')]['type'] != "arme"){
                     alert("Vous ne pouvez pas equipez cet objet");
                     return null;
