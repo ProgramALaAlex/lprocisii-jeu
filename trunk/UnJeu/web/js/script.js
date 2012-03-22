@@ -93,12 +93,8 @@ function voirListeInvitations(){
 
 function rejoindre(id){
     getApplet().rejoindreGroupe(id);
-    voirListeJoueurs();
-    voirListeInvitations();
 }
 
 function nepasrejoindre(id){
     getApplet().refuserGroupe(id);
-    voirListeJoueurs();
-    voirListeInvitations();
 }
