@@ -100,8 +100,8 @@ var inventaire = new Array();
                 <a class="chatSection" onclick="switchOnglet('guild');">Guild</a> - 
                 <a class="chatSection" onclick="switchOnglet('whisp');">Whisp</a>
                 <div id="general" class="chatbox"><span class="hello">Canal général</span></div>
-                <div id="guild" class="chatbox" style="display: none;"><span class="hello">Canal guilde</span></div>
-                <div id="whisp" class="chatbox" style="display: none;"><span class="hello">Messages privés</span></div>
+                <!--<div id="guild" class="chatbox" style="display: none;"><span class="hello">Canal guilde</span></div>
+                <div id="whisp" class="chatbox" style="display: none;"><span class="hello">Messages privés</span></div>-->
                 <form id="chatForm" action="javascript: void(0)" onsubmit="envoi();" >
                         <input type="text" id="msg" placeholder="Votre message" />
                         <input type="submit" value="Envoi" />
@@ -113,7 +113,7 @@ var inventaire = new Array();
 		<input type="button" value="Voir Inventaire local" id="butInv" onClick="voirInventaire();"/>
 		<div id="inventaireTxt"></div>
 		
-                <section id="iconeMenu">
+               <!-- <section id="iconeMenu">
                     <img onclick="show('sac');" src="images/sac.jpg" height="40px"/>
                     <img onclick="show('equipement');" src="images/equipement.jpg" height="40px"/>
                 </section>
@@ -125,6 +125,8 @@ var inventaire = new Array();
                             <div id="arme" class="equip2"></div>
                     </div>
                 </aside>
+               <input type="button" value="actualise" onclick="actualise();">
+               -->
                 <!--    
                 <em>Section inventaire et actions</em>
                 
@@ -135,5 +137,5 @@ var inventaire = new Array();
                 <hr />
                 <input type="button" value="Voir Inventaire" id="butInv" onClick="voirInventaire();"/>
                 <div id="inventaire"></div>
-                --><input type="button" value="actualise" onclick="actualise();">
+                -->
             </section>
