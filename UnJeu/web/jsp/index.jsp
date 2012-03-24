@@ -74,7 +74,7 @@
 
         <footer>
             
-            <p><em>&copy; 2012 IUT Anonymousse Team</em><br /><a title="Un Jeu" href="view.do">Un Jeu</a> est un projet étudiant strictement expérimental</p>
+            <p><em>&copy; 2012 - CisiiCompany</em><br /><a title="Un Jeu" href="view.do">Un Jeu</a> n'est pas une marque déposée</p>
 			
         </footer>
       
