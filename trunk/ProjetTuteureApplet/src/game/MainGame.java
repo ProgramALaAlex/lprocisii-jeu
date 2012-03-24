@@ -40,6 +40,7 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 	private static Player player;
 	private static float x = 250f;
 	private static float y = 330f;
+	private static String tmpChat;
 
 	public static void accepterInvitation(){
 		try {
@@ -154,6 +155,7 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 				UnicastRemoteObject.exportObject(espoir, 0);
 				remoteReference.inscription(player, espoir); 
 				listePaquetJoueurs = remoteReference.updateListe(player.getId(), player.getMapId());
+				remoteReferenceChat.init(nomJoueur, tmpChat);
 			} catch (RemoteException e) {
 				e.printStackTrace();
 				System.out.println("Erreur : le serveur du jeu ne répond pas (probablement car pas executé ou que l'objet est sur une adresse inaccessible) mais un RMI répond lawl. \nPassage en mode Hors Ligne.");
@@ -161,7 +163,7 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 			}
 		}
 	}
-
+	
 	public static void inviterAuGroupe(final Player invite){
 		try{
 			java.security.AccessController.doPrivileged(
@@ -334,7 +336,7 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 	private void enregistrerClient() {
 		try {
 			UnicastRemoteObject.exportObject(this, 0);
-			remoteReferenceChat.addClient(this);
+			tmpChat = remoteReferenceChat.addClient(this);
 		}
 		catch (RemoteException e) {
 			System.out.println("Remote exception: " + e.getMessage());
