@@ -1,5 +1,6 @@
 package rmi.serveur;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -15,28 +16,25 @@ public class Chat implements ChatRemoteInterface
 	private ArrayList<String> name = new ArrayList<String>();
 
 	@Override
-	public void addClient(ChatReceiverInterface client) {
+	public String addClient(ChatReceiverInterface client) {
 		String user = "Joueur"+clients.size();
 		System.out.println("Ajout d'un client nommé: "+user);
 		System.out.println( createUniKey() );
 		clients.add(client);
 		name.add(user);
+		return user;
 	}
 	
-	private String changeName( String newName, ChatReceiverInterface client){
+	private void changeName( String newName, ChatReceiverInterface client){
 		int id = idClient(client);
 		if(id != -1){
 			for(int i = 0; i < name.size(); i++){
 				if( newName.compareTo(name.get(i)) == 0){
-					System.out.println("Ce nom d'utilisateur est deja pris");
-					return "Ce nom d'utilisateur est deja pris";
+					return;
 				}
 			}
-			System.out.println(name.get(id)+" se nomme maintenant "+newName);
 			name.set(id, newName);
-			return "Rename effectuee";
 		}
-		return "Erreur fonction change nom";
 	}
 	
     private String createUniKey(){
@@ -82,6 +80,13 @@ public class Chat implements ChatRemoteInterface
 				return i;
 		}
 		return -1;
+	}
+
+	@Override
+	public void init(String nouveauNom, String ancienNom)
+			throws RemoteException {
+		if(name.contains(ancienNom))
+			name.set(name.indexOf(ancienNom), nouveauNom);
 	}
 	
 }
