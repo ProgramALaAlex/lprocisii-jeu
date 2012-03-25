@@ -43,7 +43,7 @@ public class Combat extends BasicGameState{
 	private static int tour;
 	private static Combattant combattantPlusRapide;
 
-	private static int attaqueJoueurX; // peut pas mettre dans constante car par rapport au bord..
+	private static int attaqueJoueurX;
 	private static int destinationAttaqueJoueurX;
 	private static boolean joueurAttaque;
 	private Image background;
@@ -156,11 +156,9 @@ public class Combat extends BasicGameState{
 	 * @return le joueur local
 	 */
 	private static Player getPlayer(){
-//		if(!MainGame.getPlayer().isLeaderCombat()){
-			if(listeJoueurs.contains(MainGame.getPlayer()))
-				return listeJoueurs.get(listeJoueurs.indexOf(MainGame.getPlayer()));
-			return listeJoueursKO.get(listeJoueursKO.indexOf(MainGame.getPlayer()));
-//		} else return MainGame.getPlayer();
+		if(listeJoueurs.contains(MainGame.getPlayer()))
+			return listeJoueurs.get(listeJoueurs.indexOf(MainGame.getPlayer()));
+		return listeJoueursKO.get(listeJoueursKO.indexOf(MainGame.getPlayer()));
 	}
 	
 
@@ -169,7 +167,6 @@ public class Combat extends BasicGameState{
 			reaffecterLeader(cible);
 			listeJoueursKO.add(cible);
 			listeJoueurs.remove(cible);
-			//TODO
 		}
 	}
 

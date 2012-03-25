@@ -5,12 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Observable;
 
-/**
- * En fait utiliser une hashmap c'était pas le top.
- * J'aurai du utiliser une arraylist je pense mais maintenant que c'est fait..
- */
 public class Inventaire extends Observable implements Serializable{
-	private static final long serialVersionUID = -2369598613241201891L;
+	private static final long serialVersionUID = 1L;
 	private HashMap<Objet, Nombre> inventaire;
 	public Inventaire() {
 		super();
