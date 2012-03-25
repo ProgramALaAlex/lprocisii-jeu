@@ -5,10 +5,7 @@
  */
 package command;
 
-import beans.InventaireBean;
-import beans.InventaireDB;
 import beans.JoueurBean;
-import beans.JoueurDB;
 import beans.NewBean;
 import beans.NewDB;
 import javax.servlet.http.*;
