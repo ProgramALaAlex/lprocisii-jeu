@@ -5,8 +5,6 @@
 package rmi.serveur.beans;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -14,7 +12,8 @@ import java.util.Date;
  * @author Loic
  */
 public class JoueurBean implements Serializable {
-    	int idJoueur;
+	private static final long serialVersionUID = -8236975854055831613L;
+	int idJoueur;
 	String pseudo;
 	String mail;
 	String pass;
@@ -32,199 +31,199 @@ public class JoueurBean implements Serializable {
 	int idArmure;
 	int idApparence;
 	int newsletter;
-        int groupe;
-        String inventaire;
-        
-    public static java.sql.Date getCurrentJavaSqlDate() {
-        java.util.Date today = new java.util.Date();
-        return new java.sql.Date(today.getTime());
-    }
-    
-    public JoueurBean(String pseudo, String mail, String pass) {
-        this.pseudo = pseudo;
-        this.mail = mail;
-        this.pass = pass;
-        this.dateInscription = getCurrentJavaSqlDate();
-	this.attaque = 0;
-	this.vitesse = 0;
-	this.pvMax = 0;
-	this.pvActuels = 0;
-	this.totalCombats = 0;
-	this.totalMonstres = 0;
-	this.dernierX = 0;
-	this.dernierY = 0;
-	this.idMap = 0;
-	this.idArme = 0;
-	this.idArmure = 0;
-	this.idApparence = 0;
-	this.newsletter = 0;
-        this.groupe = 1;
-        inventaire = null;
-    }
+	int groupe;
+	String inventaire;
 
-    public int getGroupe() {
-        return groupe;
-    }
+	public static java.sql.Date getCurrentJavaSqlDate() {
+		java.util.Date today = new java.util.Date();
+		return new java.sql.Date(today.getTime());
+	}
 
-    public static boolean estAdmin(int groupe) {
-        return (groupe == 2);
-    }
-    
-    public void setGroupe(int groupe) {
-        this.groupe = groupe;
-    }
+	public JoueurBean(String pseudo, String mail, String pass) {
+		this.pseudo = pseudo;
+		this.mail = mail;
+		this.pass = pass;
+		this.dateInscription = getCurrentJavaSqlDate();
+		this.attaque = 0;
+		this.vitesse = 0;
+		this.pvMax = 0;
+		this.pvActuels = 0;
+		this.totalCombats = 0;
+		this.totalMonstres = 0;
+		this.dernierX = 0;
+		this.dernierY = 0;
+		this.idMap = 0;
+		this.idArme = 0;
+		this.idArmure = 0;
+		this.idApparence = 0;
+		this.newsletter = 0;
+		this.groupe = 1;
+		inventaire = null;
+	}
 
-    public int getIdJoueur() {
-        return idJoueur;
-    }
-    
-    public void setIdJoueur(int id) {
-        this.idJoueur = id;
-    }
-    
-    public int getAttaque() {
-        return (int)attaque;
-    }
+	public int getGroupe() {
+		return groupe;
+	}
 
-    public void setAttaque(int attaque) {
-        this.attaque = attaque;
-    }
+	public static boolean estAdmin(int groupe) {
+		return (groupe == 2);
+	}
 
-    public Date getDateInscription() {
-        return dateInscription;
-    }
+	public void setGroupe(int groupe) {
+		this.groupe = groupe;
+	}
 
-    public void setDateInscription(Date dateInscription) {
-        this.dateInscription = dateInscription;
-    }
+	public int getIdJoueur() {
+		return idJoueur;
+	}
 
-    public int getDernierX() {
-        return dernierX;
-    }
+	public void setIdJoueur(int id) {
+		this.idJoueur = id;
+	}
 
-    public void setDernierX(int dernierX) {
-        this.dernierX = dernierX;
-    }
+	public int getAttaque() {
+		return (int)attaque;
+	}
 
-    public int getDernierY() {
-        return dernierY;
-    }
+	public void setAttaque(int attaque) {
+		this.attaque = attaque;
+	}
 
-    public void setDernierY(int dernierY) {
-        this.dernierY = dernierY;
-    }
+	public Date getDateInscription() {
+		return dateInscription;
+	}
 
-    public int getIdApparence() {
-        return idApparence;
-    }
+	public void setDateInscription(Date dateInscription) {
+		this.dateInscription = dateInscription;
+	}
 
-    public void setIdApparence(int idApparence) {
-        this.idApparence = idApparence;
-    }
+	public int getDernierX() {
+		return dernierX;
+	}
 
-    public int getIdArme() {
-        return idArme;
-    }
+	public void setDernierX(int dernierX) {
+		this.dernierX = dernierX;
+	}
 
-    public void setIdArme(int idArme) {
-        this.idArme = idArme;
-    }
+	public int getDernierY() {
+		return dernierY;
+	}
 
-    public int getIdArmure() {
-        return idArmure;
-    }
+	public void setDernierY(int dernierY) {
+		this.dernierY = dernierY;
+	}
 
-    public void setIdArmure(int idArmure) {
-        this.idArmure = idArmure;
-    }
+	public int getIdApparence() {
+		return idApparence;
+	}
 
-    public int getIdMap() {
-        return idMap;
-    }
+	public void setIdApparence(int idApparence) {
+		this.idApparence = idApparence;
+	}
 
-    public void setIdMap(int idMap) {
-        this.idMap = idMap;
-    }
+	public int getIdArme() {
+		return idArme;
+	}
 
-    public String getMail() {
-        return mail;
-    }
+	public void setIdArme(int idArme) {
+		this.idArme = idArme;
+	}
 
-    public void setMail(String mail) {
-        this.mail = mail;
-    }
+	public int getIdArmure() {
+		return idArmure;
+	}
 
-    public int getNewsletter() {
-        return newsletter;
-    }
+	public void setIdArmure(int idArmure) {
+		this.idArmure = idArmure;
+	}
 
-    public void setNewsletter(int newsletter) {
-        this.newsletter = newsletter;
-    }
+	public int getIdMap() {
+		return idMap;
+	}
 
-    public String getPass() {
-        return pass;
-    }
+	public void setIdMap(int idMap) {
+		this.idMap = idMap;
+	}
 
-    public void setPass(String pass) {
-        this.pass = pass;
-    }
+	public String getMail() {
+		return mail;
+	}
 
-    public String getPseudo() {
-        return pseudo;
-    }
+	public void setMail(String mail) {
+		this.mail = mail;
+	}
 
-    public void setPseudo(String pseudo) {
-        this.pseudo = pseudo;
-    }
+	public int getNewsletter() {
+		return newsletter;
+	}
 
-    public int getPvActuels() {
-        return pvActuels;
-    }
+	public void setNewsletter(int newsletter) {
+		this.newsletter = newsletter;
+	}
 
-    public void setPvActuels(int pvActuels) {
-        this.pvActuels = pvActuels;
-    }
+	public String getPass() {
+		return pass;
+	}
 
-    public int getPvMax() {
-        return pvMax;
-    }
+	public void setPass(String pass) {
+		this.pass = pass;
+	}
 
-    public void setPvMax(int pvMax) {
-        this.pvMax = pvMax;
-    }
+	public String getPseudo() {
+		return pseudo;
+	}
 
-    public int getTotalCombats() {
-        return totalCombats;
-    }
+	public void setPseudo(String pseudo) {
+		this.pseudo = pseudo;
+	}
 
-    public void setTotalCombats(int totalCombats) {
-        this.totalCombats = totalCombats;
-    }
+	public int getPvActuels() {
+		return pvActuels;
+	}
 
-    public int getTotalMonstres() {
-        return totalMonstres;
-    }
+	public void setPvActuels(int pvActuels) {
+		this.pvActuels = pvActuels;
+	}
 
-    public void setTotalMonstres(int totalMonstres) {
-        this.totalMonstres = totalMonstres;
-    }
+	public int getPvMax() {
+		return pvMax;
+	}
 
-    public int getVitesse() {
-        return (int)vitesse;
-    }
+	public void setPvMax(int pvMax) {
+		this.pvMax = pvMax;
+	}
 
-    public void setVitesse(int vitesse) {
-        this.vitesse = vitesse;
-    }
-    
-    public String getInventaire() {
-        return this.inventaire;
-    }
-    
-    public void setInventaire(String inventaire){
-        this.inventaire = inventaire;
-    }
-        
-        
+	public int getTotalCombats() {
+		return totalCombats;
+	}
+
+	public void setTotalCombats(int totalCombats) {
+		this.totalCombats = totalCombats;
+	}
+
+	public int getTotalMonstres() {
+		return totalMonstres;
+	}
+
+	public void setTotalMonstres(int totalMonstres) {
+		this.totalMonstres = totalMonstres;
+	}
+
+	public int getVitesse() {
+		return (int)vitesse;
+	}
+
+	public void setVitesse(int vitesse) {
+		this.vitesse = vitesse;
+	}
+
+	public String getInventaire() {
+		return this.inventaire;
+	}
+
+	public void setInventaire(String inventaire){
+		this.inventaire = inventaire;
+	}
+
+
 }

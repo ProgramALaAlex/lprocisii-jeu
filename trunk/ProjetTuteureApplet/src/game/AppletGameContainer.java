@@ -516,14 +516,6 @@ public void destroy() {
       }
    }
 
-   /**
-    * Get the GameContainer providing this applet
-    *
-    * @return The game container providing this applet
-    */
-   public GameContainer getContainer() {
-      return container;
-   }
 
    /**
     * Get the Game object for this applet
