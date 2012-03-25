@@ -32,8 +32,9 @@ public class AddNewsCommand implements Command {
         String vue = "index";
         
         System.out.println(this.getCommandName());
+        HttpSession session = request.getSession(false);
         
-        if (request.getParameter("submit") != null) {
+        if (JoueurBean.estAdmin((Integer)session.getAttribute("groupe")) && request.getParameter("submit") != null) {
             String titre = ""+request.getParameter("titre");
             String contenu = ""+request.getParameter("contenu");
 
@@ -45,7 +46,7 @@ public class AddNewsCommand implements Command {
             // Si tout est OK
             else {
                 NewBean news = new NewBean(titre, contenu);
-                db.AddNew(news);
+                db.addNews(news);
                 request.setAttribute("info", "Info : news ajoutée.");
             }
         }

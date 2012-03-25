@@ -63,9 +63,6 @@ public class UpdateCommand implements Command {
                 String IP_SERVEUR = "localhost";
                 int REGISTRY_PORT = 25565;
                 String REGISTRY_NAME = "RMI_JEU";
-                System.out.println(IP_SERVEUR);
-                System.out.println(REGISTRY_PORT);
-                System.out.println(REGISTRY_NAME);
                 
                 try {
                     Registry registry = LocateRegistry.getRegistry(IP_SERVEUR, REGISTRY_PORT);

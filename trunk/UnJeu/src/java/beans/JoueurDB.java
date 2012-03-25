@@ -20,11 +20,12 @@ public class JoueurDB {
     public void creerJoueur( JoueurBean joueur){
         try {
             Connection con = Singleton.getInstance().getConnection();
-            Statement statement = con.createStatement(); 
-            String query = "INSERT INTO unjeu.joueur (pseudo, mail, pass, dateInscription, attaque, vitesse, pvMax, pvActuels, totalCombats, totalMonstres, dernierX, dernierY, idMap, idArme, idArmure, idApparance, newsletter, groupe) VALUES ("
-                    + "'"+joueur.getPseudo()+"', "
-                    + "'"+joueur.getMail()+"', "
-                    + "'"+joueur.getPass()+"', "
+            PreparedStatement ps = con.prepareStatement( 
+            "INSERT INTO unjeu.joueur (pseudo, mail, pass, dateInscription, "
+                    + "attaque, vitesse, pvMax, pvActuels, totalCombats, "
+                    + "totalMonstres, dernierX, dernierY, idMap, idArme, "
+                    + "idArmure, idApparance, newsletter, groupe, inventaire) VALUES ("
+                    + "?,?,?,"
                     + "'"+joueur.getDateInscription()+"', "
                     + "'"+joueur.getAttaque()+"', "
                     + "'"+joueur.getVitesse()+"', "
@@ -39,9 +40,12 @@ public class JoueurDB {
                     + "'"+joueur.getIdArmure()+"', "
                     + "'"+joueur.getIdApparance()+"', "
                     + "'"+joueur.getNewsletter()+"', "
-                    + "'"+joueur.getGroupe()+"')"; 
-            System.out.println(query);
-            statement.executeUpdate(query);
+                    + "'"+joueur.getGroupe()+"', "
+                    + "'')");
+            ps.setString(1, joueur.getPseudo());
+            ps.setString(2, joueur.getMail());
+            ps.setString(3, joueur.getPass());
+            ps.executeUpdate();
             joueur.setIdJoueur(getByPseudo(joueur.getPseudo()).getIdJoueur());
         }
         catch(Exception ex) 
