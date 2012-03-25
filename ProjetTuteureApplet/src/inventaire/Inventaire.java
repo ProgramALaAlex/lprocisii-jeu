@@ -25,7 +25,6 @@ public class Inventaire extends Observable implements Serializable{
 	/**
 	 * Ajoute un objet dans l'inventaire
 	 * @param Objet à ajouter
-	 * TODO A VOIR AVEC LES POINTEURS, MARCHE SUREMENT PAS
 	 */
 	public void addObjet(Objet o){
 		if(inventaire.containsKey(o)){

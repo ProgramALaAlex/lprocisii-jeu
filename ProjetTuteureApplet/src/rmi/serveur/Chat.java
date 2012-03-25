@@ -18,8 +18,6 @@ public class Chat implements ChatRemoteInterface
 	@Override
 	public String addClient(ChatReceiverInterface client) {
 		String user = "Joueur"+clients.size();
-		System.out.println("Ajout d'un client nommé: "+user);
-		System.out.println( createUniKey() );
 		clients.add(client);
 		name.add(user);
 		return user;
@@ -35,10 +33,6 @@ public class Chat implements ChatRemoteInterface
 			}
 			name.set(id, newName);
 		}
-	}
-	
-    private String createUniKey(){
-		return UUID.randomUUID().toString();
 	}
 	
 	@Override

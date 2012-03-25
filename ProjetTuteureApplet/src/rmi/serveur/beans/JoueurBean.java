@@ -5,20 +5,16 @@
 package rmi.serveur.beans;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
  *
  * @author Loic
  */
-public class JoueurBean implements Serializable{
-	private static final long serialVersionUID = -507100696017731615L;
-
-		public static java.sql.Date getCurrentJavaSqlDate() {
-		    java.util.Date today = new java.util.Date();
-		    return new java.sql.Date(today.getTime());
-		}
-	int idJoueur;
+public class JoueurBean implements Serializable {
+    	int idJoueur;
 	String pseudo;
 	String mail;
 	String pass;
@@ -34,10 +30,15 @@ public class JoueurBean implements Serializable{
 	int idMap;
 	int idArme;
 	int idArmure;
-	int idApparance;
-        int newsletter;
+	int idApparence;
+	int newsletter;
+        int groupe;
+        String inventaire;
         
-    int groupe;
+    public static java.sql.Date getCurrentJavaSqlDate() {
+        java.util.Date today = new java.util.Date();
+        return new java.sql.Date(today.getTime());
+    }
     
     public JoueurBean(String pseudo, String mail, String pass) {
         this.pseudo = pseudo;
@@ -55,163 +56,175 @@ public class JoueurBean implements Serializable{
 	this.idMap = 0;
 	this.idArme = 0;
 	this.idArmure = 0;
-	this.idApparance = 0;
+	this.idApparence = 0;
 	this.newsletter = 0;
         this.groupe = 1;
+        inventaire = null;
     }
 
-    public float getAttaque() {
-        return attaque;
+    public int getGroupe() {
+        return groupe;
+    }
+
+    public static boolean estAdmin(int groupe) {
+        return (groupe == 2);
+    }
+    
+    public void setGroupe(int groupe) {
+        this.groupe = groupe;
+    }
+
+    public int getIdJoueur() {
+        return idJoueur;
+    }
+    
+    public void setIdJoueur(int id) {
+        this.idJoueur = id;
+    }
+    
+    public int getAttaque() {
+        return (int)attaque;
+    }
+
+    public void setAttaque(int attaque) {
+        this.attaque = attaque;
     }
 
     public Date getDateInscription() {
         return dateInscription;
     }
 
-    public int getDernierX() {
-        return dernierX;
-    }
-    
-    public int getDernierY() {
-        return dernierY;
-    }
-    
-    public int getGroupe() {
-        return groupe;
-    }
-
-    public int getIdApparence() {
-        return idApparance;
-    }
-
-    public int getIdArme() {
-        return idArme;
-    }
-
-    public int getIdArmure() {
-        return idArmure;
-    }
-
-    public int getIdJoueur() {
-        return idJoueur;
-    }
-
-    public int getIdMap() {
-        return idMap;
-    }
-
-    public String getMail() {
-        return mail;
-    }
-
-    public int getNewsletter() {
-        return newsletter;
-    }
-
-    public String getPass() {
-        return pass;
-    }
-
-    public String getPseudo() {
-        return pseudo;
-    }
-
-    public int getPvActuels() {
-        return pvActuels;
-    }
-
-    public int getPvMax() {
-        return pvMax;
-    }
-
-    public int getTotalCombats() {
-        return totalCombats;
-    }
-
-    public int getTotalMonstres() {
-        return totalMonstres;
-    }
-
-    public float getVitesse() {
-        return vitesse;
-    }
-
-    public void setAttaque(float attaque) {
-        this.attaque = attaque;
-    }
-
     public void setDateInscription(Date dateInscription) {
         this.dateInscription = dateInscription;
+    }
+
+    public int getDernierX() {
+        return dernierX;
     }
 
     public void setDernierX(int dernierX) {
         this.dernierX = dernierX;
     }
 
+    public int getDernierY() {
+        return dernierY;
+    }
+
     public void setDernierY(int dernierY) {
         this.dernierY = dernierY;
     }
 
-    public void setGroupe(int groupe) {
-        this.groupe = groupe;
+    public int getIdApparence() {
+        return idApparence;
     }
 
-    public void setIdApparance(int idApparance) {
-        this.idApparance = idApparance;
+    public void setIdApparence(int idApparence) {
+        this.idApparence = idApparence;
+    }
+
+    public int getIdArme() {
+        return idArme;
     }
 
     public void setIdArme(int idArme) {
         this.idArme = idArme;
     }
 
+    public int getIdArmure() {
+        return idArmure;
+    }
+
     public void setIdArmure(int idArmure) {
         this.idArmure = idArmure;
     }
 
-    public void setIdJoueur(int id) {
-        this.idJoueur = id;
+    public int getIdMap() {
+        return idMap;
     }
 
     public void setIdMap(int idMap) {
         this.idMap = idMap;
     }
 
+    public String getMail() {
+        return mail;
+    }
+
     public void setMail(String mail) {
         this.mail = mail;
+    }
+
+    public int getNewsletter() {
+        return newsletter;
     }
 
     public void setNewsletter(int newsletter) {
         this.newsletter = newsletter;
     }
 
+    public String getPass() {
+        return pass;
+    }
+
     public void setPass(String pass) {
         this.pass = pass;
+    }
+
+    public String getPseudo() {
+        return pseudo;
     }
 
     public void setPseudo(String pseudo) {
         this.pseudo = pseudo;
     }
 
+    public int getPvActuels() {
+        return pvActuels;
+    }
+
     public void setPvActuels(int pvActuels) {
         this.pvActuels = pvActuels;
+    }
+
+    public int getPvMax() {
+        return pvMax;
     }
 
     public void setPvMax(int pvMax) {
         this.pvMax = pvMax;
     }
 
+    public int getTotalCombats() {
+        return totalCombats;
+    }
+
     public void setTotalCombats(int totalCombats) {
         this.totalCombats = totalCombats;
+    }
+
+    public int getTotalMonstres() {
+        return totalMonstres;
     }
 
     public void setTotalMonstres(int totalMonstres) {
         this.totalMonstres = totalMonstres;
     }
 
-    public void setVitesse(float vitesse) {
-        this.vitesse = vitesse;
+    public int getVitesse() {
+        return (int)vitesse;
     }
 
+    public void setVitesse(int vitesse) {
+        this.vitesse = vitesse;
+    }
+    
+    public String getInventaire() {
+        return this.inventaire;
+    }
+    
+    public void setInventaire(String inventaire){
+        this.inventaire = inventaire;
+    }
         
         
 }

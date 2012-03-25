@@ -5,9 +5,18 @@ import game.MainGame;
 import game.Player;
 
 import inventaire.Armure;
+import inventaire.Inventaire;
 
 import java.applet.Applet;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.rmi.RemoteException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -79,6 +88,21 @@ public class Exploration extends BasicGameState{
 	public int getID() {
 		return 0;
 	}
+	
+
+ 	private Inventaire readInventaire(String inventaire){
+ 		try {
+ 			byte[] buf = inventaire.getBytes();
+ 			if (buf != null) {
+ 				ObjectInputStream objectIn = new ObjectInputStream(
+ 						new ByteArrayInputStream(buf));
+ 				return (Inventaire) objectIn.readObject();
+ 			}
+ 		} catch (Exception e) {
+ 			e.printStackTrace();
+ 		}
+ 		return null;
+ 	}
 
 	@Override
 	public void init(GameContainer container, StateBasedGame game)
@@ -102,7 +126,8 @@ public class Exploration extends BasicGameState{
 				int hpCourant = jb.getPvActuels();
 				int attaque = (int) jb.getAttaque();
 				int vitesse = (int) jb.getVitesse();
-				MainGame.initialisationJoueur(BDD_ID, pseudo, sprite, x, y, hpMax, hpCourant, attaque, vitesse);
+				Inventaire inventaire = readInventaire(jb.getInventaire());
+				MainGame.initialisationJoueur(BDD_ID, pseudo, sprite, x, y, hpMax, hpCourant, attaque, vitesse, inventaire);
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			} 
