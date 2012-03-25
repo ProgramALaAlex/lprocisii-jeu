@@ -4,16 +4,7 @@
 <%
     ClefDB cle = new ClefDB();
     String clef = cle.createInvenaire(session.getAttribute("id")+"");
-    
-    InventaireDB idb = new InventaireDB();
-    String inventaire = idb.jsonInventaire(session.getAttribute("id")+"").getJs();
 %>    
-<script>
-var inventaire = new Array();
-	var objet = new Array();
-        function rpl(){
-<%= inventaire %>
-}</script>
 <section id="content">
     
               <applet mayscript="true"
