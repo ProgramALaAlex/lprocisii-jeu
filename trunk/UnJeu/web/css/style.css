@@ -355,3 +355,31 @@ form#profilModif {
 #banField p{
     margin: 0;
 }
+
+.divNews{
+    width: 650px;
+    border: 2px solid gray;
+    margin: 10px auto; 
+    padding: 10px;
+}
+
+#adminNews{
+    width: 650px;
+    /* display: none; */
+    border: 1px solid #191919;
+    margin: 10px auto;
+    padding: 5px 10px;
+}
+
+#adminNews table td{
+    vertical-align: top;
+}
+
+#adminNews input{
+    width: 200px;
+}
+
+#adminNews textarea{
+    width: 400px;
+    height: 100px;
+}
