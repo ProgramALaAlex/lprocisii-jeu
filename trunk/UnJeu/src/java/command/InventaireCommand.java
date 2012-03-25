@@ -6,10 +6,7 @@ package command;
 
 import beans.InventaireBean;
 import beans.InventaireDB;
-import beans.JoueurBean;
-import beans.JoueurDB;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 /**
  *
