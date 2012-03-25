@@ -32,6 +32,7 @@ public class JoueurBean {
 	int idApparance;
 	int newsletter;
         int groupe;
+        String inventaire;
         
     public static java.sql.Date getCurrentJavaSqlDate() {
         java.util.Date today = new java.util.Date();
@@ -57,6 +58,7 @@ public class JoueurBean {
 	this.idApparance = 0;
 	this.newsletter = 0;
         this.groupe = 1;
+        inventaire = null;
     }
 
     public int getGroupe() {
@@ -213,6 +215,14 @@ public class JoueurBean {
 
     public void setVitesse(int vitesse) {
         this.vitesse = vitesse;
+    }
+    
+    public String getInventaire() {
+        return this.inventaire;
+    }
+    
+    public void setInventaire(String inventaire){
+        this.inventaire = inventaire;
     }
         
         
