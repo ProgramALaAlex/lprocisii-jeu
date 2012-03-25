@@ -11,6 +11,6 @@
                 <li><a title="Se connecter" href="./?action=connexion">Se connecter</a></li>
                 <li><a title="Screenshots" href="./?action=screen">Screenshots</a></li>
 		<li><a title="A propos" href="./?action=apropos">A propos</a></li>
-                <li><a title="A propos" href="./?action=armu">Armurie</a></li>
+                <li><a title="Armurerie" href="./?action=armu">Armurerie</a></li>
             </ul>
         </nav>
