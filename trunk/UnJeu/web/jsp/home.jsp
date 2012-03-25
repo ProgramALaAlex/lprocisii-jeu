@@ -9,7 +9,7 @@
     pageContext.setAttribute("admin", session.getAttribute("groupe") != null ? JoueurBean.estAdmin((Integer)session.getAttribute("groupe")) : false);
 %>
 
-<h4>News :</h4>
+<h3>News :</h3>
 <c:if test="${not empty requestScope['info']}">
     <p class="infoMessage"><c:out value="${requestScope['info']}" /></p>
 </c:if>
