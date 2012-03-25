@@ -9,7 +9,6 @@
                 <li><a title="Jouer!" href="./?action=jeu">Jouer!</a></li>
                 <li><a title="Actualité" href="./">Actualité</a></li>
                 <li><a title="Se déconnecter" href="deconnexion.do">Se déconnecter</a></li>
-                <li><a title="Classement du mois" href="./?action=classement">Classement du mois</a></li>
                 <li><a title="Screenshots" href="./?action=screen">Screenshots</a></li>
 		<li><a title="A propos" href="./?action=apropos">A propos</a></li>
                 <li><a title="Armurerie" href="./?action=armu">Armurerie</a></li>

@@ -366,6 +366,7 @@ form#profilModif {
 
 .divNews{
     width: 650px;
+    text-align: justify;
     border: 2px solid gray;
     margin: 10px auto; 
     padding: 10px;
