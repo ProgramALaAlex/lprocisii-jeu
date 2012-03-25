@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Client: localhost
--- Généré le : Ven 23 Mars 2012 à 16:41
+-- Généré le : Dim 25 Mars 2012 à 22:59
 -- Version du serveur: 5.5.20
 -- Version de PHP: 5.3.10
 
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `apparence` (
   `idApparence` int(11) NOT NULL AUTO_INCREMENT,
   `sprite` varchar(255) NOT NULL,
   PRIMARY KEY (`idApparence`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
 
 --
 -- Contenu de la table `apparence`
@@ -89,6 +89,13 @@ CREATE TABLE IF NOT EXISTS `clef` (
   `idJoueur` int(11) NOT NULL,
   PRIMARY KEY (`idJoueur`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Contenu de la table `clef`
+--
+
+INSERT INTO `clef` (`clef`, `idJoueur`) VALUES
+('f08868c8-2d32-41da-bc73-6f1ef2ec7bb9', 35);
 
 -- --------------------------------------------------------
 
@@ -167,7 +174,14 @@ CREATE TABLE IF NOT EXISTS `news` (
   `contenu` text NOT NULL,
   `date` date NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+
+--
+-- Contenu de la table `news`
+--
+
+INSERT INTO `news` (`id`, `titre`, `contenu`, `date`) VALUES
+(3, 'Bienvenue!', 'Voilà une news très importante ! Souvenez-vous de passer à l''heure d''été :) Comment ça c''est sans rapport avec le reste du site ?', '2012-03-25');
 
 -- --------------------------------------------------------
 

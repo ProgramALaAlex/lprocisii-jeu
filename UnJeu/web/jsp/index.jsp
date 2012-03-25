@@ -50,9 +50,6 @@
                 <c:when test="${param.action == 'connexion' && empty sessionScope['id']}">
                     <%@ include file="connexion.jsp" %>
                 </c:when>
-                <c:when test="${param.action == 'classement'}">
-                    <%@ include file="classement.jsp" %>
-                </c:when>
                 <c:when test="${param.action == 'screen'}">
                     <%@ include file="screen.jsp" %>
                 </c:when>

@@ -1,1 +1,0 @@
-<h3>Classement des joueurs!</h3>
