@@ -5,12 +5,9 @@
  */
 package command;
 
-import beans.InventaireBean;
-import beans.InventaireDB;
 import beans.JoueurBean;
 import beans.JoueurDB;
 import java.rmi.Naming;
-import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.logging.Level;

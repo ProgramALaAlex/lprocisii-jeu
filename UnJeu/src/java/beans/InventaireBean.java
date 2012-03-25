@@ -4,8 +4,6 @@
  */
 package beans;
 
-import java.util.ArrayList;
-
 /**
  *
  * @author Loic

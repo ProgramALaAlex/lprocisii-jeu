@@ -6,8 +6,6 @@ package command;
 
 
 import beans.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import javax.servlet.http.HttpServletRequest;
 
 /**
