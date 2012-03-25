@@ -28,7 +28,7 @@
     <% if (ban != null) { %>
         <form method="post" action="debannir.do">
             <input type="hidden" name="id" value="<%= joueur.getIdJoueur() %>" />
-            <input type="image" title="Débannir le joueur" src="images/debannir.png" onClick="if (!confirm('Débannir le joueur?')) return false;" />
+            <input type="image" title="Réintégrer le joueur" src="images/debannir.png" onClick="if (!confirm('Réintégrer le joueur?')) return false;" />
         </form>
     <% } %>
 </fieldset>
