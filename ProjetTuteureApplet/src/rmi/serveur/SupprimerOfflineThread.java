@@ -17,7 +17,7 @@ public class SupprimerOfflineThread extends Thread{
 		while(true){
 					serveur.retirerReferencesNeRepondantPas();
 				try {
-					wait(5000);
+					wait(4000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

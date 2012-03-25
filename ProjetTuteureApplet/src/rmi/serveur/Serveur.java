@@ -127,6 +127,26 @@ public class Serveur implements DispatcherInterface {
 
 	@Override
 	public JoueurBean getJoueurByID(String id) throws RemoteException {
+		for (Iterator<Player> iterator = listeJoueurs.iterator(); iterator.hasNext();) {
+			Player p = (Player) iterator.next();
+			if(p.getBDD_ID()==Integer.parseInt(id)){
+				JoueurDB db = new JoueurDB();
+				JoueurBean jb = db.getById(Integer.toString(p.getBDD_ID()));
+				jb.setDernierX((int) p.getX());
+				jb.setDernierY((int) p.getY());
+				jb.setIdMap(Integer.parseInt(p.getMapId()));
+				jb.setPvActuels(p.getPvCourant());
+				try {
+					jb.setInventaire(writeInventaire(p.getInventaire()));
+				} catch (Exception e) {
+					System.err.println("Erreur lors du chargement de l'inventaire");
+				}
+				listeRefJoueurs.remove(getReferenceCorrespondante(p));
+				iterator.remove();
+				return jb;
+			}
+		}
+				
 		JoueurDB db = new JoueurDB();
 		return db.getById(id);
 	}
@@ -212,37 +232,39 @@ public class Serveur implements DispatcherInterface {
 
 	public synchronized void retirerReferencesNeRepondantPas(){
 		int i=0;
-		for (Iterator<ReceiverInterface> iterator = listeRefJoueurs.iterator(); iterator.hasNext();) {
-			ReceiverInterface ri = iterator.next();
-			try {
-				ri.getPlayer();
-			} catch (RemoteException e) {
-				try{
-					Player p = listeJoueurs.get(i);
-					try {
-						JoueurDB db = new JoueurDB();
-						JoueurBean jb = db.getById(Integer.toString(p.getBDD_ID()));
-						jb.setDernierX((int) p.getX());
-						jb.setDernierY((int) p.getY());
-						jb.setIdMap(Integer.parseInt(p.getMapId()));
-						jb.setPvActuels(p.getPvCourant());
-						jb.setInventaire(writeInventaire(p.getInventaire()));
-						db.majJoueur(jb);
-						System.out.println(p.getNom()+" modifié dans la base de données.");
-					} catch (Exception e1) {
-						System.err.println("La modification du joueur n'a pas pu s'effectuer");
+		synchronized (listeRefJoueurs) {
+			for (Iterator<ReceiverInterface> iterator = listeRefJoueurs.iterator(); iterator.hasNext();) {
+				ReceiverInterface ri = iterator.next();
+				try {
+					ri.getPlayer();
+				} catch (RemoteException e) {
+					try{
+						Player p = listeJoueurs.get(i);
+						try {
+							JoueurDB db = new JoueurDB();
+							JoueurBean jb = db.getById(Integer.toString(p.getBDD_ID()));
+							jb.setDernierX((int) p.getX());
+							jb.setDernierY((int) p.getY());
+							jb.setIdMap(Integer.parseInt(p.getMapId()));
+							jb.setPvActuels(p.getPvCourant());
+							jb.setInventaire(writeInventaire(p.getInventaire()));
+							db.majJoueur(jb);
+							System.out.println(p.getNom()+" modifié dans la base de données.");
+						} catch (Exception e1) {
+							System.err.println("La modification du joueur n'a pas pu s'effectuer");
+						}
+						listeJoueurs.remove(i);
+						i--;
+						iterator.remove();
+						System.out.println("Un joueur ne répondant pas a été supprimé. ("+p.getNom()+")");
+					} catch(ConcurrentModificationException cme){
+						System.err.println("Désynchronisation des listes - redémarrer le serveur");
+						threadDeconnexion = new SupprimerOfflineThread(this);
+						threadDeconnexion.start();
 					}
-					listeJoueurs.remove(i);
-					i--;
-					iterator.remove();
-					System.out.println("Un joueur ne répondant pas a été supprimé. ("+p.getNom()+")");
-				} catch(ConcurrentModificationException cme){
-					System.err.println("Désynchronisation des listes - redémarrer le serveur");
-					threadDeconnexion = new SupprimerOfflineThread(this);
-					threadDeconnexion.start();
 				}
+				i++;
 			}
-			i++;
 		}
 	}
 
@@ -277,12 +299,19 @@ public class Serveur implements DispatcherInterface {
 			listeJoueurs.set(listeJoueurs.indexOf(recu), recu);
 		}
 	}
+	
+	/**
+	 * Convertir inventaire en String pour la BDD
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
 	private String writeInventaire(Inventaire obj) throws Exception {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ObjectOutputStream oout = new ObjectOutputStream(baos);
 		oout.writeObject(obj);
 		oout.close();
-		return baos.toByteArray().toString();
+		return new String(baos.toByteArray());
 	}	
 
 }

@@ -90,6 +90,10 @@ public class Exploration extends BasicGameState{
 	}
 	
 
+	/**
+	 * Convertir un String en inventaire
+	 * @param inventaire
+	 */
  	private Inventaire readInventaire(String inventaire){
  		try {
  			byte[] buf = inventaire.getBytes();
@@ -99,7 +103,7 @@ public class Exploration extends BasicGameState{
  				return (Inventaire) objectIn.readObject();
  			}
  		} catch (Exception e) {
- 			e.printStackTrace();
+ 			System.out.println("Inventaire vide - génération d'un nouveau");
  		}
  		return null;
  	}
