@@ -4,25 +4,16 @@ import game.AppletGameContainer;
 import game.MainGame;
 import game.Player;
 
-import inventaire.Armure;
 import inventaire.Inventaire;
 
 import java.applet.Applet;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.rmi.RemoteException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Vector;
-
-import netscape.javascript.JSObject;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
