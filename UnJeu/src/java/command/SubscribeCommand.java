@@ -40,7 +40,7 @@ public class SubscribeCommand implements Command {
             int attaque = Integer.parseInt(request.getParameter("attaque"));
             int vitesse = Integer.parseInt(request.getParameter("vitesse"));
             int pv = Integer.parseInt(request.getParameter("pv"));
-            System.out.println("truc: "+apparence);
+            
             request.setAttribute("distrib", 100 - attaque - vitesse - pv);
 
             JoueurDB db = new JoueurDB();
