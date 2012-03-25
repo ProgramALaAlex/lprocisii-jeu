@@ -363,9 +363,13 @@ form#profilModif {
     padding: 10px;
 }
 
+.divNews form input[type="image"] {
+    float: right;
+}
+
 #adminNews{
     width: 650px;
-    /* display: none; */
+    display: none;
     border: 1px solid #191919;
     margin: 10px auto;
     padding: 5px 10px;

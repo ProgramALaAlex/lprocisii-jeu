@@ -32,6 +32,7 @@ public class CommandManager {
         cmds.put("equipe", new EquipCommand());
         cmds.put("actualise", new ActualiseCommand());
         cmds.put("ajouterNews", new AddNewsCommand());
+        cmds.put("supprimerNews", new DeleteNewsCommand());
     }
 
     public static Command getCommand(String commandName) {

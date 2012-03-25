@@ -17,7 +17,7 @@
     <p class="errorMessage"><c:out value="${requestScope['erreur']}" /></p>
 </c:if>
 <c:if test="${admin}">
-    <a href="javascript: void(0);" onClick="$('#adminNews').slideToggle();">Poster une news</a>
+    <a href="javascript: void(0);" onClick="$('#adminNews').slideToggle();">Poster une news</a><br />
     <fieldset id="adminNews">
         <form method="post" action="ajouterNews.do">
             <table>
@@ -41,6 +41,12 @@
     <c:when test="${not empty newsList}">
         <c:forEach var="news" items="${newsList}">
             <div class="divNews">
+                <c:if test="${admin}">
+                    <form method="post" action="supprimerNews.do">
+                        <input type="hidden" name="id" value="${news.id}" />
+                        <input type="image" title="Supprimer la news" src="images/supprimer.png" onClick="if (!confirm('Supprimer la news?')) return false;" />
+                    </form>
+                </c:if>
                 <h4>${news.titre}</h4>
                 <p>${news.contenu}</p>
             </div>

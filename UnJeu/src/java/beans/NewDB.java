@@ -17,22 +17,32 @@ import java.util.logging.Logger;
  * @author Loic
  */
 public class NewDB {
-    public void AddNew( NewBean ne){
+    public void addNews(NewBean ne){
+        try {
+            Connection con = Singleton.getInstance().getConnection();
+            PreparedStatement ps = con.prepareStatement("INSERT INTO unjeu.news (titre, contenu, date) VALUES (?,?,'"+ne.getDate()+"')");
+            ps.setString(1, ne.getTitre());
+            ps.setString(2, ne.getContenu());
+            
+            ps.executeUpdate();
+        }catch(Exception e){
+            System.out.println("fail add new");
+        }
+    }
+    
+    public void deleteNews(String id){
         try {
             Connection con = Singleton.getInstance().getConnection();
             Statement statement = con.createStatement(); 
-            String query = "INSERT INTO unjeu.news (titre, contenu, date) VALUES ("
-                    + "'"+ne.getTitre()+"', "
-                    + "'"+ne.getContenu()+"', "
-                    + "'"+ne.getDate()+"')"; 
-            System.out.println(query);
+            String query = "DELETE FROM unjeu.news WHERE id="+id; 
+            
             statement.executeUpdate(query);
         }catch(Exception e){
             System.out.println("fail add new");
         }
     }
     
-    public NewBean getById( String id ){
+    public NewBean getById(String id){
         try {
             Connection con = Singleton.getInstance().getConnection();
             PreparedStatement ps = con.prepareStatement("SELECT * FROM unjeu.news WHERE id="+id);

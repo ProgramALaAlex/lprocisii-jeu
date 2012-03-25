@@ -73,11 +73,6 @@ public class SubscribeCommand implements Command {
                 
                 db.creerJoueur(joueur);
                 
-                //on creer l'inventaire du joueur
-                InventaireBean inv = new InventaireBean(joueur.getIdJoueur());
-                InventaireDB idb = new InventaireDB();
-                idb.createInvenaire(inv);
-                
                 // A l'inscription, connexion automatique
                 HttpSession session = request.getSession(false);
                 session.setAttribute("id", joueur.getIdJoueur());
