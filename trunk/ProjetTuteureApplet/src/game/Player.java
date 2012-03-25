@@ -52,7 +52,7 @@ public class Player extends Combattant implements Mover {
 	//brico
 	private transient boolean changementInvitation = false;
 
-	public Player(int BDD_ID, String nom, String spriteSheetName, float x, float y, int pvMax, int pvCourant, int attaque, int vitesse){
+	public Player(int BDD_ID, String nom, String spriteSheetName, float x, float y, int pvMax, int pvCourant, int attaque, int vitesse, Inventaire inventaire){
 		super(nom, pvMax, pvCourant, attaque, vitesse);
 		this.BDD_ID = BDD_ID;
 		this.spriteSheetName = spriteSheetName;
@@ -72,8 +72,18 @@ public class Player extends Combattant implements Mover {
 		collision.setLocation(x+5, y+5);
 		directionHistorique = Constantes.BAS;
 		pasAvantProchainCombat = (int) (Math.random()*500);
-		inventaire = new Inventaire();
-		inventaire.addObjet(new Potion());
+		if(inventaire == null) {
+			this.inventaire = new Inventaire();
+			this.inventaire.addObjet(new Potion());
+		} else {
+			try{
+				this.inventaire = inventaire;
+			} catch (Exception e) {
+				System.err.println("Inventaire corrompu détecté");
+				this.inventaire = new Inventaire();
+				this.inventaire.addObjet(new Potion());
+			}
+		}
 		userId = new UID();
 		initAnimation();
 		leaderCombat = false;

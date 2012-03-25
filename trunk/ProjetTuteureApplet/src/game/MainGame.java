@@ -2,6 +2,7 @@ package game;
 
 import inventaire.Arme;
 import inventaire.Armure;
+import inventaire.Inventaire;
 
 import java.applet.Applet;
 import java.rmi.Naming;
@@ -128,7 +129,7 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 	} 
 
 	public static void initialisationJoueur(){
-		player = new Player(0, "Joueur", "homme", x, y, 133, 133, 133, 134);
+		player = new Player(0, "Joueur", "homme", x, y, 133, 133, 133, 134, null);
 		//		player.setPvCourant(10);
 		listePaquetJoueurs = new ArrayList<Player>();
 		if (Constantes.ONLINE){
@@ -145,8 +146,8 @@ public class MainGame extends StateBasedGame implements Observer, ChatReceiverIn
 		}
 	}
 
-	public static void initialisationJoueur(int BDD_ID, String nomJoueur, String sprite, int x, int y, int hpMax, int hpCourant, int attaque, int vitesse){
-		player = new Player(BDD_ID, nomJoueur, sprite, x, y, hpMax, hpCourant, attaque, vitesse);
+	public static void initialisationJoueur(int BDD_ID, String nomJoueur, String sprite, int x, int y, int hpMax, int hpCourant, int attaque, int vitesse, Inventaire inventaire){
+		player = new Player(BDD_ID, nomJoueur, sprite, x, y, hpMax, hpCourant, attaque, vitesse, inventaire);
 		//		player.setPvCourant(10);
 		listePaquetJoueurs = new ArrayList<Player>();
 		if (Constantes.ONLINE){

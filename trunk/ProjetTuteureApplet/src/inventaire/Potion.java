@@ -6,5 +6,6 @@ public class Potion extends Objet{
 	public Potion(){
 		nom = "Potion";
 		valeur = 40;
+		id=1;
 	}
 }

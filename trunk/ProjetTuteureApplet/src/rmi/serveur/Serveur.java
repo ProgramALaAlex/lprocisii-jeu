@@ -2,14 +2,21 @@ package rmi.serveur;
 
 import game.Player;
 
+import inventaire.Inventaire;
+
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UID;
 import java.rmi.server.UnicastRemoteObject;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.Vector;
 
 import rmi.interfaces.ChatRemoteInterface;
@@ -33,7 +40,7 @@ public class Serveur implements DispatcherInterface {
 		System.out.println("Dispatcher");
 		System.setSecurityManager (null);
 		try {
-			//			System.setProperty("java.rmi.server.hostname", Constantes.IP_SERVEUR);
+			// System.setProperty("java.rmi.server.hostname", Constantes.IP_SERVEUR);
 			DispatcherInterface server = new Serveur();
 			DispatcherInterface proxy = (DispatcherInterface) UnicastRemoteObject.exportObject(server, 25465);
 			Registry registry = LocateRegistry.createRegistry(Constantes.REGISTRY_PORT);
@@ -54,11 +61,14 @@ public class Serveur implements DispatcherInterface {
 	private Vector<ReceiverInterface> listeRefJoueurs;
 
 	private Vector<Player> listeJoueurs;
+	
+	private SupprimerOfflineThread threadDeconnexion;
 
 	public Serveur(){
-		listeRefJoueurs = new Vector<ReceiverInterface>();
 		listeJoueurs = new Vector<Player>();
-		new SupprimerOfflineThread(this).start();
+		listeRefJoueurs = new Vector<ReceiverInterface>();
+		threadDeconnexion = new SupprimerOfflineThread(this);
+		threadDeconnexion.start();
 	}
 
 	@Override
@@ -74,13 +84,10 @@ public class Serveur implements DispatcherInterface {
 	@Override
 	public void attaquer(Player emetteur, Combattant cible, int degats) throws RemoteException {
 		// on récupère les joueurs du groupe de l'emetteur
-		System.out.println("Methode attaquer détectée");
 		for(Player p : emetteur.getListeJoueursCombatEnCours()){
 			System.out.println(p.getId());
-			if(!p.equals(emetteur)){
-				//			if(!p.equals(emetteur) && p.getGroupe()!=null && p.getGroupe().equals(emetteur.getGroupe())){
+			if(!p.equals(emetteur) && p.getGroupe()!=null && p.getGroupe().equals(emetteur.getGroupe())){
 				getReferenceCorrespondante(p).attaquer(cible, degats);
-				//			}
 			}
 		}
 	}
@@ -107,9 +114,7 @@ public class Serveur implements DispatcherInterface {
 		// on récupère les joueurs du groupe du leader
 		for(Player p : listeJoueurs){
 			if(!p.equals(leader))
-				//			if(p.getGroupe()!=null && p.getGroupe().equals(leader.getGroupe())){
 				getReferenceCorrespondante(p).entrerEnCombat(listeJoueurs, listeMonstre);
-			//			}
 		}
 	}
 
@@ -158,6 +163,7 @@ public class Serveur implements DispatcherInterface {
 	public void inscription(Player p, ReceiverInterface client) throws RemoteException {
 		this.listeRefJoueurs.add(client);
 		this.listeJoueurs.add(p);
+		System.out.println(p.getNom()+" s'est connecté.");
 	}
 
 	@Override
@@ -220,17 +226,20 @@ public class Serveur implements DispatcherInterface {
 						jb.setDernierY((int) p.getY());
 						jb.setIdMap(Integer.parseInt(p.getMapId()));
 						jb.setPvActuels(p.getPvCourant());
+						jb.setInventaire(writeInventaire(p.getInventaire()));
 						db.majJoueur(jb);
+						System.out.println(p.getNom()+" modifié dans la base de données.");
 					} catch (Exception e1) {
-						System.out.println("erreur bdd");
+						System.err.println("La modification du joueur n'a pas pu s'effectuer");
 					}
 					listeJoueurs.remove(i);
 					i--;
 					iterator.remove();
-					System.out.println("Un joueur ne répondant pas a été supprimé.");
+					System.out.println("Un joueur ne répondant pas a été supprimé. ("+p.getNom()+")");
 				} catch(ConcurrentModificationException cme){
-					System.out.println("humhum");
-					new SupprimerOfflineThread(this).start();
+					System.err.println("Désynchronisation des listes - redémarrer le serveur");
+					threadDeconnexion = new SupprimerOfflineThread(this);
+					threadDeconnexion.start();
 				}
 			}
 			i++;
@@ -240,7 +249,7 @@ public class Serveur implements DispatcherInterface {
 	@Override
 	public void seSoigner(Player emetteur, int soin) throws RemoteException {
 		// on récupère les joueurs du groupe de l'emetteur
-		for(Player p : listeJoueurs){ //TODO emetteur.getListeJoueursCombatEnCours()
+		for(Player p : emetteur.getListeJoueursCombatEnCours()){
 			if(!p.equals(emetteur) && p.getGroupe()!=null && p.getGroupe().equals(emetteur.getGroupe())){
 				getReferenceCorrespondante(p).seSoigner(emetteur, soin);
 			}
@@ -268,5 +277,12 @@ public class Serveur implements DispatcherInterface {
 			listeJoueurs.set(listeJoueurs.indexOf(recu), recu);
 		}
 	}
+	private String writeInventaire(Inventaire obj) throws Exception {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ObjectOutputStream oout = new ObjectOutputStream(baos);
+		oout.writeObject(obj);
+		oout.close();
+		return baos.toByteArray().toString();
+	}	
 
 }

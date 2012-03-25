@@ -47,9 +47,10 @@ public class JoueurDB {
                 joueur.setIdMap(new Integer(rs.getString(14)));
                 joueur.setIdArme(new Integer(rs.getString(15)));
                 joueur.setIdArmure(new Integer(rs.getString(16)));
-                joueur.setIdApparance(new Integer(rs.getString(17)));
+                joueur.setIdApparence(new Integer(rs.getString(17)));
                 joueur.setNewsletter(new Integer(rs.getString(18)));
                 joueur.setGroupe(new Integer(rs.getString(19)));
+                joueur.setInventaire(new String(rs.getString(20)));
             }
             return joueur;
         } catch (Exception ex) {
@@ -62,7 +63,7 @@ public class JoueurDB {
         try {
             Connection con = Singleton.getInstance().getConnection();
             Statement statement = con.createStatement(); 
-            String query = "INSERT INTO unjeu.joueur (pseudo, mail, pass, dateInscription, attaque, vitesse, pvMax, pvActuels, totalCombats, totalMonstres, dernierX, dernierY, idMap, idArme, idArmure, idApparance, newsletter, groupe) VALUES ("
+            String query = "INSERT INTO unjeu.joueur (pseudo, mail, pass, dateInscription, attaque, vitesse, pvMax, pvActuels, totalCombats, totalMonstres, dernierX, dernierY, idMap, idArme, idArmure, idApparance, newsletter, groupe, inventaire) VALUES ("
                     + "'"+joueur.getPseudo()+"', "
                     + "'"+joueur.getMail()+"', "
                     + "'"+joueur.getPass()+"', "
@@ -80,7 +81,8 @@ public class JoueurDB {
                     + "'"+joueur.getIdArmure()+"', "
                     + "'"+joueur.getIdApparence()+"', "
                     + "'"+joueur.getNewsletter()+"', "
-                    + "'"+joueur.getGroupe()+"')"; 
+                    + "'"+joueur.getGroupe()+"', "
+            		+ "'"+joueur.getInventaire()+"')"; 
             System.out.println(query);
             statement.executeUpdate(query);
             joueur.setIdJoueur(getByPseudo(joueur.getPseudo()).getIdJoueur());
@@ -131,13 +133,14 @@ public class JoueurDB {
                 joueur.setIdMap(new Integer(rs.getString(14)));
                 joueur.setIdArme(new Integer(rs.getString(15)));
                 joueur.setIdArmure(new Integer(rs.getString(16)));
-                joueur.setIdApparance(new Integer(rs.getString(17)));
+                joueur.setIdApparence(new Integer(rs.getString(17)));
                 joueur.setNewsletter(new Integer(rs.getString(18)));
                 joueur.setGroupe(new Integer(rs.getString(19)));
+                joueur.setInventaire(new String(rs.getString(20)));
             }
             return joueur;
         } catch (Exception ex) {
-            Logger.getLogger(JoueurDB.class.getName()).log(Level.SEVERE, null, ex);
+            System.err.println("Erreur lien base de données");
         }
         return null;
     }
@@ -166,13 +169,14 @@ public class JoueurDB {
                 joueur.setIdMap(new Integer(rs.getString(14)));
                 joueur.setIdArme(new Integer(rs.getString(15)));
                 joueur.setIdArmure(new Integer(rs.getString(16)));
-                joueur.setIdApparance(new Integer(rs.getString(17)));
+                joueur.setIdApparence(new Integer(rs.getString(17)));
                 joueur.setNewsletter(new Integer(rs.getString(18)));
                 joueur.setGroupe(new Integer(rs.getString(19)));
+                joueur.setInventaire(new String(rs.getString(20)));
             }
             return joueur;
         } catch (Exception ex) {
-            Logger.getLogger(JoueurDB.class.getName()).log(Level.SEVERE, null, ex);
+        	System.err.println("Erreur lien base de données");
         }
         return null;
     }
@@ -202,7 +206,7 @@ public class JoueurDB {
                 joueur.setIdMap(new Integer(rs.getString(14)));
                 joueur.setIdArme(new Integer(rs.getString(15)));
                 joueur.setIdArmure(new Integer(rs.getString(16)));
-                joueur.setIdApparance(new Integer(rs.getString(17)));
+                joueur.setIdApparence(new Integer(rs.getString(17)));
                 joueur.setNewsletter(new Integer(rs.getString(18)));
                 joueur.setGroupe(new Integer(rs.getString(19)));
                 list.add(joueur);
@@ -277,6 +281,7 @@ public class JoueurDB {
                      + "', idApparance='"+joueur.getIdApparence()
                      + "', newsletter='"+joueur.getNewsletter()
                      + "', groupe='"+joueur.getGroupe()
+                     + "', inventaire='"+joueur.getInventaire()
                      + "' WHERE idJoueur='"+joueur.getIdJoueur()+"'";
              statement.executeUpdate(query);
          }
