@@ -26,7 +26,7 @@
 	<header>
         	<h1><a title="Un Jeu" href="./"><img src="images/UnJeu.png" height="120px"/></a></h1>
         </header>
-	<c:if test="${not empty sessionScope['pseudo']}"><p id="bienvenue">Bienvenue, <c:out value="${sessionScope['pseudo']}" /></p></c:if>
+	<c:if test="${not empty sessionScope['pseudo']}"><p id="bienvenue">Bienvenue, <c:out value="${sessionScope['pseudo']}" />!</p></c:if>
             <c:choose>
                 <c:when test="${empty sessionScope['id']}">
                      <jsp:include page="nav.jsp"/>
