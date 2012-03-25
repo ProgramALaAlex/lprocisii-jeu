@@ -83,7 +83,10 @@ header
 
 p#bienvenue
 {
-        text-align: center;
+    text-align: right;
+    font-style: italic;
+    margin-bottom: 0px;
+    margin-right: 14px;
 }
 
 header h1
