@@ -2,7 +2,6 @@ package rmi.serveur;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.UUID;
 
 import rmi.interfaces.ChatReceiverInterface;
 import rmi.interfaces.ChatRemoteInterface;

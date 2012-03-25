@@ -11,12 +11,9 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UID;
 import java.rmi.server.UnicastRemoteObject;
-import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.ListIterator;
 import java.util.Vector;
 
 import rmi.interfaces.ChatRemoteInterface;
