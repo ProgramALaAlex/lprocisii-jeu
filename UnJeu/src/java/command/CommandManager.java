@@ -6,7 +6,6 @@
 package command;
 
 import java.util.concurrent.ConcurrentHashMap;
-import sun.misc.BASE64Encoder;
 
 /**
  *
@@ -32,6 +31,7 @@ public class CommandManager {
         cmds.put("debannir", new DebanCommand());
         cmds.put("equipe", new EquipCommand());
         cmds.put("actualise", new ActualiseCommand());
+        cmds.put("ajouterNews", new AddNewsCommand());
     }
 
     public static Command getCommand(String commandName) {

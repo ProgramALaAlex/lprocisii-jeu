@@ -54,11 +54,11 @@ public class NewDB {
         return null;
     }
     
-    public ArrayList<NewBean> getLestNew(  ){
+    public ArrayList<NewBean> findAll(){
         ArrayList<NewBean> list = new ArrayList();
         try {
             Connection con = Singleton.getInstance().getConnection();
-            PreparedStatement ps = con.prepareStatement("SELECT * FROM unjeu.news");
+            PreparedStatement ps = con.prepareStatement("SELECT id, titre, contenu, date FROM unjeu.news ORDER BY date");
             ResultSet rs = ps.executeQuery();
             NewBean ne = null;
             while (rs.next()) {
